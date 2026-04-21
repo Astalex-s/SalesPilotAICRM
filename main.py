@@ -1,6 +1,6 @@
 """
 Точка входа приложения — только инициализация FastAPI.
-Бизнес-логики нет. Роутеры регистрируются по мере реализации фич.
+Бизнес-логики нет. Роутеры и обработчики регистрируются в фабрике.
 """
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
 from src.infrastructure.database.session import engine
+from src.interfaces.api.exception_handlers import register_exception_handlers
+from src.interfaces.api.v1.routers import ai_router, deals_router, leads_router, pipelines_router
 
 
 @asynccontextmanager
@@ -37,10 +39,15 @@ def create_app() -> FastAPI:
         openapi_url="/api/openapi.json",
     )
 
-    # Роутеры регистрируются здесь по мере реализации фич:
-    # from src.interfaces.api.v1.routers import contacts, deals, ai_insights
-    # application.include_router(contacts.router, prefix="/api/v1")
-    # application.include_router(deals.router, prefix="/api/v1")
+    # Регистрация обработчиков исключений (до роутеров)
+    register_exception_handlers(application)
+
+    # Регистрация роутеров v1
+    _api_prefix = "/api/v1"
+    application.include_router(leads_router, prefix=_api_prefix)
+    application.include_router(deals_router, prefix=_api_prefix)
+    application.include_router(pipelines_router, prefix=_api_prefix)
+    application.include_router(ai_router, prefix=_api_prefix)
 
     return application
 
