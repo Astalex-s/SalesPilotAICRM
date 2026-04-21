@@ -11,7 +11,14 @@ from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
 from src.infrastructure.database.session import engine
 from src.interfaces.api.exception_handlers import register_exception_handlers
-from src.interfaces.api.v1.routers import ai_router, deals_router, leads_router, pipelines_router
+from src.interfaces.api.v1.routers import (
+    ai_router,
+    deals_router,
+    emails_router,
+    gmail_auth_router,
+    leads_router,
+    pipelines_router,
+)
 
 
 @asynccontextmanager
@@ -48,6 +55,8 @@ def create_app() -> FastAPI:
     application.include_router(deals_router, prefix=_api_prefix)
     application.include_router(pipelines_router, prefix=_api_prefix)
     application.include_router(ai_router, prefix=_api_prefix)
+    application.include_router(gmail_auth_router, prefix=_api_prefix)
+    application.include_router(emails_router, prefix=_api_prefix)
 
     return application
 

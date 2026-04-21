@@ -5,6 +5,7 @@
 """
 from src.infrastructure.database.models.activity_model import ActivityModel
 from src.infrastructure.database.models.deal_model import DealModel
+from src.infrastructure.database.models.email_message_model import EmailMessageModel
 from src.infrastructure.database.models.lead_model import LeadModel
 from src.infrastructure.database.models.pipeline_model import PipelineModel
 from src.infrastructure.database.models.stage_model import StageModel
@@ -12,6 +13,7 @@ from src.infrastructure.database.models.stage_model import StageModel
 __all__ = [
     "ActivityModel",
     "DealModel",
+    "EmailMessageModel",
     "LeadModel",
     "PipelineModel",
     "StageModel",

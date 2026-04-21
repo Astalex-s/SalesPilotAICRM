@@ -54,3 +54,21 @@ class StageNotInPipelineError(ApplicationError):
         )
         self.stage_id = stage_id
         self.pipeline_id = pipeline_id
+
+
+# ── Ошибки Gmail-интеграции ────────────────────────────────────────────────────
+
+class EmailMessageNotFoundError(EntityNotFoundError):
+    """Письмо с указанным ID не найдено."""
+
+    def __init__(self, email_message_id: UUID) -> None:
+        super().__init__("EmailMessage", email_message_id)
+
+
+class GmailNotAuthorizedError(ApplicationError):
+    """Gmail не авторизован — необходимо пройти OAuth2-поток."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            "Gmail не авторизован. Перейдите по /api/v1/auth/gmail для авторизации."
+        )

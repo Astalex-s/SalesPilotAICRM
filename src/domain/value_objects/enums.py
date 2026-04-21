@@ -47,3 +47,9 @@ class UserRole(str, Enum):
     ADMIN = "admin"
     MANAGER = "manager"
     SALES_REP = "sales_rep"
+
+
+class EmailDirection(str, Enum):
+    """Направление email-письма относительно CRM-системы."""
+    INBOUND = "inbound"    # входящее (от контакта к менеджеру)
+    OUTBOUND = "outbound"  # исходящее (от менеджера к контакту)
