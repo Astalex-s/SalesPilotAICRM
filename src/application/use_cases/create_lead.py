@@ -56,8 +56,8 @@ class CreateLeadUseCase:
             company=data.company,
         )
 
-        # Шаг 4: сохранение
-        await self._lead_repo.save(lead)
+        # Шаг 4: сохранение (репозиторий возвращает актуальное состояние сущности)
+        lead = await self._lead_repo.save(lead)
 
         # Шаг 5: возврат DTO
         return LeadOutput.from_entity(lead)

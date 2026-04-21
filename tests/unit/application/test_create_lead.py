@@ -20,7 +20,8 @@ def lead_repo() -> AsyncMock:
     repo = AsyncMock()
     # По умолчанию e-mail не занят
     repo.find_by_email.return_value = None
-    repo.save.return_value = None
+    # save возвращает сохранённую сущность (контракт BaseRepository)
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 

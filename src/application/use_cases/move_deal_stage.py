@@ -85,7 +85,7 @@ class MoveDealStageUseCase:
         )
 
         # Шаг 6: атомарное сохранение
-        await self._deal_repo.save(deal)
+        deal = await self._deal_repo.save(deal)
         await self._activity_repo.save(activity)
 
         # Шаг 7: возврат DTO

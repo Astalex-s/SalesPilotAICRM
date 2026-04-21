@@ -60,21 +60,21 @@ def make_pipeline_with_stage() -> tuple[Pipeline, Stage]:
 @pytest.fixture
 def lead_repo() -> AsyncMock:
     repo = AsyncMock()
-    repo.save.return_value = None
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 
 @pytest.fixture
 def deal_repo() -> AsyncMock:
     repo = AsyncMock()
-    repo.save.return_value = None
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 
 @pytest.fixture
 def activity_repo() -> AsyncMock:
     repo = AsyncMock()
-    repo.save.return_value = None
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 

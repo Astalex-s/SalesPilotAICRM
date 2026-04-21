@@ -89,8 +89,8 @@ class ConvertLeadToDealUseCase:
         )
 
         # Шаг 5: атомарное сохранение всех трёх сущностей
-        await self._deal_repo.save(deal)
-        await self._lead_repo.save(lead)
+        deal = await self._deal_repo.save(deal)
+        lead = await self._lead_repo.save(lead)
         await self._activity_repo.save(activity)
 
         # Шаг 6: возврат DTO

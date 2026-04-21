@@ -65,7 +65,7 @@ def make_open_deal(pipeline_id, stage_id) -> Deal:
 @pytest.fixture
 def deal_repo() -> AsyncMock:
     repo = AsyncMock()
-    repo.save.return_value = None
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 
@@ -77,7 +77,7 @@ def pipeline_repo() -> AsyncMock:
 @pytest.fixture
 def activity_repo() -> AsyncMock:
     repo = AsyncMock()
-    repo.save.return_value = None
+    repo.save.side_effect = lambda entity: entity
     return repo
 
 
