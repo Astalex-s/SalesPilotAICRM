@@ -28,3 +28,8 @@ class ILeadRepository(BaseRepository[Lead]):
     async def find_by_email(self, email: str) -> Lead | None:
         """Возвращает лид по адресу e-mail или None."""
         ...
+
+    @abstractmethod
+    async def find_all(self) -> list[Lead]:
+        """Возвращает все лиды в системе (используется администратором)."""
+        ...

@@ -59,3 +59,9 @@ class SqlLeadRepository(ILeadRepository):
         rows = await self._session.scalars(stmt)
         row = rows.first()
         return row.to_entity() if row is not None else None
+
+    async def find_all(self) -> list[Lead]:
+        """Возвращает все лиды (для административных запросов)."""
+        stmt = select(LeadModel)
+        rows = await self._session.scalars(stmt)
+        return [r.to_entity() for r in rows.all()]

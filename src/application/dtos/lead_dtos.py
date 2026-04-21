@@ -16,6 +16,13 @@ from src.domain.value_objects.enums import LeadSource, LeadStatus
 
 # ── Входные DTO ────────────────────────────────────────────────────────────────
 
+class ListLeadsInput(BaseModel):
+    """Параметры фильтрации для списка лидов."""
+
+    owner_id: UUID | None = None
+    status: LeadStatus | None = None
+
+
 class CreateLeadInput(BaseModel):
     """Входные данные для создания нового лида."""
 
