@@ -30,12 +30,16 @@ AsyncSessionLocal: async_sessionmaker[AsyncSession] = async_sessionmaker(
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """Зависимость FastAPI — возвращает транзакционную асинхронную сессию БД."""
+    """Зависимость FastAPI — возвращает транзакционную асинхронную сессию БД.
+
+    Транзакция автоматически коммитится при успешном завершении запроса.
+    При исключении выполняется rollback.
+    Репозитории используют flush() — commit происходит здесь, на границе запроса.
+    """
     async with AsyncSessionLocal() as session:
         try:
             yield session
+            await session.commit()
         except Exception:
             await session.rollback()
             raise
-        finally:
-            await session.close()
