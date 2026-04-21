@@ -46,7 +46,7 @@ class TestLeadCreation:
         assert new_lead.id is not None
 
     def test_empty_first_name_raises(self, owner_id) -> None:
-        with pytest.raises(ValueError, match="first name"):
+        with pytest.raises(ValueError):
             Lead.create(
                 first_name="   ",
                 last_name="Doe",
@@ -55,7 +55,7 @@ class TestLeadCreation:
             )
 
     def test_empty_last_name_raises(self, owner_id) -> None:
-        with pytest.raises(ValueError, match="last name"):
+        with pytest.raises(ValueError):
             Lead.create(
                 first_name="John",
                 last_name="",

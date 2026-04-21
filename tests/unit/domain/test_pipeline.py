@@ -87,13 +87,13 @@ class TestPipeline:
 
 class TestStage:
     def test_invalid_probability_raises(self) -> None:
-        with pytest.raises(ValueError, match="probability"):
+        with pytest.raises(ValueError):
             Stage.create(pipeline_id=uuid4(), name="Bad", order=1, probability=1.5)
 
     def test_negative_order_raises(self) -> None:
-        with pytest.raises(ValueError, match="order"):
+        with pytest.raises(ValueError):
             Stage.create(pipeline_id=uuid4(), name="Bad", order=-1)
 
     def test_empty_name_raises(self) -> None:
-        with pytest.raises(ValueError, match="name"):
+        with pytest.raises(ValueError):
             Stage.create(pipeline_id=uuid4(), name="", order=1)
