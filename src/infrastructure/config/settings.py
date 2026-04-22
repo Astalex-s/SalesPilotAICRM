@@ -41,6 +41,16 @@ class Settings(BaseSettings):
     GMAIL_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/gmail/callback"
     GMAIL_TOKEN_FILE: str = "gmail_token.json"
 
+    # Telegram Bot
+    TELEGRAM_BOT_TOKEN: str = ""
+    TELEGRAM_NOTIFICATION_CHAT_ID: str = ""
+    TELEGRAM_WEBHOOK_SECRET: str = ""
+
+    # Celery
+    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
+    CELERY_EMAIL_SYNC_INTERVAL_SECONDS: int = 600  # 10 минут
+
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_database_url(cls, v: str) -> str:

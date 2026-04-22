@@ -72,3 +72,14 @@ class GmailNotAuthorizedError(ApplicationError):
         super().__init__(
             "Gmail не авторизован. Перейдите по /api/v1/auth/gmail для авторизации."
         )
+
+
+# ── Ошибки Telegram-интеграции ─────────────────────────────────────────────────
+
+class TelegramNotConfiguredError(ApplicationError):
+    """Telegram не настроен — TELEGRAM_BOT_TOKEN или TELEGRAM_NOTIFICATION_CHAT_ID не заданы."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            "Telegram не настроен. Задайте TELEGRAM_BOT_TOKEN и TELEGRAM_NOTIFICATION_CHAT_ID."
+        )

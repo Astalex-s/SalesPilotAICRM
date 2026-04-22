@@ -16,6 +16,8 @@ from src.application.use_cases.get_pipeline import GetPipelineUseCase
 from src.application.use_cases.link_email_to_lead import LinkEmailToLeadUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
+from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
+from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.application.use_cases.score_lead import ScoreLeadUseCase
 from src.application.use_cases.send_email import SendEmailUseCase
 from src.infrastructure.ai.ai_service import OpenAIService
@@ -27,6 +29,8 @@ from src.infrastructure.database.repositories.pipeline_repository import SqlPipe
 from src.infrastructure.database.session import get_db
 from src.infrastructure.gmail.gmail_service import GmailService
 from src.infrastructure.gmail.token_storage import FileTokenStorage
+from src.infrastructure.celery.celery_task_service import CeleryTaskService
+from src.infrastructure.telegram.telegram_service import TelegramService
 from src.infrastructure.config.settings import settings
 
 
@@ -184,4 +188,37 @@ def get_link_email_to_lead_use_case(
     return LinkEmailToLeadUseCase(
         email_repo=SqlEmailMessageRepository(session),
         lead_repo=SqlLeadRepository(session),
+    )
+
+
+# ── Telegram Use Case провайдеры ──────────────────────────────────────────────
+
+def get_telegram_service() -> TelegramService:
+    """Фабрика TelegramService из настроек окружения."""
+    return TelegramService(
+        bot_token=settings.TELEGRAM_BOT_TOKEN,
+        notification_chat_id=settings.TELEGRAM_NOTIFICATION_CHAT_ID,
+    )
+
+
+def get_notify_new_lead_use_case(
+    telegram_service: TelegramService = Depends(get_telegram_service),
+) -> NotifyNewLeadUseCase:
+    """Фабрика NotifyNewLeadUseCase."""
+    return NotifyNewLeadUseCase(telegram_service=telegram_service)
+
+
+def get_task_service() -> CeleryTaskService:
+    """Фабрика CeleryTaskService — точка входа в очередь задач."""
+    return CeleryTaskService()
+
+
+def get_notify_deal_stage_change_use_case(
+    session: AsyncSession = Depends(get_session),
+    telegram_service: TelegramService = Depends(get_telegram_service),
+) -> NotifyDealStageChangeUseCase:
+    """Фабрика NotifyDealStageChangeUseCase."""
+    return NotifyDealStageChangeUseCase(
+        telegram_service=telegram_service,
+        pipeline_repo=SqlPipelineRepository(session),
     )

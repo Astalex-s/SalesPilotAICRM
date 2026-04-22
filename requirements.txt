@@ -23,6 +23,12 @@ google-api-python-client==2.149.0
 google-auth-oauthlib==1.2.1
 google-auth==1.35.0
 
+# Telegram Bot
+python-telegram-bot==21.6
+
+# Celery (очередь фоновых задач)
+celery[redis]==5.4.0
+
 # Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4

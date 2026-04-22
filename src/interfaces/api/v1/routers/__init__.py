@@ -8,6 +8,8 @@ from src.interfaces.api.v1.routers.emails import router as emails_router
 from src.interfaces.api.v1.routers.gmail_auth import router as gmail_auth_router
 from src.interfaces.api.v1.routers.leads import router as leads_router
 from src.interfaces.api.v1.routers.pipelines import router as pipelines_router
+from src.interfaces.api.v1.routers.tasks import router as tasks_router
+from src.interfaces.api.v1.routers.telegram import router as telegram_router
 
 __all__ = [
     "ai_router",
@@ -16,4 +18,6 @@ __all__ = [
     "gmail_auth_router",
     "leads_router",
     "pipelines_router",
+    "tasks_router",
+    "telegram_router",
 ]
