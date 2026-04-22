@@ -39,3 +39,25 @@ class IActivityRepository(BaseRepository[Activity]):
     async def find_by_performer(self, user_id: UUID) -> list[Activity]:
         """Возвращает все активности, выполненные указанным пользователем."""
         ...
+
+    # ── GDPR-исключения из append-only правила ─────────────────────────────────
+    # Эти методы существуют исключительно для выполнения требований GDPR.
+    # Они НЕ являются обходом append-only инварианта для иных целей.
+
+    @abstractmethod
+    async def gdpr_erase_by_entity(self, entity_id: UUID) -> int:
+        """GDPR: физически удаляет все активности сущности.
+
+        Returns:
+            Количество удалённых строк.
+        """
+        ...
+
+    @abstractmethod
+    async def gdpr_erase_by_performer(self, user_id: UUID) -> int:
+        """GDPR: физически удаляет все активности, выполненные пользователем.
+
+        Returns:
+            Количество удалённых строк.
+        """
+        ...

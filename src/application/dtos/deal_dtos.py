@@ -17,6 +17,14 @@ from src.domain.value_objects.enums import DealStatus
 
 # ── Входные DTO ────────────────────────────────────────────────────────────────
 
+class ListDealsInput(BaseModel):
+    """Входные данные для получения списка сделок с опциональной фильтрацией."""
+
+    pipeline_id: UUID | None = None
+    stage_id: UUID | None = None
+    owner_id: UUID | None = None
+
+
 class ConvertLeadToDealInput(BaseModel):
     """Входные данные для конвертации лида в сделку."""
 

@@ -15,6 +15,11 @@ class IDealRepository(BaseRepository[Deal]):
     """Контракт для операций с хранилищем сделок."""
 
     @abstractmethod
+    async def find_all(self) -> list[Deal]:
+        """Возвращает все сделки в системе (используется в аналитике)."""
+        ...
+
+    @abstractmethod
     async def find_by_owner(self, owner_id: UUID) -> list[Deal]:
         """Возвращает все сделки указанного пользователя."""
         ...

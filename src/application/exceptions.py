@@ -3,6 +3,8 @@
 Отделены от доменных исключений: отражают ошибки оркестрации use case,
 а не нарушения бизнес-правил внутри домена.
 """
+from __future__ import annotations
+
 from uuid import UUID
 
 
@@ -83,3 +85,15 @@ class TelegramNotConfiguredError(ApplicationError):
         super().__init__(
             "Telegram не настроен. Задайте TELEGRAM_BOT_TOKEN и TELEGRAM_NOTIFICATION_CHAT_ID."
         )
+
+
+# ── Ошибки GDPR-модуля ─────────────────────────────────────────────────────────
+
+class GdprTargetNotFoundError(ApplicationError):
+    """Субъект данных для GDPR-операции не найден."""
+
+    def __init__(self, target_type: str, target_id: UUID) -> None:
+        super().__init__(
+            f"{target_type} с ID {target_id} не найден — GDPR-операция невозможна."
+        )
+        self.target_id = target_id

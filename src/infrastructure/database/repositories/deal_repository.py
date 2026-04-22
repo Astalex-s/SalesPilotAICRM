@@ -39,6 +39,12 @@ class SqlDealRepository(IDealRepository):
             await self._session.delete(row)
             await self._session.flush()
 
+    async def find_all(self) -> list[Deal]:
+        """Возвращает все сделки (для аналитических запросов)."""
+        stmt = select(DealModel)
+        rows = await self._session.scalars(stmt)
+        return [r.to_entity() for r in rows.all()]
+
     async def find_by_owner(self, owner_id: UUID) -> list[Deal]:
         """Возвращает все сделки указанного пользователя."""
         stmt = select(DealModel).where(DealModel.owner_id == owner_id)

@@ -8,6 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
 from src.application.use_cases.create_lead import CreateLeadUseCase
+from src.application.use_cases.get_analytics_overview import GetAnalyticsOverviewUseCase
+from src.application.use_cases.get_dashboard_analytics import GetDashboardAnalyticsUseCase
+from src.application.use_cases.get_lead import GetLeadUseCase
+from src.application.use_cases.get_revenue_forecast import GetRevenueForecastUseCase
+from src.application.use_cases.list_deals import ListDealsUseCase
+from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.fetch_emails import FetchEmailsUseCase
 from src.application.use_cases.forecast_deal import ForecastDealUseCase
 from src.application.use_cases.generate_email import GenerateEmailUseCase
@@ -16,6 +22,9 @@ from src.application.use_cases.get_pipeline import GetPipelineUseCase
 from src.application.use_cases.link_email_to_lead import LinkEmailToLeadUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
+from src.application.use_cases.anonymize_lead import AnonymizeLeadUseCase
+from src.application.use_cases.delete_user_data import DeleteUserDataUseCase
+from src.application.use_cases.get_gdpr_audit_log import GetGdprAuditLogUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.application.use_cases.score_lead import ScoreLeadUseCase
@@ -24,6 +33,7 @@ from src.infrastructure.ai.ai_service import OpenAIService
 from src.infrastructure.database.repositories.activity_repository import SqlActivityRepository
 from src.infrastructure.database.repositories.deal_repository import SqlDealRepository
 from src.infrastructure.database.repositories.email_message_repository import SqlEmailMessageRepository
+from src.infrastructure.database.repositories.gdpr_audit_repository import SqlGdprAuditRepository
 from src.infrastructure.database.repositories.lead_repository import SqlLeadRepository
 from src.infrastructure.database.repositories.pipeline_repository import SqlPipelineRepository
 from src.infrastructure.database.session import get_db
@@ -32,6 +42,7 @@ from src.infrastructure.gmail.token_storage import FileTokenStorage
 from src.infrastructure.celery.celery_task_service import CeleryTaskService
 from src.infrastructure.telegram.telegram_service import TelegramService
 from src.infrastructure.config.settings import settings
+from src.domain.services.lead_anonymization_service import LeadAnonymizationService
 
 
 # ── AI сервис (singleton-like через lru_cache не нужен — AsyncOpenAI сам управляет пулом) ──
@@ -75,6 +86,59 @@ def get_list_leads_use_case(
 ) -> ListLeadsUseCase:
     """Фабрика ListLeadsUseCase с инжектированными репозиториями."""
     return ListLeadsUseCase(lead_repo=SqlLeadRepository(session))
+
+
+def get_analytics_overview_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetAnalyticsOverviewUseCase:
+    """Фабрика GetAnalyticsOverviewUseCase."""
+    return GetAnalyticsOverviewUseCase(
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+def get_revenue_forecast_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetRevenueForecastUseCase:
+    """Фабрика GetRevenueForecastUseCase."""
+    return GetRevenueForecastUseCase(
+        deal_repo=SqlDealRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+def get_dashboard_analytics_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetDashboardAnalyticsUseCase:
+    """Фабрика GetDashboardAnalyticsUseCase."""
+    return GetDashboardAnalyticsUseCase(
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+def get_lead_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetLeadUseCase:
+    """Фабрика GetLeadUseCase."""
+    return GetLeadUseCase(lead_repo=SqlLeadRepository(session))
+
+
+def get_list_lead_activities_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListLeadActivitiesUseCase:
+    """Фабрика ListLeadActivitiesUseCase."""
+    return ListLeadActivitiesUseCase(activity_repo=SqlActivityRepository(session))
+
+
+def get_list_deals_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListDealsUseCase:
+    """Фабрика ListDealsUseCase с инжектированным репозиторием сделок."""
+    return ListDealsUseCase(deal_repo=SqlDealRepository(session))
 
 
 def get_convert_lead_use_case(
@@ -221,4 +285,41 @@ def get_notify_deal_stage_change_use_case(
     return NotifyDealStageChangeUseCase(
         telegram_service=telegram_service,
         pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+# ── GDPR Use Case провайдеры ──────────────────────────────────────────────────
+
+def get_delete_user_data_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeleteUserDataUseCase:
+    """Фабрика DeleteUserDataUseCase — GDPR Right to Erasure для пользователя."""
+    return DeleteUserDataUseCase(
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
+        email_repo=SqlEmailMessageRepository(session),
+        activity_repo=SqlActivityRepository(session),
+        gdpr_audit_repo=SqlGdprAuditRepository(session),
+    )
+
+
+def get_anonymize_lead_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> AnonymizeLeadUseCase:
+    """Фабрика AnonymizeLeadUseCase — GDPR псевдонимизация PII лида."""
+    return AnonymizeLeadUseCase(
+        lead_repo=SqlLeadRepository(session),
+        email_repo=SqlEmailMessageRepository(session),
+        activity_repo=SqlActivityRepository(session),
+        gdpr_audit_repo=SqlGdprAuditRepository(session),
+        anonymization_service=LeadAnonymizationService(),
+    )
+
+
+def get_gdpr_audit_log_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetGdprAuditLogUseCase:
+    """Фабрика GetGdprAuditLogUseCase — чтение журнала аудита GDPR."""
+    return GetGdprAuditLogUseCase(
+        gdpr_audit_repo=SqlGdprAuditRepository(session),
     )

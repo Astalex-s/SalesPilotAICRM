@@ -11,15 +11,20 @@ from uuid import UUID
 from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi import status as http_status
 
-from src.application.dtos.lead_dtos import CreateLeadInput, LeadOutput, ListLeadsInput
+from src.application.dtos.activity_dtos import ActivityOutput
+from src.application.dtos.lead_dtos import CreateLeadInput, GetLeadInput, LeadOutput, ListLeadsInput
 from src.application.dtos.telegram_dtos import NotifyNewLeadInput
 from src.application.exceptions import TelegramNotConfiguredError
 from src.application.use_cases.create_lead import CreateLeadUseCase
+from src.application.use_cases.get_lead import GetLeadUseCase
+from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.domain.value_objects.enums import LeadStatus
 from src.interfaces.api.dependencies import (
     get_create_lead_use_case,
+    get_lead_use_case,
+    get_list_lead_activities_use_case,
     get_list_leads_use_case,
     get_notify_new_lead_use_case,
 )
@@ -70,6 +75,36 @@ async def list_leads(
     """GET /api/v1/leads — список лидов с опциональной фильтрацией."""
     data = ListLeadsInput(owner_id=owner_id, status=lead_status)
     return await use_case.execute(data)
+
+
+@router.get(
+    "/{lead_id}",
+    response_model=LeadOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Получить лида по ID",
+    description="Возвращает полные данные лида по его UUID.",
+)
+async def get_lead(
+    lead_id: UUID,
+    use_case: GetLeadUseCase = Depends(get_lead_use_case),
+) -> LeadOutput:
+    """GET /api/v1/leads/{lead_id} — получение одного лида."""
+    return await use_case.execute(GetLeadInput(lead_id=lead_id))
+
+
+@router.get(
+    "/{lead_id}/activities",
+    response_model=list[ActivityOutput],
+    status_code=http_status.HTTP_200_OK,
+    summary="Журнал активностей лида",
+    description="Возвращает все активности лида, упорядоченные от новых к старым.",
+)
+async def list_lead_activities(
+    lead_id: UUID,
+    use_case: ListLeadActivitiesUseCase = Depends(get_list_lead_activities_use_case),
+) -> list[ActivityOutput]:
+    """GET /api/v1/leads/{lead_id}/activities — журнал активностей."""
+    return await use_case.execute(lead_id)
 
 
 # ── Фоновые задачи ─────────────────────────────────────────────────────────────

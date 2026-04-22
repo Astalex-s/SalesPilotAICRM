@@ -10,14 +10,16 @@ from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, status
 
-from src.application.dtos.deal_dtos import ConvertLeadToDealInput, DealOutput, MoveDealStageInput
+from src.application.dtos.deal_dtos import ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
 from src.application.dtos.telegram_dtos import NotifyDealStageChangeInput
 from src.application.exceptions import TelegramNotConfiguredError
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
+from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
 from src.interfaces.api.dependencies import (
     get_convert_lead_use_case,
+    get_list_deals_use_case,
     get_move_deal_stage_use_case,
     get_notify_deal_stage_change_use_case,
 )
@@ -26,6 +28,29 @@ from src.interfaces.schemas.deal_schemas import MoveDealStageRequest
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/deals", tags=["Сделки"])
+
+
+@router.get(
+    "",
+    response_model=list[DealOutput],
+    status_code=status.HTTP_200_OK,
+    summary="Список сделок",
+    description=(
+        "Возвращает список сделок. "
+        "Опциональная фильтрация: pipeline_id — по воронке, "
+        "stage_id — по этапу, owner_id — по владельцу. "
+        "Без фильтров — все сделки (административный режим)."
+    ),
+)
+async def list_deals(
+    pipeline_id: UUID | None = None,
+    stage_id: UUID | None = None,
+    owner_id: UUID | None = None,
+    use_case: ListDealsUseCase = Depends(get_list_deals_use_case),
+) -> list[DealOutput]:
+    """GET /api/v1/deals — список сделок с опциональной фильтрацией."""
+    data = ListDealsInput(pipeline_id=pipeline_id, stage_id=stage_id, owner_id=owner_id)
+    return await use_case.execute(data)
 
 
 @router.post(

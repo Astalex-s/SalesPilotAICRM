@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete as sql_delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.entities.activity import Activity, EntityType
@@ -73,3 +73,21 @@ class SqlActivityRepository(IActivityRepository):
         )
         rows = await self._session.scalars(stmt)
         return [r.to_entity() for r in rows.all()]
+
+    # ── GDPR-исключения из append-only правила ─────────────────────────────────
+
+    async def gdpr_erase_by_entity(self, entity_id: UUID) -> int:
+        """GDPR: физически удаляет все активности сущности (лида или сделки)."""
+        stmt = sql_delete(ActivityModel).where(
+            ActivityModel.entity_id == entity_id
+        )
+        result = await self._session.execute(stmt)
+        return result.rowcount
+
+    async def gdpr_erase_by_performer(self, user_id: UUID) -> int:
+        """GDPR: физически удаляет все активности, выполненные пользователем."""
+        stmt = sql_delete(ActivityModel).where(
+            ActivityModel.performed_by_id == user_id
+        )
+        result = await self._session.execute(stmt)
+        return result.rowcount

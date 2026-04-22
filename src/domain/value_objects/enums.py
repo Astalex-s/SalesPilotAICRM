@@ -53,3 +53,9 @@ class EmailDirection(str, Enum):
     """Направление email-письма относительно CRM-системы."""
     INBOUND = "inbound"    # входящее (от контакта к менеджеру)
     OUTBOUND = "outbound"  # исходящее (от менеджера к контакту)
+
+
+class GdprEventType(str, Enum):
+    """Тип события в журнале аудита GDPR."""
+    USER_DATA_DELETED = "user_data_deleted"    # полное удаление данных пользователя
+    LEAD_ANONYMIZED = "lead_anonymized"        # анонимизация PII лида
