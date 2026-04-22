@@ -67,3 +67,6 @@ logs/
 *.bak
 *.tmp
 *.orig
+
+# ── Claude Code (локальные настройки — машинозависимы) ───────────────────────
+.claude/settings.local.json
