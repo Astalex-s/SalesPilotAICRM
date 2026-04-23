@@ -1,6 +1,8 @@
-version: "3.9"
+# ── Development Docker Compose ─────────────────────────────────────────────────
+# For production use docker-compose.prod.yml
 
 services:
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -32,7 +34,10 @@ services:
       retries: 5
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -45,11 +50,13 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
+      - /app/.venv
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
     restart: unless-stopped
     ports:
       - "5173:5173"
