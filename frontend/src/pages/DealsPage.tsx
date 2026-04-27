@@ -32,9 +32,9 @@ export default function DealsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Deals</Typography>
+        <Typography variant="h4">Сделки</Typography>
         <Button variant="contained" disabled>
-          + New Deal
+          + Новая сделка
         </Button>
       </Box>
 
@@ -49,18 +49,18 @@ export default function DealsPage() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Stage</TableCell>
-                <TableCell>Close Date</TableCell>
-                <TableCell>Created</TableCell>
+                <TableCell>Название</TableCell>
+                <TableCell>Сумма</TableCell>
+                <TableCell>Этап</TableCell>
+                <TableCell>Дата закрытия</TableCell>
+                <TableCell>Создан</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {deals.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
-                    No deals found.
+                    Сделки не найдены.
                   </TableCell>
                 </TableRow>
               ) : (

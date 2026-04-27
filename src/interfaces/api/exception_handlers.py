@@ -10,8 +10,10 @@ from src.application.exceptions import (
     ApplicationError,
     EntityNotFoundError,
     GmailNotAuthorizedError,
+    InvalidCredentialsError,
     LeadEmailAlreadyExistsError,
     StageNotInPipelineError,
+    UserAlreadyExistsError,
 )
 from src.domain.exceptions import DomainError
 
@@ -41,6 +43,16 @@ async def handle_gmail_not_authorized(request: Request, exc: GmailNotAuthorizedE
     return JSONResponse(status_code=401, content={"detail": str(exc)})
 
 
+async def handle_user_conflict(request: Request, exc: UserAlreadyExistsError) -> JSONResponse:
+    """409 — пользователь с таким e-mail уже зарегистрирован."""
+    return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+async def handle_invalid_credentials(request: Request, exc: InvalidCredentialsError) -> JSONResponse:
+    """401 — неверный e-mail или пароль."""
+    return JSONResponse(status_code=401, content={"detail": str(exc)})
+
+
 async def handle_application_error(request: Request, exc: ApplicationError) -> JSONResponse:
     """400 — прочие ошибки слоя Application."""
     return JSONResponse(status_code=400, content={"detail": str(exc)})
@@ -53,6 +65,8 @@ def register_exception_handlers(app: object) -> None:
     """
     app.add_exception_handler(EntityNotFoundError, handle_entity_not_found)
     app.add_exception_handler(LeadEmailAlreadyExistsError, handle_email_conflict)
+    app.add_exception_handler(UserAlreadyExistsError, handle_user_conflict)
+    app.add_exception_handler(InvalidCredentialsError, handle_invalid_credentials)
     app.add_exception_handler(StageNotInPipelineError, handle_stage_not_in_pipeline)
     app.add_exception_handler(GmailNotAuthorizedError, handle_gmail_not_authorized)
     app.add_exception_handler(DomainError, handle_domain_error)

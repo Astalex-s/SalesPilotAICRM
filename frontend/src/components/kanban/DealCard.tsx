@@ -15,6 +15,12 @@ const STATUS_COLOR: Record<Deal['status'], 'default' | 'success' | 'error'> = {
   lost: 'error',
 };
 
+const STATUS_LABEL: Record<Deal['status'], string> = {
+  open: 'Открыта',
+  won: 'Выиграна',
+  lost: 'Проиграна',
+};
+
 export default function DealCard({ deal, index }: DealCardProps) {
   return (
     <Draggable draggableId={deal.id} index={index} isDragDisabled={deal.status !== 'open'}>
@@ -54,7 +60,7 @@ export default function DealCard({ deal, index }: DealCardProps) {
                 </Typography>
               </Box>
               <Chip
-                label={deal.status}
+                label={STATUS_LABEL[deal.status]}
                 color={STATUS_COLOR[deal.status]}
                 size="small"
                 sx={{ height: 18, fontSize: 10 }}

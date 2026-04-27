@@ -1,4 +1,5 @@
 export type DealStatus = 'open' | 'won' | 'lost';
+export type DealStage = 'qualification' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost';
 
 export interface Deal {
   id: string;

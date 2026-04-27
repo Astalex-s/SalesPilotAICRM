@@ -1,4 +1,5 @@
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import GroupIcon from '@mui/icons-material/Group';
 import PeopleIcon from '@mui/icons-material/People';
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import WorkIcon from '@mui/icons-material/Work';
@@ -12,6 +13,7 @@ import {
   Toolbar,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const DRAWER_WIDTH = 240;
 
@@ -19,10 +21,10 @@ const DRAWER_WIDTH = 240;
 const DEMO_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', path: '/', icon: <DashboardIcon /> },
-  { label: 'Pipeline', path: `/pipeline/${DEMO_PIPELINE_ID}`, icon: <ViewKanbanIcon /> },
-  { label: 'Leads', path: '/leads', icon: <PeopleIcon /> },
-  { label: 'Deals', path: '/deals', icon: <WorkIcon /> },
+  { label: 'Дашборд', path: '/', icon: <DashboardIcon /> },
+  { label: 'Воронка', path: `/pipeline/${DEMO_PIPELINE_ID}`, icon: <ViewKanbanIcon /> },
+  { label: 'Лиды', path: '/leads', icon: <PeopleIcon /> },
+  { label: 'Сделки', path: '/deals', icon: <WorkIcon /> },
 ];
 
 interface SidebarProps {
@@ -32,6 +34,11 @@ interface SidebarProps {
 export default function Sidebar({ open }: SidebarProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const user = useAuthStore((s) => s.user);
+
+  const items = user?.role === 'admin'
+    ? [...NAV_ITEMS, { label: 'Пользователи', path: '/users', icon: <GroupIcon /> }]
+    : NAV_ITEMS;
 
   return (
     <Drawer
@@ -49,7 +56,7 @@ export default function Sidebar({ open }: SidebarProps) {
     >
       <Toolbar />
       <List disablePadding>
-        {NAV_ITEMS.map(({ label, path, icon }) => (
+        {items.map(({ label, path, icon }) => (
           <ListItem key={path} disablePadding>
             <ListItemButton
               selected={path === '/' ? pathname === '/' : pathname.startsWith(path)}

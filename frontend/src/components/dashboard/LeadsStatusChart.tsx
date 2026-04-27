@@ -19,11 +19,11 @@ export default function LeadsStatusChart({ data, loading }: LeadsStatusChartProp
 
   const SLICES = data
     ? [
-        { name: 'New', value: data.new, color: theme.palette.info.main },
-        { name: 'Contacted', value: data.contacted, color: theme.palette.warning.main },
-        { name: 'Qualified', value: data.qualified, color: theme.palette.success.light },
-        { name: 'Unqualified', value: data.unqualified, color: theme.palette.error.light },
-        { name: 'Converted', value: data.converted, color: theme.palette.success.dark },
+        { name: 'Новые', value: data.new, color: theme.palette.info.main },
+        { name: 'Контакт', value: data.contacted, color: theme.palette.warning.main },
+        { name: 'Квалифицир.', value: data.qualified, color: theme.palette.success.light },
+        { name: 'Неквалифиц.', value: data.unqualified, color: theme.palette.error.light },
+        { name: 'Конвертированы', value: data.converted, color: theme.palette.success.dark },
       ].filter((s) => s.value > 0)
     : [];
 
@@ -33,14 +33,14 @@ export default function LeadsStatusChart({ data, loading }: LeadsStatusChartProp
     <Card sx={{ height: '100%' }}>
       <CardContent>
         <Typography variant="h6" fontWeight={700} mb={2}>
-          Leads by Status
+          Лиды по статусу
         </Typography>
         {loading ? (
           <Skeleton variant="circular" width={220} height={220} sx={{ mx: 'auto' }} />
         ) : total === 0 ? (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 220 }}>
             <Typography variant="body2" color="text.secondary">
-              No leads yet
+              Лидов пока нет
             </Typography>
           </Box>
         ) : (

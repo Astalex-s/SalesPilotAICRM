@@ -50,13 +50,13 @@ export default function LeadDetailPage() {
     <Box>
       {/* Page header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <Tooltip title="Back to Leads">
+        <Tooltip title="Назад к лидам">
           <IconButton onClick={() => navigate('/leads')} size="small">
             <ArrowBackIcon />
           </IconButton>
         </Tooltip>
         <Typography variant="h4" fontWeight={700}>
-          {lead.data.full_name}
+          {lead.data.first_name} {lead.data.last_name}
         </Typography>
       </Box>
 

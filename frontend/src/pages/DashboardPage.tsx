@@ -30,9 +30,9 @@ export default function DashboardPage() {
       {/* Page header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4" fontWeight={700}>
-          Dashboard
+          Дашборд
         </Typography>
-        <Tooltip title="Refresh">
+        <Tooltip title="Обновить">
           <IconButton onClick={fetchDashboard} disabled={loading} size="small">
             <RefreshIcon />
           </IconButton>
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Total Leads"
+            label="Всего лидов"
             value={data?.total_leads ?? '—'}
             icon={<PeopleIcon />}
             color="primary.main"
@@ -59,57 +59,57 @@ export default function DashboardPage() {
 
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Conversion Rate"
+            label="Конверсия"
             value={data ? `${data.conversion_rate}%` : '—'}
             icon={<TrendingUpIcon />}
             color="success.main"
-            subtext="leads → converted"
+            subtext="лидов → конвертировано"
             loading={loading}
           />
         </Grid>
 
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Total Deals"
+            label="Всего сделок"
             value={data?.total_deals ?? '—'}
             icon={<WorkIcon />}
             color="secondary.main"
-            subtext={data ? `${data.open_deals} open` : undefined}
+            subtext={data ? `${data.open_deals} открытых` : undefined}
             loading={loading}
           />
         </Grid>
 
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Pipeline Value"
+            label="Стоимость воронки"
             value={data ? formatCurrency(data.pipeline_value) : '—'}
             icon={<AccountTreeIcon />}
             color="info.main"
-            subtext="open deals"
+            subtext="открытые сделки"
             loading={loading}
           />
         </Grid>
 
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Revenue Forecast"
+            label="Прогноз выручки"
             value={data ? formatCurrency(data.revenue_forecast) : '—'}
             icon={<ShowChartIcon />}
             color="warning.main"
-            subtext="weighted by stage"
+            subtext="взвешен по этапам"
             loading={loading}
           />
         </Grid>
 
         <Grid item xs={12} sm={6} md={4} lg={2}>
           <StatCard
-            label="Won Deals"
+            label="Выигранные сделки"
             value={data?.deals_by_status.won ?? '—'}
             icon={<AttachMoneyIcon />}
             color="success.dark"
             subtext={
               data && data.total_deals > 0
-                ? `${Math.round((data.deals_by_status.won / data.total_deals) * 100)}% win rate`
+                ? `${Math.round((data.deals_by_status.won / data.total_deals) * 100)}% побед`
                 : undefined
             }
             loading={loading}

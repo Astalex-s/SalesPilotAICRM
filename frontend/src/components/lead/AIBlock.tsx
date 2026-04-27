@@ -44,10 +44,10 @@ function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>
-          AI Lead Score
+          ИИ-оценка лида
         </Typography>
         <Button size="small" onClick={onRefresh} disabled={loading} startIcon={<AutoAwesomeIcon />}>
-          {score ? 'Refresh' : 'Score'}
+          {score ? 'Обновить' : 'Оценить'}
         </Button>
       </Box>
 
@@ -87,7 +87,7 @@ function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
           {score.recommended_actions.length > 0 && (
             <Box>
               <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-                Recommended Actions
+                Рекомендованные действия
               </Typography>
               <List dense disablePadding>
                 {score.recommended_actions.map((action, i) => (
@@ -127,10 +127,10 @@ function NextActionSection({ nextAction, loading, error, onRefresh }: NextAction
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
         <Typography variant="subtitle1" fontWeight={700}>
-          Next Best Action
+          Следующий шаг
         </Typography>
         <Button size="small" onClick={onRefresh} disabled={loading} startIcon={<AutoAwesomeIcon />}>
-          {nextAction ? 'Refresh' : 'Suggest'}
+          {nextAction ? 'Обновить' : 'Предложить'}
         </Button>
       </Box>
 
@@ -183,26 +183,26 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
   return (
     <Box>
       <Typography variant="subtitle1" fontWeight={700} mb={1}>
-        AI Email Generator
+        ИИ генератор писем
       </Typography>
 
       <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
         <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Tone</InputLabel>
+          <InputLabel>Тон</InputLabel>
           <Select<AiTone>
             value={tone}
-            label="Tone"
+            label="Тон"
             onChange={(e) => setTone(e.target.value as AiTone)}
           >
-            <MenuItem value="friendly">Friendly</MenuItem>
-            <MenuItem value="formal">Formal</MenuItem>
-            <MenuItem value="assertive">Assertive</MenuItem>
+            <MenuItem value="friendly">Дружелюбный</MenuItem>
+            <MenuItem value="formal">Официальный</MenuItem>
+            <MenuItem value="assertive">Настойчивый</MenuItem>
           </Select>
         </FormControl>
         <TextField
           size="small"
           fullWidth
-          placeholder="Extra context (optional)"
+          placeholder="Доп. контекст (необязательно)"
           value={context}
           onChange={(e) => setContext(e.target.value)}
         />
@@ -216,7 +216,7 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
         startIcon={loading ? <CircularProgress size={14} color="inherit" /> : <AutoAwesomeIcon />}
         sx={{ mb: 1 }}
       >
-        {loading ? 'Generating…' : 'Generate'}
+        {loading ? 'Генерирую…' : 'Сгенерировать'}
       </Button>
 
       {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
@@ -231,26 +231,26 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
             position: 'relative',
           }}
         >
-          <Tooltip title={copied ? 'Copied!' : 'Copy to clipboard'}>
+          <Tooltip title={copied ? 'Скопировано!' : 'Копировать'}>
             <Button
               size="small"
               sx={{ position: 'absolute', top: 8, right: 8 }}
               onClick={handleCopy}
               startIcon={<ContentCopyIcon fontSize="small" />}
             >
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? 'Скопировано' : 'Копировать'}
             </Button>
           </Tooltip>
 
           <Typography variant="caption" color="text.secondary" display="block">
-            Subject
+            Тема
           </Typography>
           <Typography variant="body2" fontWeight={600} mb={1}>
             {generatedEmail.subject}
           </Typography>
 
           <Typography variant="caption" color="text.secondary" display="block">
-            Body
+            Текст
           </Typography>
           <Typography
             variant="body2"
@@ -291,7 +291,7 @@ export default function AIBlock({
     <Card>
       <CardContent>
         <Typography variant="h6" fontWeight={700} mb={2}>
-          AI Insights
+          ИИ-инсайты
         </Typography>
 
         <ScoreSection

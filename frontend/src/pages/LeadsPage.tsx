@@ -26,6 +26,14 @@ const STATUS_COLOR: Record<LeadStatus, 'default' | 'info' | 'success' | 'error' 
   converted: 'default',
 };
 
+const STATUS_LABEL: Record<LeadStatus, string> = {
+  new: 'Новый',
+  contacted: 'Контакт',
+  qualified: 'Квалифицирован',
+  unqualified: 'Неквалифицирован',
+  converted: 'Конвертирован',
+};
+
 export default function LeadsPage() {
   const { leads, loading, error, fetchLeads } = useLeadStore();
   const navigate = useNavigate();
@@ -37,9 +45,9 @@ export default function LeadsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Leads</Typography>
+        <Typography variant="h4">Лиды</Typography>
         <Button variant="contained" disabled>
-          + New Lead
+          + Новый лид
         </Button>
       </Box>
 
@@ -54,19 +62,19 @@ export default function LeadsPage() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
+                <TableCell>Имя</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Company</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Created</TableCell>
+                <TableCell>Компания</TableCell>
+                <TableCell>Источник</TableCell>
+                <TableCell>Статус</TableCell>
+                <TableCell>Создан</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {leads.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center">
-                    No leads found.
+                    Лиды не найдены.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -83,7 +91,7 @@ export default function LeadsPage() {
                     <TableCell>{lead.source}</TableCell>
                     <TableCell>
                       <Chip
-                        label={lead.status}
+                        label={STATUS_LABEL[lead.status]}
                         color={STATUS_COLOR[lead.status]}
                         size="small"
                       />

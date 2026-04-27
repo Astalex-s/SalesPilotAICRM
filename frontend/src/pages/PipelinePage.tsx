@@ -18,9 +18,9 @@ export default function PipelinePage() {
     return (
       <Box>
         <Typography variant="h4" gutterBottom>
-          Pipeline
+          Воронка продаж
         </Typography>
-        <Alert severity="info">No pipeline selected.</Alert>
+        <Alert severity="info">Воронка не выбрана.</Alert>
       </Box>
     );
   }
@@ -28,7 +28,7 @@ export default function PipelinePage() {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Pipeline
+        Воронка продаж
       </Typography>
       <KanbanBoard pipelineId={pipelineId} />
     </Box>

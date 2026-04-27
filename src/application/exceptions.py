@@ -87,6 +87,28 @@ class TelegramNotConfiguredError(ApplicationError):
         )
 
 
+# ── Ошибки аутентификации и пользователей ──────────────────────────────────────
+
+class UserAlreadyExistsError(ApplicationError):
+    """Пользователь с таким e-mail уже зарегистрирован."""
+
+    def __init__(self, email: str) -> None:
+        super().__init__(f"Пользователь с e-mail '{email}' уже существует.")
+        self.email = email
+
+
+class InvalidCredentialsError(ApplicationError):
+    """Неверный e-mail или пароль."""
+
+    def __init__(self) -> None:
+        super().__init__("Неверный e-mail или пароль.")
+
+
+class UserNotFoundError(EntityNotFoundError):
+    def __init__(self, user_id: UUID) -> None:
+        super().__init__("User", user_id)
+
+
 # ── Ошибки GDPR-модуля ─────────────────────────────────────────────────────────
 
 class GdprTargetNotFoundError(ApplicationError):

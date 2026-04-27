@@ -21,9 +21,9 @@ export default function DealsStatusChart({ data, loading }: DealsStatusChartProp
 
   const BAR_DATA = data
     ? [
-        { name: 'Open', value: data.open, color: theme.palette.primary.main },
-        { name: 'Won', value: data.won, color: theme.palette.success.main },
-        { name: 'Lost', value: data.lost, color: theme.palette.error.main },
+        { name: 'Открытые', value: data.open, color: theme.palette.primary.main },
+        { name: 'Выигранные', value: data.won, color: theme.palette.success.main },
+        { name: 'Проигранные', value: data.lost, color: theme.palette.error.main },
       ]
     : [];
 
@@ -31,7 +31,7 @@ export default function DealsStatusChart({ data, loading }: DealsStatusChartProp
     <Card sx={{ height: '100%' }}>
       <CardContent>
         <Typography variant="h6" fontWeight={700} mb={2}>
-          Deals by Status
+          Сделки по статусу
         </Typography>
         {loading ? (
           <Skeleton variant="rectangular" height={220} />
@@ -43,7 +43,7 @@ export default function DealsStatusChart({ data, loading }: DealsStatusChartProp
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Tooltip
-                  formatter={(value: number) => [value, 'Deals']}
+                  formatter={(value: number) => [value, 'Сделки']}
                   contentStyle={{ fontSize: 12 }}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>

@@ -10,6 +10,7 @@ from src.infrastructure.database.models.gdpr_audit_model import GdprAuditModel
 from src.infrastructure.database.models.lead_model import LeadModel
 from src.infrastructure.database.models.pipeline_model import PipelineModel
 from src.infrastructure.database.models.stage_model import StageModel
+from src.infrastructure.database.models.user_model import UserModel
 
 __all__ = [
     "ActivityModel",
@@ -19,4 +20,5 @@ __all__ = [
     "LeadModel",
     "PipelineModel",
     "StageModel",
+    "UserModel",
 ]

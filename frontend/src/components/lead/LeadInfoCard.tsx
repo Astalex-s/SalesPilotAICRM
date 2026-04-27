@@ -54,7 +54,7 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
             <Typography variant="h5" fontWeight={700}>
-              {lead.full_name}
+              {lead.first_name} {lead.last_name}
             </Typography>
             {lead.company && (
               <Typography variant="body2" color="text.secondary">
@@ -77,13 +77,13 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
             <InfoRow icon={<EmailIcon fontSize="small" />} label="Email" value={lead.email} />
           </Grid>
           <Grid item xs={12}>
-            <InfoRow icon={<PhoneIcon fontSize="small" />} label="Phone" value={lead.phone} />
+            <InfoRow icon={<PhoneIcon fontSize="small" />} label="Телефон" value={lead.phone} />
           </Grid>
           <Grid item xs={12}>
-            <InfoRow icon={<BusinessIcon fontSize="small" />} label="Company" value={lead.company} />
+            <InfoRow icon={<BusinessIcon fontSize="small" />} label="Компания" value={lead.company} />
           </Grid>
           <Grid item xs={12}>
-            <InfoRow icon={<SourceIcon fontSize="small" />} label="Source" value={lead.source} />
+            <InfoRow icon={<SourceIcon fontSize="small" />} label="Источник" value={lead.source} />
           </Grid>
         </Grid>
 
@@ -91,7 +91,7 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
           <>
             <Divider sx={{ my: 1.5 }} />
             <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-              Notes
+              Заметки
             </Typography>
             <Typography variant="body2">{lead.notes}</Typography>
           </>
@@ -101,7 +101,7 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
         <Box sx={{ display: 'flex', gap: 3 }}>
           <Box>
             <Typography variant="caption" color="text.secondary" display="block">
-              Created
+              Создан
             </Typography>
             <Typography variant="body2">
               {new Date(lead.created_at).toLocaleDateString()}
@@ -109,7 +109,7 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
           </Box>
           <Box>
             <Typography variant="caption" color="text.secondary" display="block">
-              Updated
+              Обновлён
             </Typography>
             <Typography variant="body2">
               {new Date(lead.updated_at).toLocaleDateString()}

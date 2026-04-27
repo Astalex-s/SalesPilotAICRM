@@ -16,6 +16,16 @@ import {
 import { Box, Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { type Activity, type ActivityType } from '../../types/activity';
 
+const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
+  call: 'Звонок',
+  email: 'Email',
+  meeting: 'Встреча',
+  note: 'Заметка',
+  status_change: 'Смена статуса',
+  stage_change: 'Смена этапа',
+  lead_converted: 'Лид конвертирован',
+};
+
 const ACTIVITY_META: Record<
   ActivityType,
   { icon: React.ReactNode; color: 'primary' | 'success' | 'warning' | 'info' | 'error' | 'grey' }
@@ -40,7 +50,7 @@ export default function ActivityTimeline({ activities, loading, error }: Activit
     <Card>
       <CardContent>
         <Typography variant="h6" fontWeight={700} mb={1}>
-          Activity Timeline
+          История активности
         </Typography>
 
         {loading && (
@@ -57,7 +67,7 @@ export default function ActivityTimeline({ activities, loading, error }: Activit
 
         {!loading && !error && activities.length === 0 && (
           <Typography variant="body2" color="text.secondary">
-            No activity yet.
+            Активности пока нет.
           </Typography>
         )}
 
@@ -89,7 +99,7 @@ export default function ActivityTimeline({ activities, loading, error }: Activit
 
                   <TimelineContent sx={{ pb: 2 }}>
                     <Typography variant="caption" color="text.secondary" display="block">
-                      {activity.activity_type.replace('_', ' ')}
+                      {ACTIVITY_TYPE_LABEL[activity.activity_type]}
                     </Typography>
                     <Typography variant="body2">{activity.body}</Typography>
                   </TimelineContent>

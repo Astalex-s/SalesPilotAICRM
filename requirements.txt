@@ -19,10 +19,13 @@ redis[asyncio]==5.2.1
 # HTTP client (for external integrations)
 httpx==0.28.1
 
+# OpenAI
+openai>=1.0.0,<2.0.0
+
 # Google API (Gmail integration)
 google-api-python-client==2.149.0
 google-auth-oauthlib==1.2.1
-google-auth==1.35.0
+google-auth>=2.15.0,<3.0.0
 
 # Telegram Bot
 python-telegram-bot==21.6
@@ -33,6 +36,7 @@ celery[redis]==5.4.0
 # Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
 
 # Utils
 python-dotenv==1.0.1

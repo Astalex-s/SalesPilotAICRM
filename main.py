@@ -9,11 +9,14 @@ from fastapi import FastAPI
 
 from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
+from src.infrastructure.database.base import Base
 from src.infrastructure.database.session import engine
+import src.infrastructure.database.models  # noqa: F401 — регистрирует все ORM-модели в Base.metadata
 from src.interfaces.api.exception_handlers import register_exception_handlers
 from src.interfaces.api.v1.routers import (
     ai_router,
     analytics_router,
+    auth_router,
     deals_router,
     emails_router,
     gdpr_router,
@@ -22,6 +25,7 @@ from src.interfaces.api.v1.routers import (
     pipelines_router,
     tasks_router,
     telegram_router,
+    users_router,
 )
 
 
@@ -29,6 +33,8 @@ from src.interfaces.api.v1.routers import (
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Управляет запуском и корректным завершением работы инфраструктурных соединений."""
     # --- Запуск ---
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     await init_redis()
 
     yield
@@ -55,6 +61,8 @@ def create_app() -> FastAPI:
 
     # Регистрация роутеров v1
     _api_prefix = "/api/v1"
+    application.include_router(auth_router, prefix=_api_prefix)
+    application.include_router(users_router, prefix=_api_prefix)
     application.include_router(leads_router, prefix=_api_prefix)
     application.include_router(deals_router, prefix=_api_prefix)
     application.include_router(analytics_router, prefix=_api_prefix)
