@@ -1,4 +1,28 @@
 {
+  "nav": {
+    "sections": {
+      "sales": "Продажи",
+      "communication": "Коммуникации",
+      "intelligence": "ИИ",
+      "system": "Система"
+    },
+    "dashboard": "Дашборд",
+    "leads": "Лиды",
+    "deals": "Сделки",
+    "pipeline": "Воронка",
+    "gmail": "Gmail",
+    "telegram": "Telegram",
+    "aiAssistant": "ИИ Ассистент",
+    "analytics": "Аналитика",
+    "admin": "Администрирование",
+    "leadDetail": "Карточка лида",
+    "userProfile": "Профиль",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "search": "Поиск или команда... ⌘K",
+    "aiActive": "ИИ Активен",
+    "notifications": "Уведомления"
+  },
   "auth": {
     "signIn": "Войти",
     "register": "Регистрация",

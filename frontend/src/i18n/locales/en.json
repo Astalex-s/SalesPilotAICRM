@@ -1,4 +1,28 @@
 {
+  "nav": {
+    "sections": {
+      "sales": "Sales",
+      "communication": "Communication",
+      "intelligence": "Intelligence",
+      "system": "System"
+    },
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "deals": "Deals",
+    "pipeline": "Pipeline",
+    "gmail": "Gmail",
+    "telegram": "Telegram",
+    "aiAssistant": "AI Assistant",
+    "analytics": "Analytics",
+    "admin": "Admin",
+    "leadDetail": "Lead Detail",
+    "userProfile": "User Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "search": "Search or type a command... ⌘K",
+    "aiActive": "AI Active",
+    "notifications": "Notifications"
+  },
   "auth": {
     "signIn": "Sign In",
     "register": "Register",
