@@ -1,0 +1,31 @@
+{
+  "auth": {
+    "signIn": "Sign In",
+    "register": "Register",
+    "email": "Email",
+    "emailPlaceholder": "name@company.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Forgot?",
+    "signInButton": "Sign In",
+    "orContinueWith": "Or continue with",
+    "magicLink": "Magic Link",
+    "google": "Google",
+    "terms": "By signing in, you agree to our",
+    "termsLink": "Terms of Service",
+    "and": "and",
+    "privacyLink": "Privacy Policy",
+    "createAccount": "Create an account",
+    "createSubtitle": "Start optimizing your sales workflow today.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "workEmail": "Work Email",
+    "confirmPassword": "Confirm Password",
+    "passwordHint": "Must be 8+ characters.",
+    "passwordMismatch": "Passwords do not match",
+    "registerButton": "Create Account",
+    "termsByCreating": "By creating an account, you agree to our",
+    "tagline": "Close more deals.",
+    "taglineAccent": "Faster."
+  }
+}

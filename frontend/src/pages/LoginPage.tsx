@@ -1,5 +1,6 @@
 import { Alert, Box, Button, CircularProgress, Divider, Link, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getMe, login } from '../api/auth';
 import AuthLayout, { inputSx } from '../components/auth/AuthLayout';
@@ -7,12 +8,13 @@ import { useAuthStore } from '../store/useAuthStore';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const setAuth  = useAuthStore((s) => s.setAuth);
+  const { t }    = useTranslation();
 
-  const [email, setEmail]       = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState<string | null>(null);
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +27,7 @@ export default function LoginPage() {
       setAuth(tokenData.access_token, user);
       navigate('/', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка входа');
+      setError(err instanceof Error ? err.message : 'Login error');
     } finally {
       setLoading(false);
     }
@@ -40,14 +42,14 @@ export default function LoginPage() {
         {/* Email */}
         <Box>
           <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#171C20', mb: '6px', fontFamily: 'Inter, sans-serif' }}>
-            Email
+            {t('auth.email')}
           </Typography>
           <Box
             component="input"
             type="email"
             required
             autoFocus
-            placeholder="name@company.com"
+            placeholder={t('auth.emailPlaceholder')}
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             sx={inputSx}
@@ -58,21 +60,21 @@ export default function LoginPage() {
         <Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: '6px' }}>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#171C20', fontFamily: 'Inter, sans-serif' }}>
-              Password
+              {t('auth.password')}
             </Typography>
             <Link
               component="button"
               type="button"
               sx={{ fontSize: 12, color: '#00A8E8', textDecoration: 'none', fontFamily: 'Inter, sans-serif', '&:hover': { textDecoration: 'underline' } }}
             >
-              Forgot?
+              {t('auth.forgotPassword')}
             </Link>
           </Box>
           <Box
             component="input"
             type="password"
             required
-            placeholder="••••••••"
+            placeholder={t('auth.passwordPlaceholder')}
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             sx={inputSx}
@@ -99,7 +101,7 @@ export default function LoginPage() {
             '&.Mui-disabled': { bgcolor: '#BDC8D1', color: '#fff' },
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign In'}
+          {loading ? <CircularProgress size={20} color="inherit" /> : t('auth.signInButton')}
         </Button>
       </Box>
 
@@ -113,18 +115,18 @@ export default function LoginPage() {
           fontSize: 12, color: '#6E7881', fontFamily: 'Inter, sans-serif',
           whiteSpace: 'nowrap',
         }}>
-          Or continue with
+          {t('auth.orContinueWith')}
         </Box>
       </Box>
 
       {/* Alternative login */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {[
-          { label: 'Magic Link', icon: '✉' },
-          { label: 'Google',     icon: 'G' },
-        ].map(({ label, icon }) => (
+          { key: 'magicLink', icon: '✉' },
+          { key: 'google',    icon: 'G' },
+        ].map(({ key, icon }) => (
           <Box
-            key={label}
+            key={key}
             component="button"
             type="button"
             sx={{
@@ -140,20 +142,20 @@ export default function LoginPage() {
               '&:hover': { bgcolor: '#F0F5FF' },
             }}
           >
-            {icon}&nbsp;{label}
+            {icon}&nbsp;{t(`auth.${key}`)}
           </Box>
         ))}
       </Box>
 
       {/* Legal */}
       <Typography sx={{ mt: 3, textAlign: 'center', fontSize: 12, color: '#6E7881', fontFamily: 'Inter, sans-serif' }}>
-        By signing in, you agree to our{' '}
+        {t('auth.terms')}{' '}
         <Link sx={{ color: '#00A8E8', fontSize: 12, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-          Terms of Service
+          {t('auth.termsLink')}
         </Link>{' '}
-        and{' '}
+        {t('auth.and')}{' '}
         <Link sx={{ color: '#00A8E8', fontSize: 12, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-          Privacy Policy
+          {t('auth.privacyLink')}
         </Link>.
       </Typography>
 

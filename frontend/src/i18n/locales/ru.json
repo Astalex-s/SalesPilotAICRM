@@ -1,0 +1,31 @@
+{
+  "auth": {
+    "signIn": "Войти",
+    "register": "Регистрация",
+    "email": "Email",
+    "emailPlaceholder": "name@company.com",
+    "password": "Пароль",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Забыли?",
+    "signInButton": "Войти",
+    "orContinueWith": "Или войти через",
+    "magicLink": "Magic Link",
+    "google": "Google",
+    "terms": "Входя в систему, вы соглашаетесь с",
+    "termsLink": "Условиями использования",
+    "and": "и",
+    "privacyLink": "Политикой конфиденциальности",
+    "createAccount": "Создать аккаунт",
+    "createSubtitle": "Начните оптимизировать продажи уже сегодня.",
+    "fullName": "Полное имя",
+    "fullNamePlaceholder": "Иван Иванов",
+    "workEmail": "Рабочий Email",
+    "confirmPassword": "Подтвердите пароль",
+    "passwordHint": "Минимум 8 символов.",
+    "passwordMismatch": "Пароли не совпадают",
+    "registerButton": "Создать аккаунт",
+    "termsByCreating": "Создавая аккаунт, вы соглашаетесь с",
+    "tagline": "Закрывайте больше сделок.",
+    "taglineAccent": "Быстрее."
+  }
+}

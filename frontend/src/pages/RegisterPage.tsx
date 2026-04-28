@@ -1,5 +1,6 @@
 import { Alert, Box, Button, CircularProgress, Divider, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getMe, login, register } from '../api/auth';
 import AuthLayout, { inputSx } from '../components/auth/AuthLayout';
@@ -8,6 +9,7 @@ import { useAuthStore } from '../store/useAuthStore';
 export default function RegisterPage() {
   const navigate = useNavigate();
   const setAuth  = useAuthStore((s) => s.setAuth);
+  const { t }    = useTranslation();
 
   const [name,     setName]     = useState('');
   const [email,    setEmail]    = useState('');
@@ -19,7 +21,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (password !== confirm) { setError('Passwords do not match'); return; }
+    if (password !== confirm) { setError(t('auth.passwordMismatch')); return; }
 
     const parts      = name.trim().split(/\s+/);
     const first_name = parts[0] ?? name.trim();
@@ -40,29 +42,30 @@ export default function RegisterPage() {
     }
   };
 
-  const fields = [
-    { label: 'Full Name',   value: name,     onChange: setName,     type: 'text',     placeholder: 'John Doe',           hint: '',                      autoFocus: true },
-    { label: 'Work Email',  value: email,     onChange: setEmail,    type: 'email',    placeholder: 'john@company.com',   hint: '',                      autoFocus: false },
-    { label: 'Password',    value: password,  onChange: setPassword, type: 'password', placeholder: '••••••••',           hint: 'Must be 8+ characters.', autoFocus: false },
-    { label: 'Confirm',     value: confirm,   onChange: setConfirm,  type: 'password', placeholder: '••••••••',           hint: '',                      autoFocus: false },
-  ];
-
   return (
     <AuthLayout activeTab="register">
 
       <Box sx={{ mb: 3 }}>
-        <Typography sx={{ fontSize: 26, fontWeight: 700, color: '#171C20', fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-          Create an account
+        <Typography sx={{
+          fontSize: 26, fontWeight: 700, color: '#171C20',
+          fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em', lineHeight: 1.2,
+        }}>
+          {t('auth.createAccount')}
         </Typography>
         <Typography sx={{ fontSize: 14, color: '#6E7881', fontFamily: 'Inter, sans-serif', mt: 0.75 }}>
-          Start optimizing your sales workflow today.
+          {t('auth.createSubtitle')}
         </Typography>
       </Box>
 
       {error && <Alert severity="error" sx={{ mb: 2, fontSize: 13 }}>{error}</Alert>}
 
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {fields.map(({ label, value, onChange, type, placeholder, hint, autoFocus }) => (
+        {[
+          { label: t('auth.fullName'),        value: name,     onChange: setName,     type: 'text',     placeholder: t('auth.fullNamePlaceholder'), hint: '',                         autoFocus: true  },
+          { label: t('auth.workEmail'),        value: email,    onChange: setEmail,    type: 'email',    placeholder: t('auth.emailPlaceholder'),    hint: '',                         autoFocus: false },
+          { label: t('auth.password'),         value: password, onChange: setPassword, type: 'password', placeholder: t('auth.passwordPlaceholder'), hint: t('auth.passwordHint'),     autoFocus: false },
+          { label: t('auth.confirmPassword'),  value: confirm,  onChange: setConfirm,  type: 'password', placeholder: t('auth.passwordPlaceholder'), hint: '',                         autoFocus: false },
+        ].map(({ label, value, onChange, type, placeholder, hint, autoFocus }) => (
           <Box key={label}>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#171C20', mb: '6px', fontFamily: 'Inter, sans-serif' }}>
               {label}
@@ -104,7 +107,7 @@ export default function RegisterPage() {
             '&.Mui-disabled': { bgcolor: '#BDC8D1', color: '#fff' },
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : 'Create Account'}
+          {loading ? <CircularProgress size={20} color="inherit" /> : t('auth.registerButton')}
         </Button>
       </Box>
 
@@ -118,17 +121,17 @@ export default function RegisterPage() {
           fontSize: 12, color: '#6E7881', fontFamily: 'Inter, sans-serif',
           whiteSpace: 'nowrap',
         }}>
-          Or continue with
+          {t('auth.orContinueWith')}
         </Box>
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         {[
-          { label: 'Google',     icon: 'G' },
-          { label: 'Magic Link', icon: '✉' },
-        ].map(({ label, icon }) => (
+          { key: 'google',    icon: 'G' },
+          { key: 'magicLink', icon: '✉' },
+        ].map(({ key, icon }) => (
           <Box
-            key={label}
+            key={key}
             component="button"
             type="button"
             sx={{
@@ -144,19 +147,19 @@ export default function RegisterPage() {
               '&:hover': { bgcolor: '#F0F5FF' },
             }}
           >
-            {icon}&nbsp;{label}
+            {icon}&nbsp;{t(`auth.${key}`)}
           </Box>
         ))}
       </Box>
 
       <Typography sx={{ mt: 3, textAlign: 'center', fontSize: 12, color: '#6E7881', fontFamily: 'Inter, sans-serif' }}>
-        By creating an account, you agree to our{' '}
+        {t('auth.termsByCreating')}{' '}
         <Box component="a" href="#" sx={{ color: '#00A8E8', fontSize: 12, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-          Terms of Service
+          {t('auth.termsLink')}
         </Box>{' '}
-        and{' '}
+        {t('auth.and')}{' '}
         <Box component="a" href="#" sx={{ color: '#00A8E8', fontSize: 12, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-          Privacy Policy
+          {t('auth.privacyLink')}
         </Box>.
       </Typography>
 
