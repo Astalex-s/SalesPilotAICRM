@@ -4,41 +4,145 @@ import EmailIcon from '@mui/icons-material/Email';
 import EventIcon from '@mui/icons-material/Event';
 import NoteIcon from '@mui/icons-material/Note';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import {
-  Timeline,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineItem,
-  TimelineOppositeContent,
-  TimelineSeparator,
-} from '@mui/lab';
-import { Box, Card, CardContent, CircularProgress, Typography } from '@mui/material';
+import { Box, Card, Skeleton, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type Activity, type ActivityType } from '../../types/activity';
 
-const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
-  call: 'Звонок',
-  email: 'Email',
-  meeting: 'Встреча',
-  note: 'Заметка',
-  status_change: 'Смена статуса',
-  stage_change: 'Смена этапа',
-  lead_converted: 'Лид конвертирован',
-};
-
+/* ── Activity type config ── */
 const ACTIVITY_META: Record<
   ActivityType,
-  { icon: React.ReactNode; color: 'primary' | 'success' | 'warning' | 'info' | 'error' | 'grey' }
+  { icon: React.ReactNode; color: string; bg: string }
 > = {
-  call: { icon: <CallIcon fontSize="small" />, color: 'primary' },
-  email: { icon: <EmailIcon fontSize="small" />, color: 'info' },
-  meeting: { icon: <EventIcon fontSize="small" />, color: 'warning' },
-  note: { icon: <NoteIcon fontSize="small" />, color: 'grey' },
-  status_change: { icon: <SwapHorizIcon fontSize="small" />, color: 'warning' },
-  stage_change: { icon: <SwapHorizIcon fontSize="small" />, color: 'primary' },
-  lead_converted: { icon: <CheckCircleIcon fontSize="small" />, color: 'success' },
+  call:           { icon: <CallIcon sx={{ fontSize: 14 }} />,         color: '#00A8E8', bg: 'rgba(0,168,232,0.12)' },
+  email:          { icon: <EmailIcon sx={{ fontSize: 14 }} />,        color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
+  meeting:        { icon: <EventIcon sx={{ fontSize: 14 }} />,        color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+  note:           { icon: <NoteIcon sx={{ fontSize: 14 }} />,         color: '#94A3B8', bg: 'rgba(148,163,184,0.12)' },
+  status_change:  { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,    color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+  stage_change:   { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,    color: '#0D2144', bg: 'rgba(13,33,68,0.10)' },
+  lead_converted: { icon: <CheckCircleIcon sx={{ fontSize: 14 }} />,  color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
 };
 
+/* ── Relative time ── */
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+}
+
+/* ── Timeline item ── */
+function TimelineEntry({
+  activity,
+  isLast,
+}: {
+  activity: Activity;
+  isLast: boolean;
+}) {
+  const { t } = useTranslation();
+  const meta = ACTIVITY_META[activity.activity_type];
+
+  return (
+    <Box sx={{ display: 'flex', gap: 1.5, position: 'relative' }}>
+      {/* Icon column */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+        <Box
+          sx={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            bgcolor: meta.bg,
+            color: meta.color,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {meta.icon}
+        </Box>
+        {!isLast && (
+          <Box
+            sx={{
+              width: '2px',
+              flex: 1,
+              minHeight: 24,
+              background: `repeating-linear-gradient(
+                to bottom,
+                #E2EAF4 0px,
+                #E2EAF4 4px,
+                transparent 4px,
+                transparent 8px
+              )`,
+              mt: 0.5,
+            }}
+          />
+        )}
+      </Box>
+
+      {/* Content */}
+      <Box sx={{ pb: isLast ? 0 : 2.5, flex: 1, minWidth: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1, mb: 0.25 }}>
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#0D2144',
+            }}
+          >
+            {t(`leadDetail.timeline.types.${activity.activity_type}`)}
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 11,
+              color: '#94A3B8',
+              flexShrink: 0,
+            }}
+          >
+            {relativeTime(activity.occurred_at)}
+          </Typography>
+        </Box>
+        {activity.body && (
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 13,
+              color: '#4B6080',
+              lineHeight: 1.5,
+            }}
+          >
+            {activity.body}
+          </Typography>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
+/* ── Skeleton ── */
+function TimelineSkeleton() {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Box key={i} sx={{ display: 'flex', gap: 1.5, mb: 2.5 }}>
+          <Skeleton variant="circular" width={28} height={28} sx={{ flexShrink: 0 }} />
+          <Box sx={{ flex: 1 }}>
+            <Skeleton variant="text" width={120} height={18} />
+            <Skeleton variant="text" width="80%" height={16} />
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+/* ── Main component ── */
 interface ActivityTimelineProps {
   activities: Activity[];
   loading: boolean;
@@ -46,69 +150,67 @@ interface ActivityTimelineProps {
 }
 
 export default function ActivityTimeline({ activities, loading, error }: ActivityTimelineProps) {
+  const { t } = useTranslation();
+
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" fontWeight={700} mb={1}>
-          История активности
+    <Card
+      elevation={0}
+      sx={{
+        background: '#FFFFFF',
+        border: '1px solid #E2EAF4',
+        borderRadius: '16px',
+        boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
+        height: '100%',
+      }}
+    >
+      <Box sx={{ p: 2.5 }}>
+        <Typography
+          sx={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 700,
+            fontSize: 15,
+            color: '#0D2144',
+            mb: 2.5,
+          }}
+        >
+          {t('leadDetail.timeline.title')}
         </Typography>
 
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-            <CircularProgress size={28} />
-          </Box>
-        )}
+        {loading && <TimelineSkeleton />}
 
         {error && (
-          <Typography color="error" variant="body2">
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#EF4444' }}>
             {error}
           </Typography>
         )}
 
         {!loading && !error && activities.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            Активности пока нет.
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              py: 6,
+            }}
+          >
+            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#94A3B8' }}>
+              {t('leadDetail.timeline.empty')}
+            </Typography>
+          </Box>
         )}
 
         {!loading && activities.length > 0 && (
-          <Timeline sx={{ p: 0, m: 0 }}>
-            {activities.map((activity, idx) => {
-              const meta = ACTIVITY_META[activity.activity_type];
-              return (
-                <TimelineItem key={activity.id}>
-                  <TimelineOppositeContent
-                    sx={{ flex: 0.25, pr: 1 }}
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    {new Date(activity.occurred_at).toLocaleDateString()}
-                    <br />
-                    {new Date(activity.occurred_at).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </TimelineOppositeContent>
-
-                  <TimelineSeparator>
-                    <TimelineDot color={meta.color} variant="outlined">
-                      {meta.icon}
-                    </TimelineDot>
-                    {idx < activities.length - 1 && <TimelineConnector />}
-                  </TimelineSeparator>
-
-                  <TimelineContent sx={{ pb: 2 }}>
-                    <Typography variant="caption" color="text.secondary" display="block">
-                      {ACTIVITY_TYPE_LABEL[activity.activity_type]}
-                    </Typography>
-                    <Typography variant="body2">{activity.body}</Typography>
-                  </TimelineContent>
-                </TimelineItem>
-              );
-            })}
-          </Timeline>
+          <Box>
+            {activities.map((activity, idx) => (
+              <TimelineEntry
+                key={activity.id}
+                activity={activity}
+                isLast={idx === activities.length - 1}
+              />
+            ))}
+          </Box>
         )}
-      </CardContent>
+      </Box>
     </Card>
   );
 }

@@ -23,6 +23,183 @@
     "aiActive": "AI Active",
     "notifications": "Notifications"
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "greeting": "Here's your pipeline overview",
+    "refresh": "Refresh",
+    "pipelineHealth": "Pipeline Health",
+    "kpi": {
+      "pipelineValue": "Pipeline Value",
+      "activeDeals": "Active Deals",
+      "totalLeads": "Total Leads",
+      "winRate": "Win Rate",
+      "openDeals": "{{count}} open",
+      "totalDeals": "of {{count}} total",
+      "wonRate": "conversion rate"
+    },
+    "charts": {
+      "dealsByStatus": "Deals by Status",
+      "leadsByStatus": "Leads by Status",
+      "open": "Open",
+      "won": "Won",
+      "lost": "Lost",
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "unqualified": "Unqualified",
+      "converted": "Converted",
+      "noLeads": "No leads yet",
+      "deals": "Deals"
+    },
+    "aiInsights": {
+      "title": "AI Insights",
+      "view": "View",
+      "lostTitle": "{{count}} deals lost recently",
+      "lostDesc": "Review lost deal reasons to improve future close rates.",
+      "winRateTitle": "{{rate}}% win rate",
+      "winRateDesc": "Based on your historical conversion performance.",
+      "openDealsTitle": "{{count}} active deals",
+      "openDealsDesc": "Keep engaging to move deals through the pipeline.",
+      "healthyTitle": "Pipeline looks healthy",
+      "healthyDesc": "Keep engaging with your leads to maintain momentum."
+    }
+  },
+  "users": {
+    "title": "Users & Roles",
+    "adminOnly": "Admin Only",
+    "search": "Search users...",
+    "noUsers": "No users found",
+    "you": "You",
+    "cantEditSelf": "You cannot change your own role",
+    "loadError": "Failed to load users",
+    "updateError": "Failed to update role",
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "sales_rep": "Sales Rep"
+    },
+    "roleCards": {
+      "admin": { "desc": "Full access to all features and settings" },
+      "manager": { "desc": "Manage leads, deals, view analytics, assign reps" },
+      "sales_rep": { "desc": "Manage own leads and deals only" }
+    },
+    "table": {
+      "member": "Member",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Change Role"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "leadDetail": {
+    "back": "Back to Leads",
+    "info": {
+      "notes": "Notes",
+      "created": "Created",
+      "updated": "Updated"
+    },
+    "timeline": {
+      "title": "Activity",
+      "empty": "No activity yet.",
+      "types": {
+        "call": "Call",
+        "email": "Email",
+        "meeting": "Meeting",
+        "note": "Note",
+        "status_change": "Status Change",
+        "stage_change": "Stage Change",
+        "lead_converted": "Lead Converted"
+      }
+    },
+    "ai": {
+      "title": "AI Assistant",
+      "live": "Live",
+      "score": "Lead Score",
+      "scoreBtn": "Score",
+      "refresh": "Refresh",
+      "actions": "Next Best Action",
+      "actionsBtn": "Suggest",
+      "emailGen": "Email Generator",
+      "emailTone": "Tone",
+      "emailContext": "Additional context (optional)",
+      "emailGenBtn": "Generate",
+      "emailGenerating": "Generating...",
+      "emailSubject": "Subject",
+      "emailBody": "Body",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "tones": {
+        "friendly": "Friendly",
+        "formal": "Formal",
+        "assertive": "Assertive"
+      },
+      "priority": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "noPipeline": "No pipeline selected.",
+    "emptyColumn": "Drop deals here",
+    "likely": "{{prob}}% likely",
+    "overdue": "Overdue",
+    "totalValue": "Total Pipeline Value",
+    "totalDeals": "Total Deals"
+  },
+  "leads": {
+    "title": "Leads",
+    "addLead": "Add Lead",
+    "addLeadTooltip": "Coming soon",
+    "searchPlaceholder": "Search leads...",
+    "filterAll": "All",
+    "noLeads": "No leads found",
+    "count": "{{count}} total",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "unqualified": "Unqualified",
+      "converted": "Converted"
+    },
+    "source": {
+      "website": "Website",
+      "referral": "Referral",
+      "cold_call": "Cold Call",
+      "social_media": "Social Media",
+      "email_campaign": "Email Campaign",
+      "other": "Other"
+    },
+    "table": {
+      "name": "Name",
+      "company": "Company",
+      "status": "Status",
+      "source": "Source",
+      "created": "Created"
+    },
+    "pagination": {
+      "showing": "Showing {{from}}–{{to}} of {{total}}"
+    },
+    "dialog": {
+      "title": "Add New Lead",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "company": "Company (optional)",
+      "source": "Lead Source",
+      "cancel": "Cancel",
+      "submit": "Create Lead",
+      "submitting": "Creating...",
+      "validationRequired": "First name, last name and email are required.",
+      "submitError": "Failed to create lead. Please try again."
+    }
+  },
   "auth": {
     "signIn": "Sign In",
     "register": "Register",

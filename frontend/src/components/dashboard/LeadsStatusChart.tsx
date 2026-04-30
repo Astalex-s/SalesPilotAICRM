@@ -1,12 +1,6 @@
-import { Box, Card, CardContent, Skeleton, Typography, useTheme } from '@mui/material';
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
+import { Box, Card, Skeleton, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import type { LeadsStatusBreakdown } from '../../types/analytics';
 
 interface LeadsStatusChartProps {
@@ -14,33 +8,59 @@ interface LeadsStatusChartProps {
   loading: boolean;
 }
 
+const CARD_STYLE = {
+  height: '100%',
+  background: '#FFFFFF',
+  border: '1px solid #E2EAF4',
+  borderRadius: '16px',
+  boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
+};
+
+const SLICE_COLORS = ['#00A8E8', '#F59E0B', '#10B981', '#EF4444', '#0D2144'];
+
 export default function LeadsStatusChart({ data, loading }: LeadsStatusChartProps) {
-  const theme = useTheme();
+  const { t } = useTranslation();
 
   const SLICES = data
     ? [
-        { name: 'Новые', value: data.new, color: theme.palette.info.main },
-        { name: 'Контакт', value: data.contacted, color: theme.palette.warning.main },
-        { name: 'Квалифицир.', value: data.qualified, color: theme.palette.success.light },
-        { name: 'Неквалифиц.', value: data.unqualified, color: theme.palette.error.light },
-        { name: 'Конвертированы', value: data.converted, color: theme.palette.success.dark },
+        { name: t('dashboard.charts.new'), value: data.new, color: SLICE_COLORS[0] },
+        { name: t('dashboard.charts.contacted'), value: data.contacted, color: SLICE_COLORS[1] },
+        { name: t('dashboard.charts.qualified'), value: data.qualified, color: SLICE_COLORS[2] },
+        { name: t('dashboard.charts.unqualified'), value: data.unqualified, color: SLICE_COLORS[3] },
+        { name: t('dashboard.charts.converted'), value: data.converted, color: SLICE_COLORS[4] },
       ].filter((s) => s.value > 0)
     : [];
 
   const total = SLICES.reduce((sum, s) => sum + s.value, 0);
 
   return (
-    <Card sx={{ height: '100%' }}>
-      <CardContent>
-        <Typography variant="h6" fontWeight={700} mb={2}>
-          Лиды по статусу
+    <Card elevation={0} sx={CARD_STYLE}>
+      <Box sx={{ p: 2.5 }}>
+        <Typography
+          sx={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 700,
+            fontSize: 15,
+            color: '#0D2144',
+            mb: 2,
+          }}
+        >
+          {t('dashboard.charts.leadsByStatus')}
         </Typography>
+
         {loading ? (
-          <Skeleton variant="circular" width={220} height={220} sx={{ mx: 'auto' }} />
+          <Skeleton variant="circular" width={200} height={200} sx={{ mx: 'auto' }} />
         ) : total === 0 ? (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 220 }}>
-            <Typography variant="body2" color="text.secondary">
-              Лидов пока нет
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 240,
+            }}
+          >
+            <Typography sx={{ fontSize: 13, color: '#94A3B8' }}>
+              {t('dashboard.charts.noLeads')}
             </Typography>
           </Box>
         ) : (
@@ -51,10 +71,11 @@ export default function LeadsStatusChart({ data, loading }: LeadsStatusChartProp
                   data={SLICES}
                   cx="50%"
                   cy="45%"
-                  innerRadius={55}
-                  outerRadius={85}
+                  innerRadius={58}
+                  outerRadius={88}
                   paddingAngle={3}
                   dataKey="value"
+                  stroke="none"
                 >
                   {SLICES.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
@@ -62,18 +83,31 @@ export default function LeadsStatusChart({ data, loading }: LeadsStatusChartProp
                 </Pie>
                 <Tooltip
                   formatter={(value: number, name: string) => [value, name]}
-                  contentStyle={{ fontSize: 12 }}
+                  contentStyle={{
+                    background: '#0D2144',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#FFFFFF',
+                    fontSize: 12,
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                  itemStyle={{ color: '#FFFFFF' }}
+                  labelStyle={{ color: '#94A3B8' }}
                 />
                 <Legend
                   iconType="circle"
                   iconSize={8}
-                  wrapperStyle={{ fontSize: 12 }}
+                  wrapperStyle={{
+                    fontSize: 12,
+                    fontFamily: 'Inter, sans-serif',
+                    color: '#4B6080',
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </Box>
         )}
-      </CardContent>
+      </Box>
     </Card>
   );
 }

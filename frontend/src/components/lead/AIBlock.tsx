@@ -1,20 +1,14 @@
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   Alert,
   Box,
   Button,
   Card,
-  CardContent,
-  Chip,
   CircularProgress,
   Divider,
-  FormControl,
-  InputLabel,
   LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
   MenuItem,
   Select,
   TextField,
@@ -22,16 +16,59 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type AiTone, type GeneratedEmail, type LeadScore, type NextBestAction } from '../../types/ai';
 
-// ── Score gauge ─────────────────────────────────────────────────────────────────
+/* ── Design tokens ── */
+const CARD_STYLE = {
+  background: '#FFFFFF',
+  border: '1px solid #E2EAF4',
+  borderRadius: '16px',
+  boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
+  height: '100%',
+};
 
-function scoreColor(score: number): 'success' | 'warning' | 'error' {
-  if (score >= 0.7) return 'success';
-  if (score >= 0.4) return 'warning';
-  return 'error';
+const SECTION_LABEL_SX = {
+  fontFamily: 'Inter, sans-serif',
+  fontSize: 11,
+  fontWeight: 500,
+  letterSpacing: '0.07em',
+  textTransform: 'uppercase' as const,
+  color: '#94A3B8',
+  mb: 1,
+};
+
+const INPUT_SX = {
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '10px',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: 13,
+    '& fieldset': { borderColor: '#E2EAF4' },
+    '&:hover fieldset': { borderColor: '#CBD5E8' },
+    '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
+  },
+};
+
+const CYAN_BTN_SX = {
+  fontFamily: 'Inter, sans-serif',
+  fontWeight: 600,
+  fontSize: 13,
+  bgcolor: '#00A8E8',
+  color: '#fff',
+  borderRadius: '8px',
+  textTransform: 'none' as const,
+  boxShadow: 'none',
+  '&:hover': { bgcolor: '#0090CC', boxShadow: 'none' },
+  '&.Mui-disabled': { bgcolor: '#E2EAF4', color: '#94A3B8' },
+};
+
+function scoreColor(score: number): string {
+  if (score >= 0.7) return '#10B981';
+  if (score >= 0.4) return '#F59E0B';
+  return '#EF4444';
 }
 
+/* ── Score Section ── */
 interface ScoreSectionProps {
   score: LeadScore | null;
   loading: boolean;
@@ -40,79 +77,90 @@ interface ScoreSectionProps {
 }
 
 function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
+  const { t } = useTranslation();
+  const pct = score ? Math.round(score.score * 100) : 0;
+  const color = score ? scoreColor(score.score) : '#94A3B8';
+
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>
-          ИИ-оценка лида
-        </Typography>
-        <Button size="small" onClick={onRefresh} disabled={loading} startIcon={<AutoAwesomeIcon />}>
-          {score ? 'Обновить' : 'Оценить'}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+        <Typography sx={SECTION_LABEL_SX}>{t('leadDetail.ai.score')}</Typography>
+        <Button
+          size="small"
+          onClick={onRefresh}
+          disabled={loading}
+          startIcon={<RefreshIcon sx={{ fontSize: 14 }} />}
+          sx={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#00A8E8',
+            textTransform: 'none',
+            minWidth: 0,
+            p: '2px 8px',
+            '&:hover': { bgcolor: '#E8F4FF' },
+          }}
+        >
+          {score ? t('leadDetail.ai.refresh') : t('leadDetail.ai.scoreBtn')}
         </Button>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 1 }} />}
-      {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
+      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: '#F0F5FF', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
+      {error && <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', py: 0.5 }}>{error}</Alert>}
 
       {score && (
-        <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-              <CircularProgress
-                variant="determinate"
-                value={score.score * 100}
-                color={scoreColor(score.score)}
-                size={64}
-                thickness={5}
-              />
-              <Box
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography variant="caption" fontWeight={700}>
-                  {Math.round(score.score * 100)}%
-                </Typography>
-              </Box>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+          {/* Circular score */}
+          <Box sx={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
+            <CircularProgress
+              variant="determinate"
+              value={pct}
+              size={56}
+              thickness={5}
+              sx={{ color }}
+            />
+            <CircularProgress
+              variant="determinate"
+              value={100}
+              size={56}
+              thickness={5}
+              sx={{ color: '#F0F5FF', position: 'absolute', top: 0, left: 0 }}
+            />
+            <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 700, color }}>
+                {pct}%
+              </Typography>
             </Box>
-            <Typography variant="body2" color="text.secondary">
-              {score.reasoning}
-            </Typography>
           </Box>
 
-          {score.recommended_actions.length > 0 && (
-            <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-                Рекомендованные действия
-              </Typography>
-              <List dense disablePadding>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080', lineHeight: 1.5, mb: 1 }}>
+              {score.reasoning}
+            </Typography>
+            {score.recommended_actions.length > 0 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {score.recommended_actions.map((action, i) => (
-                  <ListItem key={i} disablePadding sx={{ py: 0.25 }}>
-                    <ListItemText
-                      primary={action}
-                      primaryTypographyProps={{ variant: 'body2' }}
-                    />
-                  </ListItem>
+                  <Box key={i} sx={{ display: 'flex', gap: 0.75, alignItems: 'flex-start' }}>
+                    <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: '#00A8E8', mt: '6px', flexShrink: 0 }} />
+                    <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#4B6080', lineHeight: 1.5 }}>
+                      {action}
+                    </Typography>
+                  </Box>
                 ))}
-              </List>
-            </Box>
-          )}
+              </Box>
+            )}
+          </Box>
         </Box>
       )}
     </Box>
   );
 }
 
-// ── Next Best Action ────────────────────────────────────────────────────────────
-
-const PRIORITY_COLOR: Record<NextBestAction['priority'], 'error' | 'warning' | 'default'> = {
-  high: 'error',
-  medium: 'warning',
-  low: 'default',
+/* ── Next Action Section ── */
+const PRIORITY_STYLE: Record<NextBestAction['priority'], { bg: string; color: string }> = {
+  high:   { bg: 'rgba(239,68,68,0.12)',  color: '#DC2626' },
+  medium: { bg: 'rgba(245,158,11,0.12)', color: '#D97706' },
+  low:    { bg: 'rgba(148,163,184,0.12)', color: '#64748B' },
 };
 
 interface NextActionSectionProps {
@@ -123,33 +171,64 @@ interface NextActionSectionProps {
 }
 
 function NextActionSection({ nextAction, loading, error, onRefresh }: NextActionSectionProps) {
+  const { t } = useTranslation();
+
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography variant="subtitle1" fontWeight={700}>
-          Следующий шаг
-        </Typography>
-        <Button size="small" onClick={onRefresh} disabled={loading} startIcon={<AutoAwesomeIcon />}>
-          {nextAction ? 'Обновить' : 'Предложить'}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+        <Typography sx={SECTION_LABEL_SX}>{t('leadDetail.ai.actions')}</Typography>
+        <Button
+          size="small"
+          onClick={onRefresh}
+          disabled={loading}
+          startIcon={<RefreshIcon sx={{ fontSize: 14 }} />}
+          sx={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#00A8E8',
+            textTransform: 'none',
+            minWidth: 0,
+            p: '2px 8px',
+            '&:hover': { bgcolor: '#E8F4FF' },
+          }}
+        >
+          {nextAction ? t('leadDetail.ai.refresh') : t('leadDetail.ai.actionsBtn')}
         </Button>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 1 }} />}
-      {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
+      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: '#F0F5FF', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
+      {error && <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', py: 0.5 }}>{error}</Alert>}
 
       {nextAction && (
-        <Box>
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: '10px',
+            bgcolor: '#F7F9FC',
+            border: '1px solid #E2EAF4',
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-            <Chip
-              label={nextAction.priority}
-              color={PRIORITY_COLOR[nextAction.priority]}
-              size="small"
-            />
-            <Typography variant="body2" fontWeight={600}>
+            <Box
+              sx={{
+                px: 1,
+                py: 0.2,
+                borderRadius: '20px',
+                bgcolor: PRIORITY_STYLE[nextAction.priority].bg,
+                color: PRIORITY_STYLE[nextAction.priority].color,
+                fontFamily: 'Inter',
+                fontSize: 11,
+                fontWeight: 600,
+              }}
+            >
+              {t(`leadDetail.ai.priority.${nextAction.priority}`)}
+            </Box>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
               {nextAction.action}
             </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary">
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8', lineHeight: 1.5 }}>
             {nextAction.reasoning}
           </Typography>
         </Box>
@@ -158,7 +237,8 @@ function NextActionSection({ nextAction, loading, error, onRefresh }: NextAction
   );
 }
 
-// ── Email Generator ─────────────────────────────────────────────────────────────
+/* ── Email Generator ── */
+const TONES: AiTone[] = ['friendly', 'formal', 'assertive'];
 
 interface EmailSectionProps {
   generatedEmail: GeneratedEmail | null;
@@ -168,43 +248,51 @@ interface EmailSectionProps {
 }
 
 function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSectionProps) {
+  const { t } = useTranslation();
   const [tone, setTone] = useState<AiTone>('friendly');
   const [context, setContext] = useState('');
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     if (!generatedEmail) return;
-    const text = `Subject: ${generatedEmail.subject}\n\n${generatedEmail.body}`;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(`Subject: ${generatedEmail.subject}\n\n${generatedEmail.body}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <Box>
-      <Typography variant="subtitle1" fontWeight={700} mb={1}>
-        ИИ генератор писем
-      </Typography>
+      <Typography sx={{ ...SECTION_LABEL_SX, mb: 1.5 }}>{t('leadDetail.ai.emailGen')}</Typography>
 
-      <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-        <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Тон</InputLabel>
-          <Select<AiTone>
-            value={tone}
-            label="Тон"
-            onChange={(e) => setTone(e.target.value as AiTone)}
-          >
-            <MenuItem value="friendly">Дружелюбный</MenuItem>
-            <MenuItem value="formal">Официальный</MenuItem>
-            <MenuItem value="assertive">Настойчивый</MenuItem>
-          </Select>
-        </FormControl>
+      {/* Tone + context */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
+        <Select
+          value={tone}
+          onChange={(e) => setTone(e.target.value as AiTone)}
+          size="small"
+          sx={{
+            minWidth: 110,
+            borderRadius: '10px',
+            fontFamily: 'Inter',
+            fontSize: 13,
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#00A8E8', borderWidth: 2 },
+          }}
+        >
+          {TONES.map((tn) => (
+            <MenuItem key={tn} value={tn} sx={{ fontFamily: 'Inter', fontSize: 13 }}>
+              {t(`leadDetail.ai.tones.${tn}`)}
+            </MenuItem>
+          ))}
+        </Select>
         <TextField
           size="small"
           fullWidth
-          placeholder="Доп. контекст (необязательно)"
+          placeholder={t('leadDetail.ai.emailContext')}
           value={context}
           onChange={(e) => setContext(e.target.value)}
+          sx={INPUT_SX}
         />
       </Box>
 
@@ -213,49 +301,52 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
         size="small"
         onClick={() => onGenerate(tone, context)}
         disabled={loading}
-        startIcon={loading ? <CircularProgress size={14} color="inherit" /> : <AutoAwesomeIcon />}
-        sx={{ mb: 1 }}
+        startIcon={loading ? <CircularProgress size={13} color="inherit" /> : <AutoAwesomeIcon sx={{ fontSize: 14 }} />}
+        sx={{ ...CYAN_BTN_SX, mb: 1.5, px: 2 }}
       >
-        {loading ? 'Генерирую…' : 'Сгенерировать'}
+        {loading ? t('leadDetail.ai.emailGenerating') : t('leadDetail.ai.emailGenBtn')}
       </Button>
 
-      {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', py: 0.5 }}>{error}</Alert>}
 
       {generatedEmail && (
         <Box
           sx={{
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 1,
+            border: '1px solid #E2EAF4',
+            borderRadius: '10px',
             p: 1.5,
+            bgcolor: '#F7F9FC',
             position: 'relative',
           }}
         >
-          <Tooltip title={copied ? 'Скопировано!' : 'Копировать'}>
+          <Tooltip title={copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}>
             <Button
               size="small"
-              sx={{ position: 'absolute', top: 8, right: 8 }}
               onClick={handleCopy}
-              startIcon={<ContentCopyIcon fontSize="small" />}
+              startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                fontFamily: 'Inter',
+                fontSize: 12,
+                textTransform: 'none',
+                color: '#00A8E8',
+                fontWeight: 600,
+                '&:hover': { bgcolor: '#E8F4FF' },
+              }}
             >
-              {copied ? 'Скопировано' : 'Копировать'}
+              {copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}
             </Button>
           </Tooltip>
 
-          <Typography variant="caption" color="text.secondary" display="block">
-            Тема
-          </Typography>
-          <Typography variant="body2" fontWeight={600} mb={1}>
+          <Typography sx={{ ...SECTION_LABEL_SX, mb: 0.5 }}>{t('leadDetail.ai.emailSubject')}</Typography>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144', mb: 1.5 }}>
             {generatedEmail.subject}
           </Typography>
 
-          <Typography variant="caption" color="text.secondary" display="block">
-            Текст
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: 12 }}
-          >
+          <Typography sx={{ ...SECTION_LABEL_SX, mb: 0.5 }}>{t('leadDetail.ai.emailBody')}</Typography>
+          <Typography sx={{ fontFamily: 'monospace', fontSize: 12, color: '#4B6080', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
             {generatedEmail.body}
           </Typography>
         </Box>
@@ -264,8 +355,7 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
   );
 }
 
-// ── AIBlock (composed) ──────────────────────────────────────────────────────────
-
+/* ── AIBlock ── */
 interface AIBlockProps {
   score: LeadScore | null;
   scoreLoading: boolean;
@@ -287,12 +377,47 @@ export default function AIBlock({
   generatedEmail, emailLoading, emailError,
   onScoreRefresh, onNextActionRefresh, onGenerateEmail,
 }: AIBlockProps) {
+  const { t } = useTranslation();
+
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" fontWeight={700} mb={2}>
-          ИИ-инсайты
-        </Typography>
+    <Card elevation={0} sx={CARD_STYLE}>
+      <Box sx={{ p: 2.5 }}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
+          <AutoAwesomeIcon sx={{ color: '#00A8E8', fontSize: 18 }} />
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+            {t('leadDetail.ai.title')}
+          </Typography>
+          <Box
+            sx={{
+              ml: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.75,
+              px: 1,
+              py: 0.3,
+              borderRadius: '20px',
+              bgcolor: 'rgba(16,185,129,0.1)',
+            }}
+          >
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                bgcolor: '#10B981',
+                animation: 'pulse 2s infinite',
+                '@keyframes pulse': {
+                  '0%, 100%': { opacity: 1 },
+                  '50%': { opacity: 0.4 },
+                },
+              }}
+            />
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 600, color: '#059669' }}>
+              {t('leadDetail.ai.live')}
+            </Typography>
+          </Box>
+        </Box>
 
         <ScoreSection
           score={score}
@@ -301,7 +426,7 @@ export default function AIBlock({
           onRefresh={onScoreRefresh}
         />
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ borderColor: '#F0F5FF', my: 2 }} />
 
         <NextActionSection
           nextAction={nextAction}
@@ -310,7 +435,7 @@ export default function AIBlock({
           onRefresh={onNextActionRefresh}
         />
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ borderColor: '#F0F5FF', my: 2 }} />
 
         <EmailSection
           generatedEmail={generatedEmail}
@@ -318,7 +443,7 @@ export default function AIBlock({
           error={emailError}
           onGenerate={onGenerateEmail}
         />
-      </CardContent>
+      </Box>
     </Card>
   );
 }

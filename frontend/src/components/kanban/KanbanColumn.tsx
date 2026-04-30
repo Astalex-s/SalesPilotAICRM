@@ -1,5 +1,6 @@
-import { Box, Chip, Paper, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Droppable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import { type Deal } from '../../types/deal';
 import { type Stage } from '../../types/pipeline';
 import DealCard from './DealCard';
@@ -9,18 +10,27 @@ interface KanbanColumnProps {
   deals: Deal[];
 }
 
-export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
-  const totalValue = deals
+function formatColumnValue(deals: Deal[]): string {
+  const total = deals
     .filter((d) => d.status === 'open')
     .reduce((sum, d) => sum + Number(d.value_amount), 0);
+  if (total === 0) return '';
+  if (total >= 1_000_000) return `$${(total / 1_000_000).toFixed(1)}M`;
+  if (total >= 1_000) return `$${(total / 1_000).toFixed(0)}K`;
+  return `$${total}`;
+}
+
+export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
+  const { t } = useTranslation();
+  const valueLabel = formatColumnValue(deals);
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minWidth: 280,
-        maxWidth: 280,
+        minWidth: 272,
+        maxWidth: 272,
         flexShrink: 0,
       }}
     >
@@ -30,18 +40,49 @@ export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          mb: 1,
+          mb: 1.5,
           px: 0.5,
         }}
       >
-        <Typography variant="subtitle1" fontWeight={700}>
+        <Typography
+          sx={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 700,
+            fontSize: 14,
+            color: '#0D2144',
+          }}
+        >
           {stage.name}
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <Chip label={deals.length} size="small" />
-          {totalValue > 0 && (
-            <Typography variant="caption" color="success.main" fontWeight={600}>
-              ${totalValue.toLocaleString()}
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Deal count badge */}
+          <Box
+            sx={{
+              px: 1,
+              py: 0.2,
+              borderRadius: '20px',
+              bgcolor: 'rgba(13,33,68,0.08)',
+              color: '#0D2144',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            {deals.length}
+          </Box>
+
+          {/* Total value */}
+          {valueLabel && (
+            <Typography
+              sx={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 12,
+                fontWeight: 600,
+                color: '#00A8E8',
+              }}
+            >
+              {valueLabel}
             </Typography>
           )}
         </Box>
@@ -50,23 +91,54 @@ export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
       {/* Droppable area */}
       <Droppable droppableId={stage.id}>
         {(provided, snapshot) => (
-          <Paper
+          <Box
             ref={provided.innerRef}
             {...provided.droppableProps}
-            variant="outlined"
             sx={{
-              p: 1,
+              flex: 1,
               minHeight: 120,
-              flexGrow: 1,
-              bgcolor: snapshot.isDraggingOver ? 'action.hover' : 'background.paper',
-              transition: 'background-color 0.15s ease',
+              borderRadius: '12px',
+              bgcolor: snapshot.isDraggingOver
+                ? 'rgba(0,168,232,0.06)'
+                : '#F0F5FF',
+              border: snapshot.isDraggingOver
+                ? '2px dashed rgba(0,168,232,0.4)'
+                : '2px dashed transparent',
+              p: 1.25,
+              transition: 'all 0.15s ease',
             }}
           >
             {deals.map((deal, index) => (
-              <DealCard key={deal.id} deal={deal} index={index} />
+              <DealCard
+                key={deal.id}
+                deal={deal}
+                index={index}
+                stageProbability={stage.probability}
+              />
             ))}
             {provided.placeholder}
-          </Paper>
+
+            {deals.length === 0 && !snapshot.isDraggingOver && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 80,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: 12,
+                    color: '#CBD5E8',
+                  }}
+                >
+                  {t('pipeline.emptyColumn')}
+                </Typography>
+              </Box>
+            )}
+          </Box>
         )}
       </Droppable>
     </Box>

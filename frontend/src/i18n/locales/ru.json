@@ -23,6 +23,183 @@
     "aiActive": "ИИ Активен",
     "notifications": "Уведомления"
   },
+  "dashboard": {
+    "title": "Дашборд",
+    "greeting": "Обзор вашей воронки продаж",
+    "refresh": "Обновить",
+    "pipelineHealth": "Состояние воронки",
+    "kpi": {
+      "pipelineValue": "Стоимость воронки",
+      "activeDeals": "Активные сделки",
+      "totalLeads": "Всего лидов",
+      "winRate": "Конверсия",
+      "openDeals": "{{count}} открытых",
+      "totalDeals": "из {{count}} всего",
+      "wonRate": "процент конверсии"
+    },
+    "charts": {
+      "dealsByStatus": "Сделки по статусу",
+      "leadsByStatus": "Лиды по статусу",
+      "open": "Открытые",
+      "won": "Выигранные",
+      "lost": "Проигранные",
+      "new": "Новые",
+      "contacted": "Контакт",
+      "qualified": "Квалифиц.",
+      "unqualified": "Неквалиф.",
+      "converted": "Конвертированы",
+      "noLeads": "Лидов пока нет",
+      "deals": "Сделки"
+    },
+    "aiInsights": {
+      "title": "ИИ Инсайты",
+      "view": "Открыть",
+      "lostTitle": "{{count}} сделок проиграно",
+      "lostDesc": "Проанализируйте причины для улучшения результатов.",
+      "winRateTitle": "{{rate}}% конверсия",
+      "winRateDesc": "На основе исторических данных по закрытым сделкам.",
+      "openDealsTitle": "{{count}} активных сделок",
+      "openDealsDesc": "Продолжайте работу для продвижения сделок по воронке.",
+      "healthyTitle": "Воронка в порядке",
+      "healthyDesc": "Поддерживайте вовлечённость лидов для сохранения темпа."
+    }
+  },
+  "users": {
+    "title": "Пользователи и роли",
+    "adminOnly": "Только для администраторов",
+    "search": "Поиск пользователей...",
+    "noUsers": "Пользователи не найдены",
+    "you": "Вы",
+    "cantEditSelf": "Нельзя изменить свою роль",
+    "loadError": "Не удалось загрузить пользователей",
+    "updateError": "Не удалось обновить роль",
+    "roles": {
+      "admin": "Администратор",
+      "manager": "Менеджер",
+      "sales_rep": "Сотрудник"
+    },
+    "roleCards": {
+      "admin": { "desc": "Полный доступ ко всем функциям и настройкам" },
+      "manager": { "desc": "Управление лидами, сделками, аналитикой, назначение сотрудников" },
+      "sales_rep": { "desc": "Управление только своими лидами и сделками" }
+    },
+    "table": {
+      "member": "Участник",
+      "role": "Роль",
+      "status": "Статус",
+      "actions": "Изменить роль"
+    },
+    "status": {
+      "active": "Активен",
+      "inactive": "Неактивен"
+    }
+  },
+  "leadDetail": {
+    "back": "Назад к лидам",
+    "info": {
+      "notes": "Заметки",
+      "created": "Создан",
+      "updated": "Обновлён"
+    },
+    "timeline": {
+      "title": "Активность",
+      "empty": "Активности пока нет.",
+      "types": {
+        "call": "Звонок",
+        "email": "Email",
+        "meeting": "Встреча",
+        "note": "Заметка",
+        "status_change": "Смена статуса",
+        "stage_change": "Смена этапа",
+        "lead_converted": "Лид конвертирован"
+      }
+    },
+    "ai": {
+      "title": "ИИ Ассистент",
+      "live": "Активен",
+      "score": "Оценка лида",
+      "scoreBtn": "Оценить",
+      "refresh": "Обновить",
+      "actions": "Следующий шаг",
+      "actionsBtn": "Предложить",
+      "emailGen": "Генератор писем",
+      "emailTone": "Тон",
+      "emailContext": "Доп. контекст (необязательно)",
+      "emailGenBtn": "Сгенерировать",
+      "emailGenerating": "Генерирую...",
+      "emailSubject": "Тема",
+      "emailBody": "Текст",
+      "copy": "Копировать",
+      "copied": "Скопировано!",
+      "tones": {
+        "friendly": "Дружелюбный",
+        "formal": "Официальный",
+        "assertive": "Настойчивый"
+      },
+      "priority": {
+        "high": "Высокий",
+        "medium": "Средний",
+        "low": "Низкий"
+      }
+    }
+  },
+  "pipeline": {
+    "title": "Воронка",
+    "noPipeline": "Воронка не выбрана.",
+    "emptyColumn": "Перетащите сделки сюда",
+    "likely": "{{prob}}% вероятность",
+    "overdue": "Просрочено",
+    "totalValue": "Стоимость воронки",
+    "totalDeals": "Всего сделок"
+  },
+  "leads": {
+    "title": "Лиды",
+    "addLead": "Новый лид",
+    "addLeadTooltip": "Скоро будет доступно",
+    "searchPlaceholder": "Поиск лидов...",
+    "filterAll": "Все",
+    "noLeads": "Лиды не найдены",
+    "count": "{{count}} всего",
+    "status": {
+      "new": "Новый",
+      "contacted": "Контакт",
+      "qualified": "Квалифицирован",
+      "unqualified": "Неквалифицирован",
+      "converted": "Конвертирован"
+    },
+    "source": {
+      "website": "Сайт",
+      "referral": "Реферал",
+      "cold_call": "Холодный звонок",
+      "social_media": "Соцсети",
+      "email_campaign": "Email-кампания",
+      "other": "Другое"
+    },
+    "table": {
+      "name": "Имя",
+      "company": "Компания",
+      "status": "Статус",
+      "source": "Источник",
+      "created": "Создан"
+    },
+    "pagination": {
+      "showing": "Показаны {{from}}–{{to}} из {{total}}"
+    },
+    "dialog": {
+      "title": "Новый лид",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "email": "Email",
+      "phone": "Телефон (необязательно)",
+      "company": "Компания (необязательно)",
+      "source": "Источник лида",
+      "cancel": "Отмена",
+      "submit": "Создать лида",
+      "submitting": "Создание...",
+      "validationRequired": "Имя, фамилия и email обязательны.",
+      "submitError": "Не удалось создать лида. Попробуйте ещё раз."
+    }
+  },
   "auth": {
     "signIn": "Войти",
     "register": "Регистрация",

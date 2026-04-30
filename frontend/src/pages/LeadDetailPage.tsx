@@ -1,14 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {
-  Alert,
-  Box,
-  CircularProgress,
-  Grid,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import AIBlock from '../components/lead/AIBlock';
 import ActivityTimeline from '../components/lead/ActivityTimeline';
@@ -16,6 +9,7 @@ import LeadInfoCard from '../components/lead/LeadInfoCard';
 import { useLeadDetailStore } from '../store/useLeadDetailStore';
 
 export default function LeadDetailPage() {
+  const { t } = useTranslation();
   const { leadId } = useParams<{ leadId: string }>();
   const navigate = useNavigate();
 
@@ -32,49 +26,72 @@ export default function LeadDetailPage() {
     return () => { reset(); };
   }, [leadId, fetchLead, fetchActivities, reset]);
 
-  if (lead.loading) {
+  if (lead.error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-        <CircularProgress />
-      </Box>
+      <Alert severity="error" sx={{ borderRadius: '12px' }}>
+        {lead.error}
+      </Alert>
     );
   }
 
-  if (lead.error) {
-    return <Alert severity="error">{lead.error}</Alert>;
-  }
-
-  if (!lead.data) return null;
-
   return (
     <Box>
-      {/* Page header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <Tooltip title="Назад к лидам">
-          <IconButton onClick={() => navigate('/leads')} size="small">
-            <ArrowBackIcon />
+      {/* ── Page header ── */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+        <Tooltip title={t('leadDetail.back')}>
+          <IconButton
+            onClick={() => navigate('/leads')}
+            size="small"
+            sx={{
+              border: '1px solid #E2EAF4',
+              borderRadius: '10px',
+              color: '#4B6080',
+              '&:hover': { bgcolor: '#F0F5FF' },
+            }}
+          >
+            <ArrowBackIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Typography variant="h4" fontWeight={700}>
-          {lead.data.first_name} {lead.data.last_name}
-        </Typography>
+
+        {lead.loading ? (
+          <Skeleton variant="text" width={200} height={32} />
+        ) : lead.data ? (
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 24,
+              fontWeight: 700,
+              color: '#0D2144',
+              lineHeight: 1.2,
+            }}
+          >
+            {lead.data.first_name} {lead.data.last_name}
+          </Typography>
+        ) : null}
       </Box>
 
-      <Grid container spacing={3} alignItems="flex-start">
-        {/* Left column — info + timeline */}
-        <Grid item xs={12} md={7}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* ── 3-column layout ── */}
+      <Grid container spacing={2.5} alignItems="flex-start">
+        {/* Left — profile card */}
+        <Grid item xs={12} md={3}>
+          {lead.loading ? (
+            <Skeleton variant="rounded" height={420} sx={{ borderRadius: '16px' }} />
+          ) : lead.data ? (
             <LeadInfoCard lead={lead.data} />
-            <ActivityTimeline
-              activities={activities.data ?? []}
-              loading={activities.loading}
-              error={activities.error}
-            />
-          </Box>
+          ) : null}
         </Grid>
 
-        {/* Right column — AI block */}
+        {/* Center — activity timeline */}
         <Grid item xs={12} md={5}>
+          <ActivityTimeline
+            activities={activities.data ?? []}
+            loading={activities.loading}
+            error={activities.error}
+          />
+        </Grid>
+
+        {/* Right — AI panel */}
+        <Grid item xs={12} md={4}>
           <AIBlock
             score={score.data}
             scoreLoading={score.loading}

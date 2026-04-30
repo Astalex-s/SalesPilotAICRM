@@ -1,15 +1,16 @@
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PeopleIcon from '@mui/icons-material/People';
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import WorkIcon from '@mui/icons-material/Work';
-import { Alert, Box, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import WorkIcon from '@mui/icons-material/Work';
+import { Alert, Box, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import AIInsightsPanel from '../components/dashboard/AIInsightsPanel';
 import DealsStatusChart from '../components/dashboard/DealsStatusChart';
 import LeadsStatusChart from '../components/dashboard/LeadsStatusChart';
 import StatCard from '../components/dashboard/StatCard';
+import { useAuthStore } from '../store/useAuthStore';
 import { useDashboardStore } from '../store/useDashboardStore';
 
 function formatCurrency(value: number): string {
@@ -18,8 +19,135 @@ function formatCurrency(value: number): string {
   return `$${value.toFixed(0)}`;
 }
 
+/* ── Pipeline health: deals breakdown with progress bars ── */
+function PipelineHealthCard({
+  data,
+  loading,
+}: {
+  data: { open: number; won: number; lost: number } | null;
+  loading: boolean;
+}) {
+  const { t } = useTranslation();
+  const total = data ? data.open + data.won + data.lost : 0;
+
+  const rows = data
+    ? [
+        { label: t('dashboard.charts.open'), value: data.open, color: '#00A8E8' },
+        { label: t('dashboard.charts.won'), value: data.won, color: '#10B981' },
+        { label: t('dashboard.charts.lost'), value: data.lost, color: '#EF4444' },
+      ]
+    : [];
+
+  return (
+    <Box
+      sx={{
+        height: '100%',
+        background: '#FFFFFF',
+        border: '1px solid #E2EAF4',
+        borderRadius: '16px',
+        boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
+        p: 2.5,
+      }}
+    >
+      <Typography
+        sx={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 700,
+          fontSize: 15,
+          color: '#0D2144',
+          mb: 2,
+        }}
+      >
+        {t('dashboard.pipelineHealth')}
+      </Typography>
+
+      {loading ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Skeleton variant="rounded" height={40} />
+          <Skeleton variant="rounded" height={40} />
+          <Skeleton variant="rounded" height={40} />
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          {rows.map((row) => {
+            const pct = total > 0 ? Math.round((row.value / total) * 100) : 0;
+            return (
+              <Box key={row.label}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 0.75,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: row.color,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: '#4B6080',
+                      }}
+                    >
+                      {row.label}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Typography
+                      sx={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: '#0D2144',
+                      }}
+                    >
+                      {row.value}
+                    </Typography>
+                    <Typography sx={{ fontSize: 11, color: '#94A3B8' }}>{pct}%</Typography>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    bgcolor: '#F0F5FF',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '100%',
+                      width: `${pct}%`,
+                      bgcolor: row.color,
+                      borderRadius: 3,
+                      transition: 'width 0.6s ease',
+                    }}
+                  />
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+/* ── Main page ── */
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { data, loading, error, fetchDashboard } = useDashboardStore();
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     fetchDashboard();
@@ -28,102 +156,114 @@ export default function DashboardPage() {
   return (
     <Box>
       {/* Page header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4" fontWeight={700}>
-          Дашборд
-        </Typography>
-        <Tooltip title="Обновить">
-          <IconButton onClick={fetchDashboard} disabled={loading} size="small">
-            <RefreshIcon />
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          mb: 3,
+        }}
+      >
+        <Box>
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 24,
+              fontWeight: 700,
+              color: '#0D2144',
+              lineHeight: 1.2,
+            }}
+          >
+            {t('dashboard.title')}
+          </Typography>
+          <Typography sx={{ fontSize: 14, color: '#4B6080', mt: 0.5 }}>
+            {user?.first_name ? `${user.first_name} · ` : ''}
+            {t('dashboard.greeting')}
+          </Typography>
+        </Box>
+        <Tooltip title={t('dashboard.refresh')}>
+          <IconButton
+            onClick={fetchDashboard}
+            disabled={loading}
+            size="small"
+            sx={{
+              border: '1px solid #E2EAF4',
+              borderRadius: '10px',
+              color: '#4B6080',
+              '&:hover': { bgcolor: '#F0F5FF' },
+            }}
+          >
+            <RefreshIcon fontSize="small" />
           </IconButton>
         </Tooltip>
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>
           {error}
         </Alert>
       )}
 
-      {/* KPI cards row */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={4} lg={2}>
+      {/* ── Row 1: KPI cards ── */}
+      <Grid container spacing={2.5} sx={{ mb: 2.5 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label="Всего лидов"
-            value={data?.total_leads ?? '—'}
-            icon={<PeopleIcon />}
-            color="primary.main"
-            loading={loading}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={4} lg={2}>
-          <StatCard
-            label="Конверсия"
-            value={data ? `${data.conversion_rate}%` : '—'}
-            icon={<TrendingUpIcon />}
-            color="success.main"
-            subtext="лидов → конвертировано"
-            loading={loading}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={4} lg={2}>
-          <StatCard
-            label="Всего сделок"
-            value={data?.total_deals ?? '—'}
-            icon={<WorkIcon />}
-            color="secondary.main"
-            subtext={data ? `${data.open_deals} открытых` : undefined}
-            loading={loading}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={4} lg={2}>
-          <StatCard
-            label="Стоимость воронки"
+            label={t('dashboard.kpi.pipelineValue')}
             value={data ? formatCurrency(data.pipeline_value) : '—'}
-            icon={<AccountTreeIcon />}
-            color="info.main"
-            subtext="открытые сделки"
+            icon={<AccountTreeIcon fontSize="small" />}
+            accentColor="#00A8E8"
+            subtext={t('dashboard.kpi.openDeals', { count: data?.open_deals ?? 0 })}
             loading={loading}
           />
         </Grid>
-
-        <Grid item xs={12} sm={6} md={4} lg={2}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label="Прогноз выручки"
-            value={data ? formatCurrency(data.revenue_forecast) : '—'}
-            icon={<ShowChartIcon />}
-            color="warning.main"
-            subtext="взвешен по этапам"
+            label={t('dashboard.kpi.activeDeals')}
+            value={data?.open_deals ?? '—'}
+            icon={<WorkIcon fontSize="small" />}
+            accentColor="#0D2144"
+            subtext={t('dashboard.kpi.totalDeals', { count: data?.total_deals ?? 0 })}
             loading={loading}
           />
         </Grid>
-
-        <Grid item xs={12} sm={6} md={4} lg={2}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label="Выигранные сделки"
-            value={data?.deals_by_status.won ?? '—'}
-            icon={<AttachMoneyIcon />}
-            color="success.dark"
-            subtext={
-              data && data.total_deals > 0
-                ? `${Math.round((data.deals_by_status.won / data.total_deals) * 100)}% побед`
-                : undefined
-            }
+            label={t('dashboard.kpi.totalLeads')}
+            value={data?.total_leads ?? '—'}
+            icon={<PeopleIcon fontSize="small" />}
+            accentColor="#10B981"
+            loading={loading}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            label={t('dashboard.kpi.winRate')}
+            value={data ? `${data.conversion_rate}%` : '—'}
+            icon={<ShowChartIcon fontSize="small" />}
+            accentColor="#F59E0B"
+            subtext={t('dashboard.kpi.wonRate')}
             loading={loading}
           />
         </Grid>
       </Grid>
 
-      {/* Charts row */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+      {/* ── Row 2: Deals chart + AI Insights ── */}
+      <Grid container spacing={2.5} sx={{ mb: 2.5 }}>
+        <Grid item xs={12} md={8}>
           <DealsStatusChart data={data?.deals_by_status ?? null} loading={loading} />
         </Grid>
+        <Grid item xs={12} md={4}>
+          <AIInsightsPanel data={data} loading={loading} />
+        </Grid>
+      </Grid>
+
+      {/* ── Row 3: Leads chart + Pipeline health ── */}
+      <Grid container spacing={2.5}>
         <Grid item xs={12} md={6}>
           <LeadsStatusChart data={data?.leads_by_status ?? null} loading={loading} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <PipelineHealthCard data={data?.deals_by_status ?? null} loading={loading} />
         </Grid>
       </Grid>
     </Box>
