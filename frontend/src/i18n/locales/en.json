@@ -64,6 +64,25 @@
       "healthyDesc": "Keep engaging with your leads to maintain momentum."
     }
   },
+  "deals": {
+    "title": "Deals",
+    "addDeal": "Add Deal",
+    "noDeals": "No deals found.",
+    "table": {
+      "title": "Title",
+      "amount": "Amount",
+      "stage": "Stage",
+      "closeDate": "Close Date",
+      "created": "Created"
+    },
+    "stages": {
+      "qualification": "Qualification",
+      "proposal": "Proposal",
+      "negotiation": "Negotiation",
+      "closed_won": "Closed Won",
+      "closed_lost": "Closed Lost"
+    }
+  },
   "users": {
     "title": "Users & Roles",
     "adminOnly": "Admin Only",
