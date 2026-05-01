@@ -1,7 +1,7 @@
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Box, Typography } from '@mui/material';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { type Deal } from '../../types/deal';
 

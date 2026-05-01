@@ -1,5 +1,5 @@
 import { Alert, Box, Skeleton, Typography } from '@mui/material';
-import { DragDropContext, type DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useKanbanStore } from '../../store/useKanbanStore';

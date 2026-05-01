@@ -4,7 +4,7 @@ import DealCard from '../DealCard';
 import type { Deal } from '../../../types/deal';
 
 // react-beautiful-dnd требует DragDropContext; мокируем для unit-тестов
-vi.mock('react-beautiful-dnd', () => ({
+vi.mock('@hello-pangea/dnd', () => ({
   Draggable: ({
     children,
   }: {

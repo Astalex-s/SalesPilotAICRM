@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { type Deal } from '../../types/deal';
 import { type Stage } from '../../types/pipeline';
