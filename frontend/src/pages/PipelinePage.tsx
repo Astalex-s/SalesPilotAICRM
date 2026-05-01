@@ -2,6 +2,7 @@ import { Alert, Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import AddDealDialog from '../components/deals/AddDealDialog';
 import KanbanBoard from '../components/kanban/KanbanBoard';
 import PipelineManagerDialog from '../components/pipeline/PipelineManagerDialog';
 import { useKanbanStore } from '../store/useKanbanStore';
@@ -13,6 +14,7 @@ export default function PipelinePage() {
   const { pipelineId } = useParams<{ pipelineId: string }>();
   const { pipeline, allPipelines, loadBoard, loadPipelines, reloadBoard } = useKanbanStore();
   const [managerOpen, setManagerOpen] = useState(false);
+  const [addDealStageId, setAddDealStageId] = useState<string | null>(null);
 
   useEffect(() => {
     loadPipelines();
@@ -115,12 +117,23 @@ export default function PipelinePage() {
         </Box>
       </Box>
 
-      <KanbanBoard pipelineId={pipelineId} />
+      <KanbanBoard
+        pipelineId={pipelineId}
+        onAddDeal={(stageId) => setAddDealStageId(stageId)}
+      />
 
       <PipelineManagerDialog
         open={managerOpen}
         onClose={() => { setManagerOpen(false); reloadBoard(); }}
         onPipelinesChanged={handlePipelinesChanged}
+      />
+
+      <AddDealDialog
+        open={addDealStageId !== null}
+        onClose={() => setAddDealStageId(null)}
+        pipeline={pipeline ?? null}
+        defaultStageId={addDealStageId ?? undefined}
+        onDealCreated={() => { setAddDealStageId(null); reloadBoard(); }}
       />
     </Box>
   );

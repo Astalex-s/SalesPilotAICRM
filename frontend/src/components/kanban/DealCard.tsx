@@ -77,8 +77,7 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
               ? '0 8px 32px rgba(13,33,68,0.14)'
               : '0 2px 8px rgba(13,33,68,0.06)',
             opacity: !isDraggable ? 0.65 : 1,
-            transform: snapshot.isDragging ? 'scale(1.02)' : 'scale(1)',
-            transition: 'box-shadow 0.15s ease, transform 0.12s ease',
+            transition: 'box-shadow 0.15s ease',
             cursor: isDraggable ? (snapshot.isDragging ? 'grabbing' : 'grab') : 'not-allowed',
             position: 'relative',
             overflow: 'hidden',

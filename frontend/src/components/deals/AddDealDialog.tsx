@@ -402,12 +402,13 @@ function SuccessStep({ deal, lead, pipelineId, onDone }: SuccessStepProps) {
 interface FormStepProps {
   leads: Lead[];
   pipeline: Pipeline | null;
+  defaultStageId?: string;
   onCancel: () => void;
   onCreated: (deal: Deal, lead: Lead) => void;
   onLeadUpdated: (leadId: string, status: LeadStatus) => Promise<void>;
 }
 
-function FormStep({ leads, pipeline, onCancel, onCreated, onLeadUpdated }: FormStepProps) {
+function FormStep({ leads, pipeline, defaultStageId, onCancel, onCreated, onLeadUpdated }: FormStepProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
@@ -434,10 +435,11 @@ function FormStep({ leads, pipeline, onCancel, onCreated, onLeadUpdated }: FormS
 
   const stages: Stage[] = pipeline?.stages ?? [];
 
-  // Auto-select first stage when pipeline loads
+  // Auto-select defaultStageId or first stage when pipeline loads
   useEffect(() => {
     if (stageId === '' && stages.length > 0) {
-      setStageId(stages[0].id);
+      const preferred = defaultStageId && stages.find((s) => s.id === defaultStageId);
+      setStageId(preferred ? preferred.id : stages[0].id);
     }
   }, [stages.length]);
 
@@ -654,9 +656,10 @@ interface AddDealDialogProps {
   onClose: () => void;
   pipeline: Pipeline | null;
   onDealCreated: (deal: Deal) => void;
+  defaultStageId?: string;
 }
 
-export default function AddDealDialog({ open, onClose, pipeline, onDealCreated }: AddDealDialogProps) {
+export default function AddDealDialog({ open, onClose, pipeline, onDealCreated, defaultStageId }: AddDealDialogProps) {
   const { t } = useTranslation();
   const leads = useLeadStore((s) => s.leads);
   const fetchLeads = useLeadStore((s) => s.fetchLeads);
@@ -727,6 +730,7 @@ export default function AddDealDialog({ open, onClose, pipeline, onDealCreated }
           <FormStep
             leads={leads}
             pipeline={pipeline}
+            defaultStageId={defaultStageId}
             onCancel={handleClose}
             onCreated={handleCreated}
             onLeadUpdated={async (id, status) => { await updateLeadInStore(id, { status }); }}

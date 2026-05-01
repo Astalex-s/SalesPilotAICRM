@@ -7,6 +7,7 @@ import KanbanColumn from './KanbanColumn';
 
 interface KanbanBoardProps {
   pipelineId: string;
+  onAddDeal?: (stageId: string) => void;
 }
 
 /* ── Skeleton for loading state ── */
@@ -96,7 +97,7 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
 }
 
 /* ── Main board ── */
-export default function KanbanBoard({ pipelineId }: KanbanBoardProps) {
+export default function KanbanBoard({ pipelineId, onAddDeal }: KanbanBoardProps) {
   const { pipeline, columns, loading, error, moveDeal } = useKanbanStore();
   const userId = useAuthStore((s) => s.user?.id ?? '');
 
@@ -147,6 +148,7 @@ export default function KanbanBoard({ pipelineId }: KanbanBoardProps) {
               key={stage.id}
               stage={stage}
               deals={columns[stage.id] ?? []}
+              onAddDeal={onAddDeal ? () => onAddDeal(stage.id) : undefined}
             />
           ))}
         </Box>
