@@ -5,6 +5,27 @@ import { type Deal } from '../../types/deal';
 import { type Stage } from '../../types/pipeline';
 import DealCard from './DealCard';
 
+/* ── Stage name i18n: map known stage names (any language) to i18n keys ── */
+const STAGE_I18N_KEYS: Record<string, string> = {
+  // Russian (seeded DB names)
+  'квалификация':       'deals.stages.qualification',
+  'предложение':        'deals.stages.proposal',
+  'переговоры':         'deals.stages.negotiation',
+  'закрыто: победа':    'deals.stages.closed_won',
+  'закрыто: проигрыш':  'deals.stages.closed_lost',
+  // English equivalents
+  'qualification':      'deals.stages.qualification',
+  'proposal':           'deals.stages.proposal',
+  'negotiation':        'deals.stages.negotiation',
+  'closed won':         'deals.stages.closed_won',
+  'closed lost':        'deals.stages.closed_lost',
+};
+
+function translateStageName(name: string, t: (k: string) => string): string {
+  const key = STAGE_I18N_KEYS[name.trim().toLowerCase()];
+  return key ? t(key) : name;
+}
+
 interface KanbanColumnProps {
   stage: Stage;
   deals: Deal[];
@@ -52,7 +73,7 @@ export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
             color: '#0D2144',
           }}
         >
-          {stage.name}
+          {translateStageName(stage.name, t)}
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

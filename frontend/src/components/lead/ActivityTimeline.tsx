@@ -23,15 +23,15 @@ const ACTIVITY_META: Record<
 };
 
 /* ── Relative time ── */
-function relativeTime(dateStr: string): string {
+function relativeTime(dateStr: string, t: (k: string, o?: object) => string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('time.justNow');
+  if (mins < 60) return t('time.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return t('time.hoursAgo', { count: hrs });
   const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return t('time.daysAgo', { count: days });
   return new Date(dateStr).toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
 }
 
@@ -105,7 +105,7 @@ function TimelineEntry({
               flexShrink: 0,
             }}
           >
-            {relativeTime(activity.occurred_at)}
+            {relativeTime(activity.occurred_at, t)}
           </Typography>
         </Box>
         {activity.body && (
