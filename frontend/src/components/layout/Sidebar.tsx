@@ -1,10 +1,10 @@
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Box, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useKanbanStore } from '../../store/useKanbanStore';
 import { useUIStore } from '../../store/useUIStore';
-
-const DEMO_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 /* ── Icon components (inline SVG — no extra dep) ────────────────────────────── */
 const Icon = ({ d, size = 20 }: { d: string; size?: number }) => (
@@ -136,6 +136,153 @@ const PulsingDot = () => (
   }} />
 );
 
+/* ── Pipeline nav item with pipeline switcher flyout ────────────────────────── */
+function PipelineNavItem({ expanded }: { expanded: boolean }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { allPipelines, loadPipelines } = useKanbanStore();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { loadPipelines(); }, [loadPipelines]);
+
+  const isActive = pathname.startsWith('/pipeline/');
+  const activePipelineId = isActive ? pathname.split('/pipeline/')[1] : null;
+
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (allPipelines.length <= 1) {
+      const id = allPipelines[0]?.id ?? '00000000-0000-0000-0000-000000000001';
+      navigate(`/pipeline/${id}`);
+    } else {
+      setAnchorEl(e.currentTarget);
+    }
+  };
+
+  const handleSelect = (id: string) => {
+    setAnchorEl(null);
+    navigate(`/pipeline/${id}`);
+  };
+
+  const color = isActive ? C.activeText : C.iconDefault;
+
+  const inner = (
+    <Box
+      ref={itemRef}
+      onClick={handleClick}
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        gap: expanded ? 1.5 : 0,
+        justifyContent: expanded ? 'flex-start' : 'center',
+        px: expanded ? '12px' : 0,
+        py: '8px',
+        mx: expanded ? '8px' : 'auto',
+        width: expanded ? 'calc(100% - 16px)' : 40,
+        height: 40,
+        borderRadius: '8px',
+        bgcolor: isActive ? C.active : 'transparent',
+        color,
+        cursor: 'pointer',
+        transition: 'background 0.15s, color 0.15s',
+        '&:hover': { bgcolor: isActive ? C.active : C.hoverBg },
+      }}
+    >
+      {isActive && (
+        <Box sx={{
+          position: 'absolute', left: -8, top: '50%', transform: 'translateY(-50%)',
+          width: 3, height: 20, bgcolor: C.activeLine, borderRadius: '0 2px 2px 0',
+        }} />
+      )}
+      <Box sx={{ color, flexShrink: 0, display: 'flex' }}>
+        <Icon d={ICONS.pipeline} />
+      </Box>
+      {expanded && (
+        <>
+          <Typography sx={{
+            fontSize: 13, fontWeight: isActive ? 600 : 400,
+            fontFamily: 'Inter, sans-serif', color, lineHeight: 1, flex: 1,
+          }}>
+            {t('nav.pipeline')}
+          </Typography>
+          {allPipelines.length > 1 && (
+            <Box sx={{ color: C.sectionCap, display: 'flex', ml: 'auto' }}>
+              <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </Box>
+          )}
+        </>
+      )}
+    </Box>
+  );
+
+  return (
+    <>
+      {expanded ? inner : (
+        <Tooltip title={t('nav.pipeline')} placement="right" arrow>
+          {inner}
+        </Tooltip>
+      )}
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        PaperProps={{
+          sx: {
+            borderRadius: '10px',
+            boxShadow: '0 4px 20px rgba(13,33,68,0.12)',
+            border: '1px solid #E8EFF7',
+            minWidth: 200,
+            ml: 0.5,
+          },
+        }}
+      >
+        <Typography sx={{
+          px: 2, pt: 1.25, pb: 0.5,
+          fontSize: 10, fontWeight: 600, letterSpacing: '0.07em',
+          textTransform: 'uppercase', color: '#94A3B8', fontFamily: 'Inter, sans-serif',
+        }}>
+          {t('nav.pipeline')}
+        </Typography>
+        {allPipelines.map((p) => (
+          <MenuItem
+            key={p.id}
+            onClick={() => handleSelect(p.id)}
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 13,
+              fontWeight: activePipelineId === p.id ? 600 : 400,
+              color: activePipelineId === p.id ? C.activeLine : C.text,
+              borderRadius: '6px',
+              mx: 0.75,
+              my: 0.25,
+              px: 1.5,
+              '&:hover': { bgcolor: C.hoverBg },
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+              {activePipelineId === p.id && (
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: C.activeLine, flexShrink: 0 }} />
+              )}
+              {activePipelineId !== p.id && (
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#E2EAF4', flexShrink: 0 }} />
+              )}
+              <Typography noWrap sx={{ fontFamily: 'inherit', fontSize: 'inherit', fontWeight: 'inherit', color: 'inherit' }}>
+                {p.name}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
+
 /* ── Avatar initials ─────────────────────────────────────────────────────────── */
 function UserAvatar({ firstName, lastName, size = 32 }: { firstName: string; lastName: string; size?: number }) {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
@@ -187,7 +334,6 @@ export default function Sidebar() {
         { iconKey: 'dashboard', labelKey: 'nav.dashboard', path: '/' },
         { iconKey: 'leads',     labelKey: 'nav.leads',     path: '/leads' },
         { iconKey: 'deals',     labelKey: 'nav.deals',     path: '/deals' },
-        { iconKey: 'pipeline',  labelKey: 'nav.pipeline',  path: `/pipeline/${DEMO_PIPELINE_ID}` },
       ],
     },
     {
@@ -280,6 +426,9 @@ export default function Sidebar() {
                   cyan={item.cyan}
                 />
               ))}
+              {sectionKey === 'nav.sections.sales' && (
+                <PipelineNavItem expanded={expanded} />
+              )}
             </Box>
           );
         })}
