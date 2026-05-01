@@ -101,9 +101,17 @@ async def telegram_status(
             webhook_pending_updates=0,
         )
 
-    info = await telegram_service.get_webhook_info()
-    return TelegramStatusOutput(
-        configured=True,
-        webhook_url=info.url,
-        webhook_pending_updates=info.pending_update_count,
-    )
+    try:
+        info = await telegram_service.get_webhook_info()
+        return TelegramStatusOutput(
+            configured=True,
+            webhook_url=info.url,
+            webhook_pending_updates=info.pending_update_count,
+        )
+    except Exception as exc:
+        logger.warning("Telegram get_webhook_info failed: %s", exc)
+        return TelegramStatusOutput(
+            configured=True,
+            webhook_url="",
+            webhook_pending_updates=0,
+        )
