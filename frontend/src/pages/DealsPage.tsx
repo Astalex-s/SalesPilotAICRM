@@ -1,23 +1,71 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Alert, Box, Button, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type DealStage } from '../types/deal';
+import { dealsApi } from '../api/deals';
+import { pipelinesApi } from '../api/pipelines';
+import AddDealDialog from '../components/deals/AddDealDialog';
+import { type Deal, type DealStatus } from '../types/deal';
+import { type Pipeline } from '../types/pipeline';
 
-const STAGE_STYLE: Record<DealStage, { bg: string; color: string }> = {
-  qualification: { bg: 'rgba(0,168,232,0.12)',  color: '#0090CC' },
-  proposal:      { bg: 'rgba(245,158,11,0.12)', color: '#D97706' },
-  negotiation:   { bg: 'rgba(139,92,246,0.12)', color: '#7C3AED' },
-  closed_won:    { bg: 'rgba(16,185,129,0.12)', color: '#059669' },
-  closed_lost:   { bg: 'rgba(239,68,68,0.12)',  color: '#DC2626' },
+const DEMO_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
+
+/* Stage name → i18n key (same mapping as KanbanColumn) */
+const STAGE_I18N_KEYS: Record<string, string> = {
+  'квалификация':          'deals.stages.qualification',
+  'предложение':           'deals.stages.proposal',
+  'переговоры':            'deals.stages.negotiation',
+  'закрыто: победа':       'deals.stages.closed_won',
+  'закрыто: проигрыш':     'deals.stages.closed_lost',
+  'qualification':         'deals.stages.qualification',
+  'proposal':              'deals.stages.proposal',
+  'negotiation':           'deals.stages.negotiation',
+  'closed won':            'deals.stages.closed_won',
+  'closed lost':           'deals.stages.closed_lost',
+};
+
+function translateStageName(name: string, t: (k: string) => string): string {
+  const key = STAGE_I18N_KEYS[name.trim().toLowerCase()];
+  return key ? t(key) : name;
+}
+
+const STATUS_STYLE: Record<DealStatus, { bg: string; color: string }> = {
+  open: { bg: 'rgba(0,168,232,0.10)',   color: '#00A8E8' },
+  won:  { bg: 'rgba(16,185,129,0.10)',  color: '#059669' },
+  lost: { bg: 'rgba(239,68,68,0.10)',   color: '#DC2626' },
 };
 
 export default function DealsPage() {
   const { t } = useTranslation();
 
-  // Placeholder — data fetching will be wired in a future step
-  const loading = false;
-  const error: string | null = null;
-  const deals: never[] = [];
+  const [deals, setDeals] = useState<Deal[]>([]);
+  const [pipeline, setPipeline] = useState<Pipeline | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    Promise.all([
+      dealsApi.list(),
+      pipelinesApi.get(DEMO_PIPELINE_ID),
+    ])
+      .then(([d, p]) => { setDeals(d); setPipeline(p); })
+      .catch(() => setError(t('deals.loadError')))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  /* When a new deal is created via the dialog, prepend it to the list */
+  const handleDealCreated = (deal: Deal) => {
+    setDeals((prev) => [deal, ...prev]);
+  };
+
+  /* Resolve stage name for a deal using loaded pipeline stages */
+  const getStageName = (stageId: string): string => {
+    const stage = pipeline?.stages.find((s) => s.id === stageId);
+    return stage ? translateStageName(stage.name, t) : '—';
+  };
 
   return (
     <Box>
@@ -29,7 +77,7 @@ export default function DealsPage() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          disabled
+          onClick={() => setDialogOpen(true)}
           sx={{
             bgcolor: '#00A8E8',
             color: '#fff',
@@ -40,7 +88,7 @@ export default function DealsPage() {
             px: 2.5,
             textTransform: 'none',
             boxShadow: 'none',
-            '&.Mui-disabled': { bgcolor: '#CBD5E8', color: '#fff' },
+            '&:hover': { bgcolor: '#0090CC', boxShadow: 'none' },
           }}
         >
           {t('deals.addDeal')}
@@ -61,15 +109,15 @@ export default function DealsPage() {
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow sx={{ bgcolor: '#F8FAFC' }}>
-              {[
-                t('deals.table.title'),
-                t('deals.table.amount'),
-                t('deals.table.stage'),
-                t('deals.table.closeDate'),
-                t('deals.table.created'),
-              ].map((label) => (
+              {([
+                [t('deals.table.title'),     undefined],
+                [t('deals.table.amount'),    undefined],
+                [t('deals.table.stage'),     undefined],
+                [t('deals.table.status') || 'Status', '120px'],
+                [t('deals.table.closeDate'), undefined],
+              ] as [string, string | undefined][]).map(([label, width], i) => (
                 <TableCell
-                  key={label}
+                  key={i}
                   sx={{
                     fontFamily: 'Inter, sans-serif',
                     fontSize: 11,
@@ -79,6 +127,7 @@ export default function DealsPage() {
                     color: '#94A3B8',
                     border: 'none',
                     py: 1.5,
+                    width,
                   }}
                 >
                   {label}
@@ -103,72 +152,68 @@ export default function DealsPage() {
                 <TableCell
                   colSpan={5}
                   align="center"
-                  sx={{
-                    py: 8,
-                    border: 'none',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 14,
-                    color: '#94A3B8',
-                  }}
+                  sx={{ py: 8, border: 'none', fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#94A3B8' }}
                 >
                   {t('deals.noDeals')}
                 </TableCell>
               </TableRow>
             ) : (
               deals.map((deal) => {
-                const d = deal as {
-                  id: string;
-                  title: string;
-                  amount: number;
-                  stage: DealStage;
-                  close_date: string | null;
-                  created_at: string;
-                };
-                const s = STAGE_STYLE[d.stage];
+                const st = STATUS_STYLE[deal.status] ?? STATUS_STYLE.open;
+                const amountNum = parseFloat(deal.value_amount);
                 return (
                   <TableRow
-                    key={d.id}
+                    key={deal.id}
                     sx={{
                       height: 56,
                       '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
                       '&:hover': { bgcolor: '#F0F5FF' },
                     }}
                   >
+                    {/* Title */}
                     <TableCell>
-                      <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
-                        {d.title}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: '#00A8E8' }}>
-                        ${d.amount.toLocaleString()}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          display: 'inline-flex',
-                          px: 1.25,
-                          py: 0.4,
-                          borderRadius: '20px',
-                          bgcolor: s.bg,
-                          color: s.color,
-                          fontFamily: 'Inter',
-                          fontSize: 12,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {t(`deals.stages.${d.stage}`)}
+                      <Box>
+                        <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144', lineHeight: 1.2 }}>
+                          {deal.title}
+                        </Typography>
+                        {deal.company && (
+                          <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>
+                            {deal.company}
+                          </Typography>
+                        )}
                       </Box>
                     </TableCell>
+
+                    {/* Amount */}
                     <TableCell>
-                      <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#94A3B8' }}>
-                        {d.close_date ? new Date(d.close_date).toLocaleDateString() : '—'}
+                      <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: '#00A8E8' }}>
+                        {isNaN(amountNum) ? deal.value_amount : amountNum.toLocaleString()} {deal.value_currency}
                       </Typography>
                     </TableCell>
+
+                    {/* Stage (resolved from pipeline) */}
+                    <TableCell>
+                      <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#475569' }}>
+                        {getStageName(deal.stage_id)}
+                      </Typography>
+                    </TableCell>
+
+                    {/* Status badge */}
+                    <TableCell>
+                      <Box sx={{
+                        display: 'inline-flex', px: 1.25, py: 0.4, borderRadius: '20px',
+                        bgcolor: st.bg, color: st.color, fontFamily: 'Inter', fontSize: 12, fontWeight: 600,
+                      }}>
+                        {t(`deals.status.${deal.status}`)}
+                      </Box>
+                    </TableCell>
+
+                    {/* Close date */}
                     <TableCell>
                       <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#94A3B8' }}>
-                        {new Date(d.created_at).toLocaleDateString()}
+                        {deal.expected_close_date
+                          ? new Date(deal.expected_close_date).toLocaleDateString()
+                          : '—'}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -178,6 +223,14 @@ export default function DealsPage() {
           </TableBody>
         </Table>
       </Box>
+
+      {/* Add Deal Dialog */}
+      <AddDealDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        pipeline={pipeline}
+        onDealCreated={handleDealCreated}
+      />
     </Box>
   );
 }

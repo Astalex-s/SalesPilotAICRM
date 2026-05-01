@@ -24,6 +24,7 @@ const ICONS = {
   ai:          'M12 2a2 2 0 012 2v1a7 7 0 010 14v1a2 2 0 01-4 0v-1a7 7 0 010-14V4a2 2 0 012-2z M8 12h.01 M12 12h.01 M16 12h.01',
   analytics:   'M18 20V10 M12 20V4 M6 20v-6',
   admin:       'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+  gdpr:        'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4',
   settings:    'M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z',
   logout:      'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9',
   menu:        'M3 12h18 M3 6h18 M3 18h18',
@@ -192,21 +193,22 @@ export default function Sidebar() {
     {
       sectionKey: 'nav.sections.communication',
       items: [
-        { iconKey: 'gmail',    labelKey: 'nav.gmail',    path: '#gmail' },
-        { iconKey: 'telegram', labelKey: 'nav.telegram', path: '#telegram' },
+        { iconKey: 'gmail',    labelKey: 'nav.gmail',    path: '/gmail' },
+        { iconKey: 'telegram', labelKey: 'nav.telegram', path: '/telegram' },
       ],
     },
     {
       sectionKey: 'nav.sections.intelligence',
       items: [
-        { iconKey: 'ai', labelKey: 'nav.aiAssistant', path: '#ai', cyan: true, badge: <PulsingDot /> },
+        { iconKey: 'ai', labelKey: 'nav.aiAssistant', path: '/ai-assistant', cyan: true, badge: <PulsingDot /> },
       ],
     },
     {
       sectionKey: 'nav.sections.system',
       items: [
-        { iconKey: 'analytics', labelKey: 'nav.analytics', path: '#analytics' },
-        { iconKey: 'admin',     labelKey: 'nav.admin',     path: '/users', adminOnly: true },
+        { iconKey: 'analytics', labelKey: 'nav.analytics', path: '/analytics' },
+        { iconKey: 'admin',     labelKey: 'nav.admin',     path: '/users',  adminOnly: true },
+        { iconKey: 'gdpr',      labelKey: 'nav.gdpr',      path: '/gdpr',   adminOnly: true },
       ],
     },
   ];
@@ -311,7 +313,7 @@ export default function Sidebar() {
             {expanded && (
               <Box sx={{ display: 'flex', gap: 0.5 }}>
                 <Tooltip title={t('nav.settings')} arrow>
-                  <Box sx={{ color: C.sectionCap, cursor: 'pointer', display: 'flex', p: '4px', borderRadius: '6px', '&:hover': { color: C.activeText, bgcolor: C.hoverBg } }}>
+                  <Box onClick={() => go('/settings')} sx={{ color: C.sectionCap, cursor: 'pointer', display: 'flex', p: '4px', borderRadius: '6px', '&:hover': { color: C.activeText, bgcolor: C.hoverBg } }}>
                     <Icon d={ICONS.settings} size={18} />
                   </Box>
                 </Tooltip>
@@ -323,11 +325,18 @@ export default function Sidebar() {
               </Box>
             )}
             {!expanded && (
-              <Tooltip title={t('nav.logout')} placement="right" arrow>
-                <Box onClick={handleLogout} sx={{ color: C.sectionCap, cursor: 'pointer', display: 'flex', p: '4px', borderRadius: '6px', '&:hover': { color: '#EF4444', bgcolor: '#FFF5F5' } }}>
-                  <Icon d={ICONS.logout} size={18} />
-                </Box>
-              </Tooltip>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Tooltip title={t('nav.settings')} placement="right" arrow>
+                  <Box onClick={() => go('/settings')} sx={{ color: C.sectionCap, cursor: 'pointer', display: 'flex', p: '4px', borderRadius: '6px', '&:hover': { color: C.activeText, bgcolor: C.hoverBg } }}>
+                    <Icon d={ICONS.settings} size={18} />
+                  </Box>
+                </Tooltip>
+                <Tooltip title={t('nav.logout')} placement="right" arrow>
+                  <Box onClick={handleLogout} sx={{ color: C.sectionCap, cursor: 'pointer', display: 'flex', p: '4px', borderRadius: '6px', '&:hover': { color: '#EF4444', bgcolor: '#FFF5F5' } }}>
+                    <Icon d={ICONS.logout} size={18} />
+                  </Box>
+                </Tooltip>
+              </Box>
             )}
           </>
         )}

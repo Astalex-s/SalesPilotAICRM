@@ -24,6 +24,7 @@ class Stage:
     name: str
     order: int
     probability: float  # вероятность выигрыша: 0.0 → 1.0
+    color: str | None = None  # HEX-цвет этапа, например "#00A8E8"
 
     def __post_init__(self) -> None:
         if not self.name.strip():
@@ -44,6 +45,7 @@ class Stage:
         name: str,
         order: int,
         probability: float = 0.5,
+        color: str | None = None,
     ) -> Stage:
         """Создаёт новый этап с генерируемым ID."""
         return cls(
@@ -52,6 +54,7 @@ class Stage:
             name=name.strip(),
             order=order,
             probability=probability,
+            color=color,
         )
 
     # ── Поведение ──────────────────────────────────────────────────────────────

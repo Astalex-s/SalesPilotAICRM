@@ -77,6 +77,18 @@ class SqlUserRepository(IUserRepository):
         )
         return [row.to_entity() for row in result.scalars().all()]
 
+    async def update_password_hash(self, user_id: UUID, password_hash: str) -> bool:
+        """Обновляет хэш пароля пользователя. Возвращает False если пользователь не найден."""
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            return False
+        model.password_hash = password_hash
+        await self._session.flush()
+        return True
+
     async def update_role(self, user_id: UUID, role: str) -> User | None:
         """Обновляет роль пользователя напрямую в БД."""
         result = await self._session.execute(

@@ -2,6 +2,12 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
+import AIAssistantPage from './pages/AIAssistantPage';
+import SettingsPage from './pages/SettingsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import GdprPage from './pages/GdprPage';
+import GmailPage from './pages/GmailPage';
+import TelegramPage from './pages/TelegramPage';
 import DashboardPage from './pages/DashboardPage';
 import DealsPage from './pages/DealsPage';
 import LeadDetailPage from './pages/LeadDetailPage';
@@ -37,7 +43,13 @@ export default function App() {
               <Route path="leads/:leadId" element={<LeadDetailPage />} />
               <Route path="deals" element={<DealsPage />} />
               <Route path="pipeline/:pipelineId" element={<PipelinePage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="gmail" element={<GmailPage />} />
+              <Route path="telegram" element={<TelegramPage />} />
+              <Route path="gdpr" element={<GdprPage />} />
               <Route path="users" element={<UsersPage />} />
+              <Route path="ai-assistant" element={<AIAssistantPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>
 

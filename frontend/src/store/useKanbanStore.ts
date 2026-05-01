@@ -9,12 +9,19 @@ export type KanbanColumns = Record<string, Deal[]>;
 
 interface KanbanState {
   pipeline: Pipeline | null;
+  allPipelines: Pipeline[];
   columns: KanbanColumns;
   loading: boolean;
   error: string | null;
 
+  /** Load list of all active pipelines. */
+  loadPipelines: () => Promise<void>;
+
   /** Load pipeline metadata + all its deals, build columns. */
   loadBoard: (pipelineId: string) => Promise<void>;
+
+  /** Reload the currently open board (used after stage edits). */
+  reloadBoard: () => Promise<void>;
 
   /**
    * Move a deal from one stage column to another.
@@ -45,9 +52,24 @@ function buildColumns(pipeline: Pipeline, deals: Deal[]): KanbanColumns {
 
 export const useKanbanStore = create<KanbanState>((set, get) => ({
   pipeline: null,
+  allPipelines: [],
   columns: {},
   loading: false,
   error: null,
+
+  loadPipelines: async () => {
+    try {
+      const pipelines = await pipelinesApi.list();
+      set({ allPipelines: pipelines });
+    } catch (_) {
+      // non-critical — fail silently
+    }
+  },
+
+  reloadBoard: async () => {
+    const { pipeline } = get();
+    if (pipeline) await get().loadBoard(pipeline.id);
+  },
 
   loadBoard: async (pipelineId: string) => {
     set({ loading: true, error: null });

@@ -21,7 +21,8 @@
     "logout": "Выйти",
     "search": "Поиск или команда... ⌘K",
     "aiActive": "ИИ Активен",
-    "notifications": "Уведомления"
+    "notifications": "Уведомления",
+    "gdpr": "GDPR"
   },
   "dashboard": {
     "title": "Дашборд",
@@ -68,10 +69,12 @@
     "title": "Сделки",
     "addDeal": "Новая сделка",
     "noDeals": "Сделки не найдены.",
+    "loadError": "Не удалось загрузить сделки",
     "table": {
       "title": "Название",
       "amount": "Сумма",
       "stage": "Этап",
+      "status": "Статус",
       "closeDate": "Дата закрытия",
       "created": "Создан"
     },
@@ -81,6 +84,58 @@
       "negotiation": "Переговоры",
       "closed_won": "Закрыто: победа",
       "closed_lost": "Закрыто: проигрыш"
+    },
+    "status": {
+      "open": "Открыта",
+      "won": "Выиграна",
+      "lost": "Проиграна"
+    },
+    "dialog": {
+      "title": "Новая сделка",
+      "leadLabel": "Лид",
+      "leadPlaceholder": "Выберите лида...",
+      "notQualifiedWarning": "Этот лид не квалифицирован. Конвертировать можно только лидов со статусом «Квалифицирован».",
+      "titleLabel": "Название сделки",
+      "amountLabel": "Сумма",
+      "currencyLabel": "Валюта",
+      "stageLabel": "Начальный этап",
+      "closeDateLabel": "Ожидаемая дата закрытия (необязательно)",
+      "cancel": "Отмена",
+      "submit": "Создать сделку",
+      "submitting": "Создаём...",
+      "error": "Не удалось создать сделку"
+    },
+    "success": {
+      "title": "Сделка создана!",
+      "subtitle": "«{{title}}» добавлена в воронку",
+      "aiCard": {
+        "title": "AI-оценка лида",
+        "desc": "Проанализируйте вероятность конверсии и получите рекомендации",
+        "button": "Анализировать лида",
+        "analyzing": "Анализируем...",
+        "error": "Не удалось оценить лида"
+      },
+      "emailCard": {
+        "title": "Отправить письмо",
+        "desc": "Составьте и отправьте персонализированное письмо лиду",
+        "to": "Кому",
+        "subject": "Тема",
+        "body": "Текст",
+        "generateAI": "Сгенерировать с AI",
+        "generating": "Генерируем...",
+        "send": "Отправить",
+        "sending": "Отправляем...",
+        "sent": "Отправлено!",
+        "notConnected": "Gmail не подключён.",
+        "connectLink": "Подключить Gmail →",
+        "error": "Не удалось отправить письмо"
+      },
+      "telegramCard": {
+        "title": "Telegram-уведомления",
+        "desc": "При смене этапа сделки в воронке уведомления автоматически отправляются в ваш Telegram-канал."
+      },
+      "viewPipeline": "Открыть в воронке",
+      "done": "Готово"
     }
   },
   "users": {
@@ -169,7 +224,27 @@
     "likely": "{{prob}}% вероятность",
     "overdue": "Просрочено",
     "totalValue": "Стоимость воронки",
-    "totalDeals": "Всего сделок"
+    "totalDeals": "Всего сделок",
+    "manage": "Управление воронками"
+  },
+  "pipelineManager": {
+    "title": "Управление воронками",
+    "newPipeline": "Новая воронка",
+    "pipelineNamePlaceholder": "Название воронки...",
+    "create": "Создать",
+    "selectPipeline": "Выберите воронку слева",
+    "stagesCount": "{{count}} этапов",
+    "stageName": "Название этапа",
+    "probability": "Успех %",
+    "probabilityHint": "Вероятность выигрыша (%)",
+    "stageColor": "Цвет",
+    "stageNamePlaceholder": "Название этапа...",
+    "addStage": "Добавить этап",
+    "editStage": "Редактировать этап",
+    "deleteStage": "Удалить этап",
+    "noStages": "Этапов пока нет. Добавьте первый.",
+    "save": "Сохранить",
+    "cancel": "Отмена"
   },
   "leads": {
     "title": "Лиды",
@@ -218,6 +293,342 @@
       "validationRequired": "Имя, фамилия и email обязательны.",
       "submitError": "Не удалось создать лида. Попробуйте ещё раз."
     }
+  },
+  "gdpr": {
+    "title": "GDPR Соответствие",
+    "adminOnly": "Только администраторам",
+    "warning": "Эти действия необратимы. Все удалённые данные восстановить невозможно.",
+    "deleteUser": {
+      "title": "Удалить данные пользователя",
+      "desc": "Безвозвратно удаляет все данные аккаунта: лиды, сделки, письма и записи активности. (Ст. 17 — Право на удаление)",
+      "selectLabel": "Выберите пользователя",
+      "selectPlaceholder": "Выберите пользователя...",
+      "button": "Удалить все данные",
+      "confirmTitle": "Подтвердите удаление",
+      "confirmDesc": "Вы собираетесь безвозвратно удалить все данные пользователя {{name}}. Это действие нельзя отменить.",
+      "confirm": "Да, удалить навсегда",
+      "cancel": "Отмена",
+      "successLeads": "{{count}} лидов",
+      "successDeals": "{{count}} сделок",
+      "successEmails": "{{count}} писем",
+      "successActivities": "{{count}} активностей",
+      "successLabel": "Удалено:"
+    },
+    "anonymizeLead": {
+      "title": "Анонимизировать лида",
+      "desc": "Заменяет все персональные данные (имя, email, телефон, компания, заметки) на GDPR-безопасные заглушки. Запись сохраняется для аналитики без PII. (Ст. 17 — Псевдонимизация)",
+      "selectLabel": "Выберите лида",
+      "selectPlaceholder": "Выберите лида...",
+      "button": "Анонимизировать",
+      "confirmTitle": "Подтвердите анонимизацию",
+      "confirmDesc": "Вы собираетесь анонимизировать все персональные данные лида {{name}}. PII будут заменены на заглушки.",
+      "confirm": "Да, анонимизировать",
+      "cancel": "Отмена",
+      "successEmails": "{{count}} писем удалено",
+      "successActivities": "{{count}} активностей удалено",
+      "successLabel": "Анонимизировано:"
+    },
+    "auditLog": {
+      "title": "Журнал аудита",
+      "empty": "GDPR-событий пока нет.",
+      "eventType": "Событие",
+      "targetType": "Объект",
+      "summary": "Описание",
+      "date": "Дата",
+      "events": {
+        "user_data_deleted": "Данные удалены",
+        "lead_anonymized": "Лид анонимизирован"
+      }
+    },
+    "errors": {
+      "deleteUser": "Не удалось удалить данные пользователя",
+      "anonymize": "Не удалось анонимизировать лида",
+      "auditLog": "Не удалось загрузить журнал аудита"
+    }
+  },
+  "telegram": {
+    "title": "Telegram",
+    "configured": "Бот активен",
+    "notConfigured": "Не настроен",
+    "statusCard": {
+      "title": "Статус бота",
+      "token": "Токен бота",
+      "tokenSet": "Настроен",
+      "tokenMissing": "Не задан",
+      "webhook": "URL вебхука",
+      "webhookNone": "Не задан",
+      "pending": "Ожидающие события",
+      "refresh": "Обновить"
+    },
+    "webhookCard": {
+      "title": "Установить вебхук",
+      "desc": "Укажите публичный HTTPS URL, на который Telegram будет отправлять обновления.",
+      "urlLabel": "URL вебхука",
+      "urlPlaceholder": "https://yourdomain.com/api/v1/telegram/webhook",
+      "secretLabel": "Секретный токен (необязательно)",
+      "secretPlaceholder": "Случайная строка для валидации запросов",
+      "submit": "Установить",
+      "submitting": "Устанавливаю...",
+      "success": "Вебхук успешно зарегистрирован"
+    },
+    "capabilitiesCard": {
+      "title": "Что делает бот",
+      "items": [
+        "Отправляет уведомление при создании нового лида",
+        "Уведомляет при переходе сделки на новый этап",
+        "Обрабатывает входящие сообщения через вебхук"
+      ]
+    },
+    "notConfiguredCard": {
+      "title": "Telegram-бот не настроен",
+      "desc": "Задайте переменные окружения TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID для включения уведомлений.",
+      "hint": "Получите токен у @BotFather в Telegram, затем перезапустите бэкенд."
+    },
+    "errors": {
+      "status": "Не удалось загрузить статус Telegram",
+      "webhook": "Не удалось установить вебхук"
+    }
+  },
+  "gmail": {
+    "title": "Gmail",
+    "connected": "Подключён",
+    "notConnected": "Не подключён",
+    "connect": "Подключить Gmail",
+    "connectDesc": "Подключите аккаунт Gmail для отправки, получения и отслеживания писем прямо в CRM.",
+    "sync": "Синхронизировать",
+    "syncing": "Синхронизация...",
+    "compose": "Написать",
+    "search": "Поиск по письмам...",
+    "noEmails": "Писем пока нет. Нажмите «Синхронизировать», чтобы загрузить входящие.",
+    "oauthHint": "Откроется новая вкладка. Подтвердите доступ в Google, затем нажмите ниже.",
+    "refreshStatus": "Я авторизовался — обновить",
+    "direction": {
+      "inbound": "Входящее",
+      "outbound": "Исходящее"
+    },
+    "table": {
+      "from": "От кого",
+      "subject": "Тема",
+      "date": "Дата",
+      "lead": "Лид"
+    },
+    "dialog": {
+      "title": "Новое письмо",
+      "to": "Получатель",
+      "toPlaceholder": "name@company.com",
+      "subject": "Тема",
+      "subjectPlaceholder": "Тема письма",
+      "body": "Сообщение",
+      "bodyPlaceholder": "Напишите ваше сообщение...",
+      "linkLead": "Привязать к лиду (необязательно)",
+      "selectLead": "Выберите лид...",
+      "send": "Отправить",
+      "sending": "Отправляю...",
+      "cancel": "Отмена"
+    },
+    "errors": {
+      "authUrl": "Не удалось получить URL авторизации",
+      "fetch": "Не удалось загрузить письма",
+      "send": "Не удалось отправить письмо",
+      "status": "Не удалось проверить статус Gmail"
+    }
+  },
+  "analytics": {
+    "title": "Аналитика",
+    "greeting": "Обзор показателей продаж",
+    "refresh": "Обновить",
+    "kpi": {
+      "winRate": "Конверсия",
+      "avgDealSize": "Средняя сделка",
+      "closedRevenue": "Закрытая выручка",
+      "weightedForecast": "Взвешенный прогноз",
+      "ofDeals": "из {{count}} сделок"
+    },
+    "funnel": {
+      "title": "Воронка конверсии",
+      "leads": "Лиды",
+      "statuses": {
+        "new": "Новые",
+        "contacted": "Контакт",
+        "qualified": "Квалифиц.",
+        "unqualified": "Неквалиф.",
+        "converted": "Конвертированы"
+      }
+    },
+    "forecast": {
+      "title": "Прогноз выручки",
+      "closed": "Закрыто",
+      "pipeline": "Воронка",
+      "weighted": "Взвешенный"
+    },
+    "pipelineStats": {
+      "title": "Разбивка по воронкам",
+      "pipeline": "Воронка",
+      "total": "Всего",
+      "open": "Открытые",
+      "won": "Выиграны",
+      "lost": "Проиграны",
+      "value": "Стоимость",
+      "revenue": "Выручка",
+      "winRate": "Конверсия",
+      "avgDeal": "Ср. сделка",
+      "noData": "Нет данных по воронкам"
+    }
+  },
+  "aiAssistant": {
+    "title": "ИИ Ассистент",
+    "subtitle": "Аналитика на основе ИИ для ваших лидов и сделок",
+    "tabs": {
+      "leadScore": "Оценка лидов",
+      "dealForecast": "Прогноз сделок",
+      "emailGen": "Генератор писем"
+    },
+    "selectLead": "Выберите лида",
+    "selectDeal": "Выберите сделку",
+    "selectLeadPlaceholder": "Выберите лида...",
+    "selectDealPlaceholder": "Выберите сделку...",
+    "analyze": "Анализировать",
+    "analyzing": "Анализируем...",
+    "score": {
+      "title": "Оценка конверсии",
+      "reasoning": "Обоснование",
+      "actions": "Рекомендуемые действия"
+    },
+    "forecast": {
+      "title": "Вероятность выигрыша",
+      "risks": "Факторы риска",
+      "opportunities": "Возможности"
+    },
+    "email": {
+      "tone": "Тон",
+      "context": "Дополнительный контекст (необязательно)",
+      "contextPlaceholder": "Например, упомяните предстоящую демонстрацию продукта",
+      "generate": "Сгенерировать",
+      "generating": "Генерируем...",
+      "subject": "Тема",
+      "body": "Текст письма",
+      "copy": "Копировать",
+      "copied": "Скопировано!",
+      "tones": {
+        "friendly": "Дружеский",
+        "formal": "Официальный",
+        "assertive": "Настойчивый"
+      }
+    },
+    "priority": {
+      "high": "Высокий",
+      "medium": "Средний",
+      "low": "Низкий"
+    },
+    "errors": {
+      "score": "Не удалось оценить лида",
+      "forecast": "Не удалось сделать прогноз",
+      "email": "Не удалось сгенерировать письмо"
+    }
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Отметить все прочитанными",
+    "noMore": "Всё прочитано!",
+    "footer": "Всего {{count}} уведомлений",
+    "types": {
+      "email": "Email",
+      "deal": "Сделка",
+      "lead": "Лид",
+      "system": "Система"
+    },
+    "items": {
+      "emailReceived": {
+        "title": "Новое письмо",
+        "msg": "От {{sender}}: «{{subject}}»"
+      },
+      "dealStageChanged": {
+        "title": "Этап сделки обновлён",
+        "msg": "«{{deal}}» перемещена в {{stage}}"
+      },
+      "leadCreated": {
+        "title": "Новый лид добавлен",
+        "msg": "{{name}} из {{company}}"
+      },
+      "leadConverted": {
+        "title": "Лид конвертирован",
+        "msg": "{{name}} переведён в сделку"
+      },
+      "systemUpdate": {
+        "title": "Обновление системы",
+        "msg": "{{message}}"
+      },
+      "aiAnalysisReady": {
+        "title": "ИИ-анализ готов",
+        "msg": "Оценка лида {{name}}: {{score}}%"
+      }
+    }
+  },
+  "profile": {
+    "title": "Мой профиль",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Email",
+    "role": "Роль",
+    "avatarColor": "Цвет аватара",
+    "changePassword": "Изменить пароль",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "saveChanges": "Сохранить изменения",
+    "saved": "Изменения сохранены!",
+    "passwordChanged": "Пароль изменён!",
+    "cancel": "Отмена",
+    "passwordHint": "Оставьте пустым, чтобы не менять пароль",
+    "errors": {
+      "currentRequired": "Введите текущий пароль",
+      "passwordMismatch": "Пароли не совпадают",
+      "passwordTooShort": "Пароль должен содержать не менее 8 символов"
+    }
+  },
+  "settings": {
+    "title": "Настройки",
+    "subtitle": "Управление параметрами приложения",
+    "saveChanges": "Сохранить",
+    "saved": "Настройки сохранены",
+    "sections": {
+      "appearance": "Внешний вид",
+      "language": "Язык и регион",
+      "notifications": "Настройки уведомлений",
+      "privacy": "Конфиденциальность"
+    },
+    "appearance": {
+      "sidebarDefault": "Боковая панель открыта по умолчанию",
+      "sidebarDefaultDesc": "Показывать раскрытую боковую панель при загрузке",
+      "themeDark": "Тёмная тема (скоро)"
+    },
+    "language": {
+      "appLanguage": "Язык приложения",
+      "en": "English",
+      "ru": "Русский"
+    },
+    "notifications": {
+      "emailNotifs": "Email-уведомления",
+      "emailNotifsDesc": "Получать уведомления о новых письмах",
+      "dealNotifs": "Обновления сделок",
+      "dealNotifsDesc": "Уведомления при смене этапа сделки",
+      "leadNotifs": "Уведомления о лидах",
+      "leadNotifsDesc": "Новые лиды и конвертации",
+      "systemNotifs": "Системные уведомления",
+      "systemNotifsDesc": "Обновления приложения и объявления"
+    },
+    "privacy": {
+      "twoFactor": "Двухфакторная аутентификация",
+      "twoFactorDesc": "Скоро",
+      "activeSessions": "Активные сессии",
+      "activeSessionsDesc": "Вы вошли на этом устройстве"
+    }
+  },
+  "time": {
+    "justNow": "только что",
+    "minutesAgo": "{{count}} мин. назад",
+    "hoursAgo": "{{count}} ч. назад",
+    "daysAgo": "{{count}} д. назад"
   },
   "auth": {
     "signIn": "Войти",

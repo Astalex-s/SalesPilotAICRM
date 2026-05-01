@@ -8,18 +8,50 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.domain.entities.pipeline import Pipeline
 from src.domain.entities.stage import Stage
 
 
-# ── Входные DTO ────────────────────────────────────────────────────────────────
+# ── Входные DTO — воронки ──────────────────────────────────────────────────────
 
 class GetPipelineInput(BaseModel):
     """Входные данные для получения воронки по ID."""
 
     pipeline_id: UUID
+
+
+class CreatePipelineInput(BaseModel):
+    """Входные данные для создания новой воронки."""
+
+    name: str = Field(..., min_length=1, max_length=255)
+
+
+class UpdatePipelineInput(BaseModel):
+    """Входные данные для переименования воронки."""
+
+    name: str = Field(..., min_length=1, max_length=255)
+
+
+# ── Входные DTO — этапы ────────────────────────────────────────────────────────
+
+class AddStageInput(BaseModel):
+    """Входные данные для добавления этапа в воронку."""
+
+    name: str = Field(..., min_length=1, max_length=255)
+    probability: float = Field(default=0.5, ge=0.0, le=1.0)
+    color: str | None = Field(default=None, max_length=20)
+
+
+class UpdateStageInput(BaseModel):
+    """Входные данные для обновления этапа (частичное обновление)."""
+
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    probability: float | None = Field(default=None, ge=0.0, le=1.0)
+    # Пустая строка означает «сбросить цвет»; None означает «не менять»
+    color: str | None = Field(default=None, max_length=20)
+    clear_color: bool = False  # если True — сбрасывает color в None
 
 
 # ── Выходные DTO ───────────────────────────────────────────────────────────────
@@ -34,6 +66,7 @@ class StageOutput(BaseModel):
     name: str
     order: int
     probability: float
+    color: str | None = None
 
     @classmethod
     def from_entity(cls, stage: Stage) -> StageOutput:
@@ -44,6 +77,7 @@ class StageOutput(BaseModel):
             name=stage.name,
             order=stage.order,
             probability=stage.probability,
+            color=stage.color,
         )
 
 

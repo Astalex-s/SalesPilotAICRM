@@ -11,7 +11,17 @@ export interface User {
 
 export interface TokenResponse {
   access_token: string;
+  refresh_token: string;
   token_type: string;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  new_password: string;
 }
 
 export interface RegisterPayload {

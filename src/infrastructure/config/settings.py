@@ -29,6 +29,16 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-me-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+    PASSWORD_RESET_EXPIRE_MINUTES: int = 15
+
+    # SMTP (для сброса пароля)
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "noreply@salespilot.local"
+    FRONTEND_URL: str = "http://localhost:5173"
 
     # OpenAI
     OPENAI_API_KEY: str = ""

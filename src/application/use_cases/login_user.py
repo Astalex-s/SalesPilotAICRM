@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from src.application.dtos.auth_dtos import LoginInput, TokenOutput
 from src.application.exceptions import InvalidCredentialsError
-from src.infrastructure.auth.auth_service import create_access_token, verify_password
+from src.infrastructure.auth.auth_service import create_access_token, create_refresh_token, verify_password
 from src.infrastructure.database.repositories.user_repository import SqlUserRepository
 
 
@@ -22,5 +22,6 @@ class LoginUserUseCase:
         if not user.is_active or not verify_password(data.password, password_hash):
             raise InvalidCredentialsError()
 
-        token = create_access_token(user_id=user.id, role=user.role.value)
-        return TokenOutput(access_token=token)
+        access_token = create_access_token(user_id=user.id, role=user.role.value)
+        refresh_token = create_refresh_token(user_id=user.id, role=user.role.value)
+        return TokenOutput(access_token=access_token, refresh_token=refresh_token)

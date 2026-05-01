@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import Float, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Float, ForeignKey, Integer, String, UniqueConstraint, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.domain.entities.stage import Stage
@@ -29,6 +29,7 @@ class StageModel(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     probability: Mapped[float] = mapped_column(Float, nullable=False, default=0.5)
+    color: Mapped[str | None] = mapped_column(String(20), nullable=True, default=None)
 
     # Обратная ссылка на воронку (lazy="noload" — загружается только через PipelineModel)
     pipeline: Mapped["PipelineModel"] = relationship(  # noqa: F821
@@ -45,6 +46,7 @@ class StageModel(Base):
             name=self.name,
             order=self.order,
             probability=self.probability,
+            color=self.color,
         )
 
     @classmethod
@@ -56,4 +58,5 @@ class StageModel(Base):
             name=stage.name,
             order=stage.order,
             probability=stage.probability,
+            color=stage.color,
         )

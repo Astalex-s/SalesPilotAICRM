@@ -19,6 +19,13 @@ from src.application.use_cases.forecast_deal import ForecastDealUseCase
 from src.application.use_cases.generate_email import GenerateEmailUseCase
 from src.application.use_cases.get_next_best_action import GetNextBestActionUseCase
 from src.application.use_cases.get_pipeline import GetPipelineUseCase
+from src.application.use_cases.list_pipelines import ListPipelinesUseCase
+from src.application.use_cases.create_pipeline import CreatePipelineUseCase
+from src.application.use_cases.update_pipeline import UpdatePipelineUseCase
+from src.application.use_cases.delete_pipeline import DeletePipelineUseCase
+from src.application.use_cases.add_stage import AddStageUseCase
+from src.application.use_cases.update_stage import UpdateStageUseCase
+from src.application.use_cases.delete_stage import DeleteStageUseCase
 from src.application.use_cases.link_email_to_lead import LinkEmailToLeadUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
@@ -169,6 +176,55 @@ def get_pipeline_use_case(
 ) -> GetPipelineUseCase:
     """Фабрика GetPipelineUseCase с инжектированными репозиториями."""
     return GetPipelineUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_list_pipelines_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListPipelinesUseCase:
+    """Фабрика ListPipelinesUseCase."""
+    return ListPipelinesUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_create_pipeline_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> CreatePipelineUseCase:
+    """Фабрика CreatePipelineUseCase."""
+    return CreatePipelineUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_update_pipeline_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> UpdatePipelineUseCase:
+    """Фабрика UpdatePipelineUseCase."""
+    return UpdatePipelineUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_delete_pipeline_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeletePipelineUseCase:
+    """Фабрика DeletePipelineUseCase."""
+    return DeletePipelineUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_add_stage_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> AddStageUseCase:
+    """Фабрика AddStageUseCase."""
+    return AddStageUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_update_stage_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> UpdateStageUseCase:
+    """Фабрика UpdateStageUseCase."""
+    return UpdateStageUseCase(pipeline_repo=SqlPipelineRepository(session))
+
+
+def get_delete_stage_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeleteStageUseCase:
+    """Фабрика DeleteStageUseCase."""
+    return DeleteStageUseCase(pipeline_repo=SqlPipelineRepository(session))
 
 
 # ── AI Use Case провайдеры ────────────────────────────────────────────────────

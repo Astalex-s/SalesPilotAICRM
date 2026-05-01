@@ -4,6 +4,7 @@ export interface Stage {
   name: string;
   order: number;
   probability: number;
+  color?: string | null;
 }
 
 export interface Pipeline {

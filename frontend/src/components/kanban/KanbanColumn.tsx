@@ -63,18 +63,28 @@ export default function KanbanColumn({ stage, deals }: KanbanColumnProps) {
           justifyContent: 'space-between',
           mb: 1.5,
           px: 0.5,
+          pb: 1,
+          borderBottom: `3px solid ${stage.color ?? '#E8EFF7'}`,
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 700,
-            fontSize: 14,
-            color: '#0D2144',
-          }}
-        >
-          {translateStageName(stage.name, t)}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+          {stage.color && (
+            <Box sx={{
+              width: 10, height: 10, borderRadius: '50%',
+              bgcolor: stage.color, flexShrink: 0,
+            }} />
+          )}
+          <Typography
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 700,
+              fontSize: 14,
+              color: '#0D2144',
+            }}
+          >
+            {translateStageName(stage.name, t)}
+          </Typography>
+        </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {/* Deal count badge */}

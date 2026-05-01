@@ -1,4 +1,4 @@
-import { type Deal, type MoveDealStagePayload } from '../types/deal';
+import { type ConvertLeadPayload, type Deal, type MoveDealStagePayload } from '../types/deal';
 import axiosInstance from './axiosInstance';
 
 interface ListDealsParams {
@@ -10,6 +10,11 @@ interface ListDealsParams {
 export const dealsApi = {
   list: async (params?: ListDealsParams): Promise<Deal[]> => {
     const { data } = await axiosInstance.get<Deal[]>('/deals', { params });
+    return data;
+  },
+
+  create: async (payload: ConvertLeadPayload): Promise<Deal> => {
+    const { data } = await axiosInstance.post<Deal>('/deals', payload);
     return data;
   },
 

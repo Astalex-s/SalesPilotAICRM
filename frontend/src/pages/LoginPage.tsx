@@ -1,7 +1,7 @@
 import { Alert, Box, Button, CircularProgress, Divider, Link, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { getMe, login } from '../api/auth';
 import AuthLayout, { inputSx } from '../components/auth/AuthLayout';
 import { useAuthStore } from '../store/useAuthStore';

@@ -24,3 +24,13 @@ export interface MoveDealStagePayload {
   pipeline_id: string;
   performed_by_id: string;
 }
+
+export interface ConvertLeadPayload {
+  lead_id: string;
+  stage_id: string;
+  pipeline_id: string;
+  deal_title?: string;
+  deal_value_amount?: string;
+  deal_value_currency?: string;
+  performed_by_id?: string;
+}

@@ -1,9 +1,16 @@
+import { useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import {
+  useNotificationStore,
+  SEED_NOTIFICATIONS,
+} from '../../store/useNotificationStore';
+import NotificationPanel from '../notifications/NotificationPanel';
+import UserProfileDialog from '../profile/UserProfileDialog';
 
-/* ── Inline language switcher for top bar ───────────────────────────────────── */
+/* ── Inline language switcher ────────────────────────────────────────────────── */
 function LangSwitcher() {
   const { i18n } = useTranslation();
   const current = i18n.language;
@@ -35,7 +42,7 @@ function LangSwitcher() {
   );
 }
 
-/* ── Route → page title map ─────────────────────────────────────────────────── */
+/* ── Route → page title ──────────────────────────────────────────────────────── */
 function usePageTitle() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -45,10 +52,11 @@ function usePageTitle() {
   if (pathname === '/deals')              return t('nav.deals');
   if (pathname.startsWith('/pipeline/')) return t('nav.pipeline');
   if (pathname === '/users')              return t('nav.admin');
+  if (pathname === '/settings')           return t('nav.settings');
   return 'SalesPilotAI';
 }
 
-/* ── Notification bell with badge ───────────────────────────────────────────── */
+/* ── Bell icon SVG ───────────────────────────────────────────────────────────── */
 function BellIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -71,10 +79,11 @@ function SearchIcon() {
 /* ── Avatar initials ─────────────────────────────────────────────────────────── */
 function Avatar({ firstName, lastName }: { firstName: string; lastName: string }) {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
+  const savedColor = localStorage.getItem('crm-avatar-color') ?? '#0D2144';
   return (
     <Box sx={{
       width: 32, height: 32, borderRadius: '50%',
-      bgcolor: '#0D2144', color: '#fff',
+      bgcolor: savedColor, color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: 12, fontWeight: 700, fontFamily: 'Inter, sans-serif',
       border: '1.5px solid #E8EFF7', flexShrink: 0,
@@ -90,111 +99,155 @@ export default function TopBar() {
   const user = useAuthStore((s) => s.user);
   const title = usePageTitle();
 
+  const { notifications, seed } = useNotificationStore();
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // Seed mock notifications once
+  useEffect(() => {
+    seed(SEED_NOTIFICATIONS);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Bell panel state
+  const bellRef = useRef<HTMLDivElement>(null);
+  const [bellAnchor, setBellAnchor] = useState<HTMLElement | null>(null);
+
+  // Profile dialog state
+  const [profileOpen, setProfileOpen] = useState(false);
+
   return (
-    <Box component="header" sx={{
-      height: 52,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      px: 3,
-      bgcolor: 'rgba(255,255,255,0.88)',
-      backdropFilter: 'blur(16px)',
-      borderBottom: '1px solid #E8EFF7',
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      flexShrink: 0,
-    }}>
-
-      {/* Left: page title */}
-      <Typography sx={{
-        fontSize: 16, fontWeight: 600, color: '#191C1E',
-        fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
-        whiteSpace: 'nowrap',
+    <>
+      <Box component="header" sx={{
+        height: 52,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        px: 3,
+        bgcolor: 'rgba(255,255,255,0.88)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid #E8EFF7',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        flexShrink: 0,
       }}>
-        {title}
-      </Typography>
 
-      {/* Center: search */}
-      <Box sx={{
-        flex: 1, maxWidth: 400, mx: 3,
-        display: { xs: 'none', md: 'flex' },
-        alignItems: 'center', gap: 1,
-        height: 32, px: 1.5,
-        border: '1px solid #E8EFF7',
-        borderRadius: '999px',
-        bgcolor: '#fff',
-        color: '#8FA3B8',
-        cursor: 'text',
-        boxShadow: '0 1px 3px rgba(13,33,68,0.04)',
-        '&:hover': { borderColor: '#BDC8D1' },
-      }}>
-        <SearchIcon />
-        <Typography sx={{ fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#8FA3B8', userSelect: 'none' }}>
-          {t('nav.search')}
-        </Typography>
-      </Box>
-
-      {/* Right cluster */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
-
-        {/* AI Active pill */}
-        <Box sx={{
-          display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 0.75,
-          px: 1.25, py: '4px', borderRadius: '999px',
-          bgcolor: 'rgba(0,168,232,0.08)',
-          border: '1px solid rgba(0,168,232,0.2)',
+        {/* Left: page title */}
+        <Typography sx={{
+          fontSize: 16, fontWeight: 600, color: '#191C1E',
+          fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
+          whiteSpace: 'nowrap',
         }}>
-          <Box sx={{
-            width: 7, height: 7, borderRadius: '50%', bgcolor: '#00A8E8',
-            animation: 'pulse 2s ease-in-out infinite',
-            '@keyframes pulse': {
-              '0%,100%': { opacity: 1 }, '50%': { opacity: 0.4 },
-            },
-          }} />
-          <Typography sx={{ fontSize: 10, fontWeight: 600, color: '#00A8E8', fontFamily: 'Inter, sans-serif', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            {t('nav.aiActive')}
+          {title}
+        </Typography>
+
+        {/* Center: search */}
+        <Box sx={{
+          flex: 1, maxWidth: 400, mx: 3,
+          display: { xs: 'none', md: 'flex' },
+          alignItems: 'center', gap: 1,
+          height: 32, px: 1.5,
+          border: '1px solid #E8EFF7',
+          borderRadius: '999px',
+          bgcolor: '#fff',
+          color: '#8FA3B8',
+          cursor: 'text',
+          boxShadow: '0 1px 3px rgba(13,33,68,0.04)',
+          '&:hover': { borderColor: '#BDC8D1' },
+        }}>
+          <SearchIcon />
+          <Typography sx={{ fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#8FA3B8', userSelect: 'none' }}>
+            {t('nav.search')}
           </Typography>
         </Box>
 
-        {/* Language switcher */}
-        <LangSwitcher />
+        {/* Right cluster */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
 
-        {/* Notification bell */}
-        <Box sx={{
-          position: 'relative', color: '#3E4850', cursor: 'pointer',
-          display: 'flex', p: '4px', borderRadius: '8px',
-          '&:hover': { color: '#00A8E8', bgcolor: '#F0F8FF' },
-          transition: 'all 0.15s',
-        }}>
-          <BellIcon />
+          {/* AI Active pill */}
           <Box sx={{
-            position: 'absolute', top: 2, right: 2,
-            width: 14, height: 14, borderRadius: '50%',
-            bgcolor: '#FF6B35', border: '1.5px solid #fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 0.75,
+            px: 1.25, py: '4px', borderRadius: '999px',
+            bgcolor: 'rgba(0,168,232,0.08)',
+            border: '1px solid rgba(0,168,232,0.2)',
           }}>
-            <Typography sx={{ fontSize: 8, fontWeight: 700, color: '#fff', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
-              3
+            <Box sx={{
+              width: 7, height: 7, borderRadius: '50%', bgcolor: '#00A8E8',
+              animation: 'pulse 2s ease-in-out infinite',
+              '@keyframes pulse': {
+                '0%,100%': { opacity: 1 }, '50%': { opacity: 0.4 },
+              },
+            }} />
+            <Typography sx={{ fontSize: 10, fontWeight: 600, color: '#00A8E8', fontFamily: 'Inter, sans-serif', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              {t('nav.aiActive')}
             </Typography>
           </Box>
-        </Box>
 
-        {/* User avatar */}
-        {user && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}>
-            <Avatar firstName={user.first_name} lastName={user.last_name} />
-            <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-              <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#191C1E', fontFamily: 'Inter, sans-serif', lineHeight: 1.2 }}>
-                {user.first_name}
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: '#8FA3B8', fontFamily: 'Inter, sans-serif', lineHeight: 1.2, textTransform: 'capitalize' }}>
-                {user.role.replace('_', ' ')}
-              </Typography>
-            </Box>
+          {/* Language switcher */}
+          <LangSwitcher />
+
+          {/* Notification bell */}
+          <Box
+            ref={bellRef}
+            onClick={() => setBellAnchor(bellRef.current)}
+            sx={{
+              position: 'relative', cursor: 'pointer',
+              display: 'flex', p: '4px', borderRadius: '8px',
+              bgcolor: bellAnchor ? '#F0F8FF' : 'transparent',
+              color: bellAnchor ? '#00A8E8' : '#3E4850',
+              '&:hover': { color: '#00A8E8', bgcolor: '#F0F8FF' },
+              transition: 'all 0.15s',
+            }}
+          >
+            <BellIcon />
+            {unreadCount > 0 && (
+              <Box sx={{
+                position: 'absolute', top: 2, right: 2,
+                width: 14, height: 14, borderRadius: '50%',
+                bgcolor: '#FF6B35', border: '1.5px solid #fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Typography sx={{ fontSize: 8, fontWeight: 700, color: '#fff', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </Typography>
+              </Box>
+            )}
           </Box>
-        )}
+
+          {/* User avatar */}
+          {user && (
+            <Box
+              onClick={() => setProfileOpen(true)}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer',
+                p: '3px', borderRadius: '8px',
+                '&:hover': { bgcolor: '#F5F8FC' },
+                transition: 'background 0.15s',
+              }}
+            >
+              <Avatar firstName={user.first_name} lastName={user.last_name} />
+              <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#191C1E', fontFamily: 'Inter, sans-serif', lineHeight: 1.2 }}>
+                  {user.first_name}
+                </Typography>
+                <Typography sx={{ fontSize: 11, color: '#8FA3B8', fontFamily: 'Inter, sans-serif', lineHeight: 1.2, textTransform: 'capitalize' }}>
+                  {user.role.replace('_', ' ')}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+        </Box>
       </Box>
-    </Box>
+
+      {/* Notification panel */}
+      <NotificationPanel
+        anchorEl={bellAnchor}
+        onClose={() => setBellAnchor(null)}
+      />
+
+      {/* User profile dialog */}
+      <UserProfileDialog
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+      />
+    </>
   );
 }

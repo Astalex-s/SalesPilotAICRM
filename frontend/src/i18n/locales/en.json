@@ -21,7 +21,8 @@
     "logout": "Logout",
     "search": "Search or type a command... ⌘K",
     "aiActive": "AI Active",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "gdpr": "GDPR"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -68,10 +69,12 @@
     "title": "Deals",
     "addDeal": "Add Deal",
     "noDeals": "No deals found.",
+    "loadError": "Failed to load deals",
     "table": {
       "title": "Title",
       "amount": "Amount",
       "stage": "Stage",
+      "status": "Status",
       "closeDate": "Close Date",
       "created": "Created"
     },
@@ -81,6 +84,58 @@
       "negotiation": "Negotiation",
       "closed_won": "Closed Won",
       "closed_lost": "Closed Lost"
+    },
+    "status": {
+      "open": "Open",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "dialog": {
+      "title": "New Deal",
+      "leadLabel": "Lead",
+      "leadPlaceholder": "Select a lead...",
+      "notQualifiedWarning": "This lead is not qualified. Only leads with status \"Qualified\" can be converted to deals.",
+      "titleLabel": "Deal Title",
+      "amountLabel": "Amount",
+      "currencyLabel": "Currency",
+      "stageLabel": "Starting Stage",
+      "closeDateLabel": "Expected Close Date (optional)",
+      "cancel": "Cancel",
+      "submit": "Create Deal",
+      "submitting": "Creating...",
+      "error": "Failed to create deal"
+    },
+    "success": {
+      "title": "Deal Created!",
+      "subtitle": "\"{{title}}\" has been added to the pipeline",
+      "aiCard": {
+        "title": "AI Lead Scoring",
+        "desc": "Analyze conversion probability and get recommended actions",
+        "button": "Analyze Lead",
+        "analyzing": "Analyzing...",
+        "error": "Failed to score lead"
+      },
+      "emailCard": {
+        "title": "Send Intro Email",
+        "desc": "Compose and send a personalized email to the lead",
+        "to": "To",
+        "subject": "Subject",
+        "body": "Message",
+        "generateAI": "Generate with AI",
+        "generating": "Generating...",
+        "send": "Send Email",
+        "sending": "Sending...",
+        "sent": "Sent!",
+        "notConnected": "Gmail is not connected.",
+        "connectLink": "Connect Gmail first →",
+        "error": "Failed to send email"
+      },
+      "telegramCard": {
+        "title": "Telegram Notifications",
+        "desc": "Stage change notifications are automatically sent to your Telegram channel when you move this deal through the pipeline."
+      },
+      "viewPipeline": "View in Pipeline",
+      "done": "Done"
     }
   },
   "users": {
@@ -169,7 +224,27 @@
     "likely": "{{prob}}% likely",
     "overdue": "Overdue",
     "totalValue": "Total Pipeline Value",
-    "totalDeals": "Total Deals"
+    "totalDeals": "Total Deals",
+    "manage": "Manage Pipelines"
+  },
+  "pipelineManager": {
+    "title": "Pipeline Manager",
+    "newPipeline": "New Pipeline",
+    "pipelineNamePlaceholder": "Pipeline name...",
+    "create": "Create",
+    "selectPipeline": "Select a pipeline on the left",
+    "stagesCount": "{{count}} stages",
+    "stageName": "Stage Name",
+    "probability": "Win %",
+    "probabilityHint": "Win probability (%)",
+    "stageColor": "Color",
+    "stageNamePlaceholder": "Stage name...",
+    "addStage": "Add Stage",
+    "editStage": "Edit stage",
+    "deleteStage": "Delete stage",
+    "noStages": "No stages yet. Add one below.",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "leads": {
     "title": "Leads",
@@ -218,6 +293,342 @@
       "validationRequired": "First name, last name and email are required.",
       "submitError": "Failed to create lead. Please try again."
     }
+  },
+  "gdpr": {
+    "title": "GDPR Compliance",
+    "adminOnly": "Admin Only",
+    "warning": "These actions are permanent and cannot be undone. All deleted data is irrecoverable.",
+    "deleteUser": {
+      "title": "Delete User Data",
+      "desc": "Permanently deletes all data associated with a user account: leads, deals, emails, and activity records. (Art. 17 — Right to Erasure)",
+      "selectLabel": "Select User",
+      "selectPlaceholder": "Choose a user...",
+      "button": "Delete All Data",
+      "confirmTitle": "Confirm Data Deletion",
+      "confirmDesc": "You are about to permanently delete all data for {{name}}. This action cannot be undone.",
+      "confirm": "Yes, Delete Permanently",
+      "cancel": "Cancel",
+      "successLeads": "{{count}} leads",
+      "successDeals": "{{count}} deals",
+      "successEmails": "{{count}} emails",
+      "successActivities": "{{count}} activities",
+      "successLabel": "Deleted:"
+    },
+    "anonymizeLead": {
+      "title": "Anonymize Lead",
+      "desc": "Replaces all personal data (name, email, phone, company, notes) with GDPR-safe placeholders. The lead record is preserved for analytics without PII. (Art. 17 — Pseudonymization)",
+      "selectLabel": "Select Lead",
+      "selectPlaceholder": "Choose a lead...",
+      "button": "Anonymize Lead",
+      "confirmTitle": "Confirm Anonymization",
+      "confirmDesc": "You are about to anonymize all personal data for {{name}}. PII will be replaced with safe placeholders.",
+      "confirm": "Yes, Anonymize",
+      "cancel": "Cancel",
+      "successEmails": "{{count}} emails removed",
+      "successActivities": "{{count}} activities removed",
+      "successLabel": "Anonymized:"
+    },
+    "auditLog": {
+      "title": "Audit Log",
+      "empty": "No GDPR events recorded yet.",
+      "eventType": "Event",
+      "targetType": "Target",
+      "summary": "Summary",
+      "date": "Date",
+      "events": {
+        "user_data_deleted": "Data Deleted",
+        "lead_anonymized": "Lead Anonymized"
+      }
+    },
+    "errors": {
+      "deleteUser": "Failed to delete user data",
+      "anonymize": "Failed to anonymize lead",
+      "auditLog": "Failed to load audit log"
+    }
+  },
+  "telegram": {
+    "title": "Telegram",
+    "configured": "Bot Active",
+    "notConfigured": "Not Configured",
+    "statusCard": {
+      "title": "Bot Status",
+      "token": "Bot Token",
+      "tokenSet": "Configured",
+      "tokenMissing": "Not set",
+      "webhook": "Webhook URL",
+      "webhookNone": "Not set",
+      "pending": "Pending Updates",
+      "refresh": "Refresh"
+    },
+    "webhookCard": {
+      "title": "Set Webhook",
+      "desc": "Register a public HTTPS URL where Telegram will send bot updates.",
+      "urlLabel": "Webhook URL",
+      "urlPlaceholder": "https://yourdomain.com/api/v1/telegram/webhook",
+      "secretLabel": "Secret Token (optional)",
+      "secretPlaceholder": "Random secret for request validation",
+      "submit": "Set Webhook",
+      "submitting": "Setting...",
+      "success": "Webhook registered successfully"
+    },
+    "capabilitiesCard": {
+      "title": "What the bot does",
+      "items": [
+        "Sends a notification when a new lead is created",
+        "Notifies when a deal moves to a new pipeline stage",
+        "Processes incoming Telegram messages via webhook"
+      ]
+    },
+    "notConfiguredCard": {
+      "title": "Telegram Bot Not Configured",
+      "desc": "Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables to enable Telegram notifications.",
+      "hint": "Get a token from @BotFather on Telegram, then restart the backend service."
+    },
+    "errors": {
+      "status": "Failed to load Telegram status",
+      "webhook": "Failed to set webhook"
+    }
+  },
+  "gmail": {
+    "title": "Gmail",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "connect": "Connect Gmail",
+    "connectDesc": "Connect your Gmail account to send, receive and track emails directly in CRM.",
+    "sync": "Sync Inbox",
+    "syncing": "Syncing...",
+    "compose": "Compose",
+    "search": "Search emails...",
+    "noEmails": "No emails yet. Click Sync to load your inbox.",
+    "oauthHint": "A new tab has been opened. Complete authorization in Google, then click below.",
+    "refreshStatus": "I've Authorized — Refresh",
+    "direction": {
+      "inbound": "Received",
+      "outbound": "Sent"
+    },
+    "table": {
+      "from": "From",
+      "subject": "Subject",
+      "date": "Date",
+      "lead": "Lead"
+    },
+    "dialog": {
+      "title": "New Email",
+      "to": "Recipient",
+      "toPlaceholder": "name@company.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "Email subject",
+      "body": "Message",
+      "bodyPlaceholder": "Write your message...",
+      "linkLead": "Link to Lead (optional)",
+      "selectLead": "Select lead...",
+      "send": "Send",
+      "sending": "Sending...",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "authUrl": "Failed to get authorization URL",
+      "fetch": "Failed to load emails",
+      "send": "Failed to send email",
+      "status": "Failed to check Gmail status"
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "greeting": "Sales performance overview",
+    "refresh": "Refresh",
+    "kpi": {
+      "winRate": "Win Rate",
+      "avgDealSize": "Avg Deal Size",
+      "closedRevenue": "Closed Revenue",
+      "weightedForecast": "Weighted Forecast",
+      "ofDeals": "of {{count}} deals"
+    },
+    "funnel": {
+      "title": "Conversion Funnel",
+      "leads": "Leads",
+      "statuses": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "unqualified": "Unqualified",
+        "converted": "Converted"
+      }
+    },
+    "forecast": {
+      "title": "Revenue Forecast",
+      "closed": "Closed",
+      "pipeline": "Pipeline",
+      "weighted": "Weighted"
+    },
+    "pipelineStats": {
+      "title": "Pipeline Breakdown",
+      "pipeline": "Pipeline",
+      "total": "Total",
+      "open": "Open",
+      "won": "Won",
+      "lost": "Lost",
+      "value": "Value",
+      "revenue": "Revenue",
+      "winRate": "Win Rate",
+      "avgDeal": "Avg Deal",
+      "noData": "No pipeline data available"
+    }
+  },
+  "aiAssistant": {
+    "title": "AI Assistant",
+    "subtitle": "AI-powered insights for your leads and deals",
+    "tabs": {
+      "leadScore": "Lead Scoring",
+      "dealForecast": "Deal Forecast",
+      "emailGen": "Email Generator"
+    },
+    "selectLead": "Select a lead",
+    "selectDeal": "Select a deal",
+    "selectLeadPlaceholder": "Choose a lead...",
+    "selectDealPlaceholder": "Choose a deal...",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "score": {
+      "title": "Conversion Score",
+      "reasoning": "Reasoning",
+      "actions": "Recommended Actions"
+    },
+    "forecast": {
+      "title": "Win Probability",
+      "risks": "Risk Factors",
+      "opportunities": "Opportunities"
+    },
+    "email": {
+      "tone": "Tone",
+      "context": "Additional context (optional)",
+      "contextPlaceholder": "E.g. mention the upcoming product demo",
+      "generate": "Generate Email",
+      "generating": "Generating...",
+      "subject": "Subject",
+      "body": "Body",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "tones": {
+        "friendly": "Friendly",
+        "formal": "Formal",
+        "assertive": "Assertive"
+      }
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "errors": {
+      "score": "Failed to score lead",
+      "forecast": "Failed to forecast deal",
+      "email": "Failed to generate email"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "noMore": "You're all caught up!",
+    "footer": "{{count}} notifications total",
+    "types": {
+      "email": "Email",
+      "deal": "Deal",
+      "lead": "Lead",
+      "system": "System"
+    },
+    "items": {
+      "emailReceived": {
+        "title": "New email received",
+        "msg": "From {{sender}}: \"{{subject}}\""
+      },
+      "dealStageChanged": {
+        "title": "Deal stage updated",
+        "msg": "\"{{deal}}\" moved to {{stage}}"
+      },
+      "leadCreated": {
+        "title": "New lead added",
+        "msg": "{{name}} from {{company}}"
+      },
+      "leadConverted": {
+        "title": "Lead converted",
+        "msg": "{{name}} has been converted to a deal"
+      },
+      "systemUpdate": {
+        "title": "System update",
+        "msg": "{{message}}"
+      },
+      "aiAnalysisReady": {
+        "title": "AI analysis ready",
+        "msg": "Lead score for {{name}}: {{score}}%"
+      }
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "role": "Role",
+    "avatarColor": "Avatar Color",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "saveChanges": "Save Changes",
+    "saved": "Changes saved!",
+    "passwordChanged": "Password changed!",
+    "cancel": "Cancel",
+    "passwordHint": "Leave blank to keep your current password",
+    "errors": {
+      "currentRequired": "Please enter your current password",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your application preferences",
+    "saveChanges": "Save Changes",
+    "saved": "Settings saved",
+    "sections": {
+      "appearance": "Appearance",
+      "language": "Language & Region",
+      "notifications": "Notification Preferences",
+      "privacy": "Privacy & Security"
+    },
+    "appearance": {
+      "sidebarDefault": "Sidebar expanded by default",
+      "sidebarDefaultDesc": "Keep the sidebar open when the app loads",
+      "themeDark": "Dark mode (coming soon)"
+    },
+    "language": {
+      "appLanguage": "Application Language",
+      "en": "English",
+      "ru": "Russian"
+    },
+    "notifications": {
+      "emailNotifs": "Email notifications",
+      "emailNotifsDesc": "Get notified when you receive new emails",
+      "dealNotifs": "Deal updates",
+      "dealNotifsDesc": "Alerts when deal stages change",
+      "leadNotifs": "Lead notifications",
+      "leadNotifsDesc": "Notify on new leads and conversions",
+      "systemNotifs": "System notifications",
+      "systemNotifsDesc": "App updates and announcements"
+    },
+    "privacy": {
+      "twoFactor": "Two-factor authentication",
+      "twoFactorDesc": "Coming soon",
+      "activeSessions": "Active sessions",
+      "activeSessionsDesc": "Logged in on this device"
+    }
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
   },
   "auth": {
     "signIn": "Sign In",
