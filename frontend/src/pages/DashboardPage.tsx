@@ -228,22 +228,31 @@ export default function DashboardPage() {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label={t('dashboard.kpi.totalLeads')}
-            value={data?.total_leads ?? '—'}
+            label={t('dashboard.kpi.leadConversion')}
+            value={data ? `${data.conversion_rate}%` : '—'}
             icon={<PeopleIcon fontSize="small" />}
             accentColor="#10B981"
+            subtext={t('dashboard.kpi.totalLeads', { count: data?.total_leads ?? 0 })}
             loading={loading}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            label={t('dashboard.kpi.winRate')}
-            value={data ? `${data.conversion_rate}%` : '—'}
-            icon={<ShowChartIcon fontSize="small" />}
-            accentColor="#F59E0B"
-            subtext={t('dashboard.kpi.wonRate')}
-            loading={loading}
-          />
+          {(() => {
+            const won = data?.deals_by_status?.won ?? 0;
+            const lost = data?.deals_by_status?.lost ?? 0;
+            const decided = won + lost;
+            const winRate = decided > 0 ? Math.round(won / decided * 100) : null;
+            return (
+              <StatCard
+                label={t('dashboard.kpi.winRate')}
+                value={winRate !== null ? `${winRate}%` : '—'}
+                icon={<ShowChartIcon fontSize="small" />}
+                accentColor="#F59E0B"
+                subtext={t('dashboard.kpi.wonDeals', { won, lost })}
+                loading={loading}
+              />
+            );
+          })()}
         </Grid>
       </Grid>
 

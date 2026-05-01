@@ -32,11 +32,12 @@
     "kpi": {
       "pipelineValue": "Стоимость воронки",
       "activeDeals": "Активные сделки",
-      "totalLeads": "Всего лидов",
-      "winRate": "Конверсия",
+      "leadConversion": "Конверсия лидов",
+      "winRate": "Win Rate",
       "openDeals": "{{count}} открытых",
       "totalDeals": "из {{count}} всего",
-      "wonRate": "процент конверсии"
+      "totalLeads": "{{count}} лидов всего",
+      "wonDeals": "{{won}} выиграно · {{lost}} проиграно"
     },
     "charts": {
       "dealsByStatus": "Сделки по статусу",

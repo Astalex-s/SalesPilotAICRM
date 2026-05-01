@@ -32,11 +32,12 @@
     "kpi": {
       "pipelineValue": "Pipeline Value",
       "activeDeals": "Active Deals",
-      "totalLeads": "Total Leads",
+      "leadConversion": "Lead Conversion",
       "winRate": "Win Rate",
       "openDeals": "{{count}} open",
       "totalDeals": "of {{count}} total",
-      "wonRate": "conversion rate"
+      "totalLeads": "{{count}} leads total",
+      "wonDeals": "{{won}} won · {{lost}} lost"
     },
     "charts": {
       "dealsByStatus": "Deals by Status",
