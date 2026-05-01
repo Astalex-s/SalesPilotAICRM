@@ -97,7 +97,6 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
 
 /* ── Main board ── */
 export default function KanbanBoard({ pipelineId }: KanbanBoardProps) {
-  const { t } = useTranslation();
   const { pipeline, columns, loading, error, moveDeal } = useKanbanStore();
   const userId = useAuthStore((s) => s.user?.id ?? '');
 

@@ -40,41 +40,41 @@ const baseDeal: Deal = {
 
 describe('DealCard', () => {
   it('renders deal title', () => {
-    render(<DealCard deal={baseDeal} index={0} />);
+    render(<DealCard deal={baseDeal} index={0} stageProbability={50} />);
     expect(screen.getByText('Enterprise Contract')).toBeInTheDocument();
   });
 
   it('renders deal value with currency', () => {
-    render(<DealCard deal={baseDeal} index={0} />);
+    render(<DealCard deal={baseDeal} index={0} stageProbability={50} />);
     // Value may be locale-formatted; just verify currency is visible
     expect(screen.getByText(/USD/)).toBeInTheDocument();
   });
 
   it('renders status chip', () => {
-    render(<DealCard deal={baseDeal} index={0} />);
+    render(<DealCard deal={baseDeal} index={0} stageProbability={50} />);
     expect(screen.getByText('open')).toBeInTheDocument();
   });
 
   it('renders company when provided', () => {
-    render(<DealCard deal={baseDeal} index={0} />);
+    render(<DealCard deal={baseDeal} index={0} stageProbability={50} />);
     expect(screen.getByText('BigCorp')).toBeInTheDocument();
   });
 
   it('does not render company row when company is null', () => {
     const noCompany = { ...baseDeal, company: null };
-    render(<DealCard deal={noCompany} index={0} />);
+    render(<DealCard deal={noCompany} index={0} stageProbability={50} />);
     expect(screen.queryByText('BigCorp')).not.toBeInTheDocument();
   });
 
   it('renders won status chip', () => {
     const wonDeal = { ...baseDeal, status: 'won' as const };
-    render(<DealCard deal={wonDeal} index={0} />);
+    render(<DealCard deal={wonDeal} index={0} stageProbability={100} />);
     expect(screen.getByText('won')).toBeInTheDocument();
   });
 
   it('renders lost status chip', () => {
     const lostDeal = { ...baseDeal, status: 'lost' as const };
-    render(<DealCard deal={lostDeal} index={0} />);
+    render(<DealCard deal={lostDeal} index={0} stageProbability={0} />);
     expect(screen.getByText('lost')).toBeInTheDocument();
   });
 });

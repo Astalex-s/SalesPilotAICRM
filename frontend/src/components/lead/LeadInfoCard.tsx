@@ -91,12 +91,14 @@ export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
 
   const validNext = VALID_TRANSITIONS[lead.status];
   const canChange = validNext.length > 0 && !!onStatusChange;
 
   const handleBadgeClick = (e: React.MouseEvent<HTMLElement>) => {
     if (!canChange) return;
+    setStatusError(null);
     setAnchorEl(e.currentTarget);
   };
 
@@ -104,8 +106,11 @@ export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps
     setAnchorEl(null);
     if (!onStatusChange) return;
     setStatusLoading(true);
+    setStatusError(null);
     try {
       await onStatusChange(newStatus);
+    } catch (err) {
+      setStatusError(err instanceof Error ? err.message : 'Status update failed');
     } finally {
       setStatusLoading(false);
     }
@@ -231,6 +236,16 @@ export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps
               );
             })}
           </Menu>
+
+          {statusError && (
+            <Typography sx={{
+              mt: 0.75, fontSize: 11, color: '#DC2626',
+              fontFamily: 'Inter, sans-serif', textAlign: 'center',
+              maxWidth: 200,
+            }}>
+              {statusError}
+            </Typography>
+          )}
         </Box>
 
         <Divider sx={{ borderColor: '#F0F5FF', mb: 2 }} />

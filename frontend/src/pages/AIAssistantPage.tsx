@@ -29,16 +29,6 @@ const card = {
   p: 3,
 };
 
-const labelStyle = {
-  fontFamily: 'Inter, sans-serif',
-  fontSize: 11,
-  fontWeight: 600,
-  letterSpacing: '0.06em',
-  textTransform: 'uppercase' as const,
-  color: '#8FA3B8',
-  mb: 0.75,
-};
-
 const sectionTitle = {
   fontFamily: 'Inter, sans-serif',
   fontSize: 13,
@@ -276,7 +266,7 @@ function DealForecastTab() {
             </MenuItem>
             {deals.map((d) => (
               <MenuItem key={d.id} value={d.id} sx={{ fontFamily: 'Inter', fontSize: 13 }}>
-                {d.title} — ${d.amount.toLocaleString()}
+                {d.title} — ${parseFloat(d.value_amount).toLocaleString()}
               </MenuItem>
             ))}
           </Select>

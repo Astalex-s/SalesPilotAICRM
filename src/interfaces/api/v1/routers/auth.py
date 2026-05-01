@@ -74,6 +74,7 @@ async def refresh(
 @router.post(
     "/forgot-password",
     status_code=http_status.HTTP_204_NO_CONTENT,
+    response_model=None,
     summary="Запросить сброс пароля (отправить письмо)",
 )
 async def forgot_password(
@@ -87,6 +88,7 @@ async def forgot_password(
 @router.post(
     "/reset-password",
     status_code=http_status.HTTP_204_NO_CONTENT,
+    response_model=None,
     summary="Установить новый пароль по токену из письма",
 )
 async def reset_password(

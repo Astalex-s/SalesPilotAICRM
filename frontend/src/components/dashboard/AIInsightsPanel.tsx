@@ -60,7 +60,7 @@ interface AIInsightsPanelProps {
 
 export default function AIInsightsPanel({ data, loading }: AIInsightsPanelProps) {
   const { t } = useTranslation();
-  const insights = data ? buildInsights(data, t) : [];
+  const insights = data ? buildInsights(data, (k, o) => t(k, o as Record<string, unknown>)) : [];
 
   return (
     <Card

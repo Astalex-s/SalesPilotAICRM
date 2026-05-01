@@ -37,7 +37,7 @@ const inputSx = {
 function IconBtn({
   title, onClick, danger, disabled, children,
 }: {
-  title?: string; onClick: () => void; danger?: boolean; disabled?: boolean; children: React.ReactNode;
+  title?: string; onClick: (e: React.MouseEvent) => void; danger?: boolean; disabled?: boolean; children: React.ReactNode;
 }) {
   return (
     <Box
@@ -184,8 +184,7 @@ function StageRow({
   };
 
   const handleMoveOrder = async (direction: 'up' | 'down') => {
-    const newOrder = direction === 'up' ? stage.order - 1 : stage.order + 1;
-    // We swap by setting this stage's order to newOrder and swapping the neighbour
+    // We swap by setting this stage's order and swapping the neighbour
     // Simplest: just send PATCH with a special order. But our API doesn't support
     // explicit reorder — instead we reload & re-index by moving elements.
     // For now: update probability as a no-op to trigger save, then a workaround
@@ -478,7 +477,6 @@ export default function PipelineManagerDialog({
     if (swapIdx < 0 || swapIdx >= stages.length) return;
 
     const stageA = stages[idx];
-    const stageB = stages[swapIdx];
 
     // Swap orders: update both stages
     try {
@@ -486,15 +484,6 @@ export default function PipelineManagerDialog({
       // Temporarily give stageA a temp order to avoid unique constraint conflict
       // The backend will handle it via merge/save with full pipeline state
       // Approach: swap order values and save both in sequence
-      const orderA = stageA.order;
-      const orderB = stageB.order;
-      // We need to use a temp order to avoid conflict — use -1 approach
-      // Actually the backend save() replaces all stages via merge, so we can
-      // send updated order via the pipeline's stage list. But we only have
-      // per-stage update endpoints. The cleanest fix: reload full pipeline,
-      // mutate order locally, save via update endpoints.
-      // For now: use a temp very high order for stageA, then set stageB to orderA, then stageA to orderB.
-      const tempOrder = 9999;
       await pipelinesApi.updateStage(pipeline.id, stageA.id, { name: stageA.name, probability: stageA.probability });
       // Actually we can't change order via updateStage as the DTO doesn't support it.
       // The domain handles order internally. We need a different approach.

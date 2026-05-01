@@ -105,7 +105,7 @@ function TimelineEntry({
               flexShrink: 0,
             }}
           >
-            {relativeTime(activity.occurred_at, t)}
+            {relativeTime(activity.occurred_at, (k, o) => t(k, o as Record<string, unknown>))}
           </Typography>
         </Box>
         {activity.body && (
