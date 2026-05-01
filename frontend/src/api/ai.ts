@@ -1,4 +1,4 @@
-import { type AiTone, type GeneratedEmail, type LeadScore, type NextBestAction } from '../types/ai';
+import { type AiTone, type DealForecast, type GeneratedEmail, type LeadScore, type NextBestAction } from '../types/ai';
 import axiosInstance from './axiosInstance';
 
 export const aiApi = {
@@ -12,6 +12,13 @@ export const aiApi = {
   nextBestAction: async (leadId: string): Promise<NextBestAction> => {
     const { data } = await axiosInstance.post<NextBestAction>(
       `/ai/lead/${leadId}/next-action`,
+    );
+    return data;
+  },
+
+  forecastDeal: async (dealId: string): Promise<DealForecast> => {
+    const { data } = await axiosInstance.post<DealForecast>(
+      `/ai/deals/${dealId}/forecast`,
     );
     return data;
   },

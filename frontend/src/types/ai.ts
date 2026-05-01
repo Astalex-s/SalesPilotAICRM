@@ -22,3 +22,10 @@ export interface GeneratedEmail {
   body: string;
   tone: AiTone;
 }
+
+export interface DealForecast {
+  deal_id: string;
+  win_probability: number;
+  risk_factors: string[];
+  opportunities: string[];
+}
