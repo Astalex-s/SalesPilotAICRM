@@ -1,5 +1,5 @@
 import { type Activity } from '../types/activity';
-import { type CreateLeadPayload, type Lead, type LeadStatus } from '../types/lead';
+import { type CreateLeadPayload, type Lead, type LeadStatus, type UpdateLeadPayload } from '../types/lead';
 import axiosInstance from './axiosInstance';
 
 interface ListLeadsParams {
@@ -27,6 +27,11 @@ export const leadsApi = {
 
   create: async (payload: CreateLeadPayload): Promise<Lead> => {
     const { data } = await axiosInstance.post<Lead>('/leads', payload);
+    return data;
+  },
+
+  update: async (leadId: string, payload: UpdateLeadPayload): Promise<Lead> => {
+    const { data } = await axiosInstance.patch<Lead>(`/leads/${leadId}`, payload);
     return data;
   },
 };

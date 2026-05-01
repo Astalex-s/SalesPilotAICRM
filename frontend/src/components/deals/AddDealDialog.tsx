@@ -20,6 +20,7 @@ import { dealsApi } from '../../api/deals';
 import { gmailApi } from '../../api/gmail';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useLeadStore } from '../../store/useLeadStore';
+import type { LeadStatus } from '../../types/lead';
 import type { LeadScore, NextBestAction } from '../../types/ai';
 import type { Deal } from '../../types/deal';
 import type { Lead } from '../../types/lead';
@@ -403,9 +404,10 @@ interface FormStepProps {
   pipeline: Pipeline | null;
   onCancel: () => void;
   onCreated: (deal: Deal, lead: Lead) => void;
+  onLeadUpdated: (leadId: string, status: LeadStatus) => Promise<void>;
 }
 
-function FormStep({ leads, pipeline, onCancel, onCreated }: FormStepProps) {
+function FormStep({ leads, pipeline, onCancel, onCreated, onLeadUpdated }: FormStepProps) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
@@ -416,6 +418,7 @@ function FormStep({ leads, pipeline, onCancel, onCreated }: FormStepProps) {
   const [stageId, setStageId] = useState('');
   const [closeDate, setCloseDate] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [qualifying, setQualifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedLead = leads.find((l) => l.id === leadId) ?? null;
@@ -461,6 +464,19 @@ function FormStep({ leads, pipeline, onCancel, onCreated }: FormStepProps) {
     }
   };
 
+  const handleQualify = async () => {
+    if (!leadId) return;
+    setQualifying(true);
+    setError(null);
+    try {
+      await onLeadUpdated(leadId, 'qualified');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('deals.dialog.error'));
+    } finally {
+      setQualifying(false);
+    }
+  };
+
   const canSubmit = !!leadId && !!stageId && !submitting && !isNotQualified;
 
   const inputSx = {
@@ -500,7 +516,28 @@ function FormStep({ leads, pipeline, onCancel, onCreated }: FormStepProps) {
       </FormControl>
 
       {isNotQualified && (
-        <Alert severity="warning" sx={{ borderRadius: '8px', py: 0.5, '& .MuiAlert-message': { fontFamily: 'Inter', fontSize: 12 } }}>
+        <Alert
+          severity="warning"
+          sx={{ borderRadius: '8px', py: 0.5, '& .MuiAlert-message': { fontFamily: 'Inter', fontSize: 12, width: '100%' } }}
+          action={
+            <Button
+              size="small"
+              onClick={handleQualify}
+              disabled={qualifying}
+              sx={{
+                fontFamily: 'Inter', fontSize: 11, fontWeight: 700, textTransform: 'none',
+                color: '#D97706', borderColor: '#D97706', borderRadius: '6px',
+                whiteSpace: 'nowrap',
+                '&:hover': { bgcolor: 'rgba(217,119,6,0.08)' },
+              }}
+            >
+              {qualifying
+                ? <><CircularProgress size={11} sx={{ color: '#D97706', mr: 0.5 }} />{t('deals.dialog.qualifying')}</>
+                : t('deals.dialog.qualifyLead')
+              }
+            </Button>
+          }
+        >
           {t('deals.dialog.notQualifiedWarning')}
         </Alert>
       )}
@@ -623,6 +660,7 @@ export default function AddDealDialog({ open, onClose, pipeline, onDealCreated }
   const { t } = useTranslation();
   const leads = useLeadStore((s) => s.leads);
   const fetchLeads = useLeadStore((s) => s.fetchLeads);
+  const updateLeadInStore = useLeadStore((s) => s.updateLead);
 
   const [step, setStep] = useState<'form' | 'success'>('form');
   const [createdDeal, setCreatedDeal] = useState<Deal | null>(null);
@@ -691,6 +729,7 @@ export default function AddDealDialog({ open, onClose, pipeline, onDealCreated }
             pipeline={pipeline}
             onCancel={handleClose}
             onCreated={handleCreated}
+            onLeadUpdated={async (id, status) => { await updateLeadInStore(id, { status }); }}
           />
         ) : (
           <SuccessStep

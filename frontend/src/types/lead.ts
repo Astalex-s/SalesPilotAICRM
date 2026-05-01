@@ -23,6 +23,11 @@ export interface Lead {
   updated_at: string;
 }
 
+export interface UpdateLeadPayload {
+  status?: LeadStatus;
+  notes?: string;
+}
+
 export interface CreateLeadPayload {
   first_name: string;
   last_name: string;

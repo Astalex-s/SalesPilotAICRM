@@ -100,6 +100,8 @@
       "currencyLabel": "Валюта",
       "stageLabel": "Начальный этап",
       "closeDateLabel": "Ожидаемая дата закрытия (необязательно)",
+      "qualifyLead": "Квалифицировать",
+      "qualifying": "Квалифицируем...",
       "cancel": "Отмена",
       "submit": "Создать сделку",
       "submitting": "Создаём...",
@@ -253,6 +255,7 @@
     "searchPlaceholder": "Поиск лидов...",
     "filterAll": "Все",
     "noLeads": "Лиды не найдены",
+    "changeStatus": "Изменить статус",
     "count": "{{count}} всего",
     "status": {
       "new": "Новый",

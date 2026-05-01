@@ -48,6 +48,14 @@ class CreateLeadInput(BaseModel):
         return v.strip()
 
 
+class UpdateLeadInput(BaseModel):
+    """Входные данные для обновления лида."""
+
+    lead_id: UUID
+    status: LeadStatus | None = None
+    notes: str | None = None
+
+
 # ── Выходные DTO ───────────────────────────────────────────────────────────────
 
 class LeadOutput(BaseModel):

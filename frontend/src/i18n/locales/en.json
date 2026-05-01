@@ -100,6 +100,8 @@
       "currencyLabel": "Currency",
       "stageLabel": "Starting Stage",
       "closeDateLabel": "Expected Close Date (optional)",
+      "qualifyLead": "Qualify Lead",
+      "qualifying": "Qualifying...",
       "cancel": "Cancel",
       "submit": "Create Deal",
       "submitting": "Creating...",
@@ -253,6 +255,7 @@
     "searchPlaceholder": "Search leads...",
     "filterAll": "All",
     "noLeads": "No leads found",
+    "changeStatus": "Change status",
     "count": "{{count}} total",
     "status": {
       "new": "New",

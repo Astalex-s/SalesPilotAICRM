@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { leadsApi } from '../api/leads';
-import { type CreateLeadPayload, type Lead } from '../types/lead';
+import { type CreateLeadPayload, type Lead, type UpdateLeadPayload } from '../types/lead';
 
 interface LeadState {
   leads: Lead[];
@@ -8,6 +8,7 @@ interface LeadState {
   error: string | null;
   fetchLeads: () => Promise<void>;
   createLead: (payload: CreateLeadPayload) => Promise<void>;
+  updateLead: (leadId: string, payload: UpdateLeadPayload) => Promise<Lead>;
 }
 
 export const useLeadStore = create<LeadState>((set) => ({
@@ -33,5 +34,13 @@ export const useLeadStore = create<LeadState>((set) => ({
     } catch (err) {
       set({ error: (err as Error).message, loading: false });
     }
+  },
+
+  updateLead: async (leadId: string, payload: UpdateLeadPayload) => {
+    const updated = await leadsApi.update(leadId, payload);
+    set((state) => ({
+      leads: state.leads.map((l) => (l.id === leadId ? updated : l)),
+    }));
+    return updated;
   },
 }));

@@ -3,7 +3,7 @@ import { aiApi } from '../api/ai';
 import { leadsApi } from '../api/leads';
 import { type Activity } from '../types/activity';
 import { type AiTone, type GeneratedEmail, type LeadScore, type NextBestAction } from '../types/ai';
-import { type Lead } from '../types/lead';
+import { type Lead, type UpdateLeadPayload } from '../types/lead';
 
 interface AsyncSlice<T> {
   data: T | null;
@@ -27,6 +27,7 @@ interface LeadDetailState {
   fetchScore: (leadId: string) => Promise<void>;
   fetchNextAction: (leadId: string) => Promise<void>;
   generateEmail: (leadId: string, tone: AiTone, extraContext?: string) => Promise<void>;
+  updateLead: (leadId: string, payload: UpdateLeadPayload) => Promise<void>;
   reset: () => void;
 }
 
@@ -89,6 +90,11 @@ export const useLeadDetailStore = create<LeadDetailState>((set) => ({
     } catch (err) {
       set({ generatedEmail: { data: null, loading: false, error: (err as Error).message } });
     }
+  },
+
+  updateLead: async (leadId, payload) => {
+    const updated = await leadsApi.update(leadId, payload);
+    set({ lead: { data: updated, loading: false, error: null } });
   },
 
   reset: () => set(initialState),

@@ -16,7 +16,7 @@ export default function LeadDetailPage() {
   const {
     lead, activities, score, nextAction, generatedEmail,
     fetchLead, fetchActivities, fetchScore, fetchNextAction, generateEmail,
-    reset,
+    updateLead, reset,
   } = useLeadDetailStore();
 
   useEffect(() => {
@@ -77,7 +77,10 @@ export default function LeadDetailPage() {
           {lead.loading ? (
             <Skeleton variant="rounded" height={420} sx={{ borderRadius: '16px' }} />
           ) : lead.data ? (
-            <LeadInfoCard lead={lead.data} />
+            <LeadInfoCard
+            lead={lead.data}
+            onStatusChange={(newStatus) => updateLead(lead.data!.id, { status: newStatus })}
+          />
           ) : null}
         </Grid>
 

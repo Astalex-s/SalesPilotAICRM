@@ -12,7 +12,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi import status as http_status
 
 from src.application.dtos.activity_dtos import ActivityOutput
-from src.application.dtos.lead_dtos import CreateLeadInput, GetLeadInput, LeadOutput, ListLeadsInput
+from src.application.dtos.lead_dtos import CreateLeadInput, GetLeadInput, LeadOutput, ListLeadsInput, UpdateLeadInput
 from src.application.dtos.telegram_dtos import NotifyNewLeadInput
 from src.application.exceptions import TelegramNotConfiguredError
 from src.application.use_cases.create_lead import CreateLeadUseCase
@@ -20,6 +20,7 @@ from src.application.use_cases.get_lead import GetLeadUseCase
 from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
+from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.domain.value_objects.enums import LeadStatus
 from src.interfaces.api.dependencies import (
     get_create_lead_use_case,
@@ -27,7 +28,9 @@ from src.interfaces.api.dependencies import (
     get_list_lead_activities_use_case,
     get_list_leads_use_case,
     get_notify_new_lead_use_case,
+    get_update_lead_use_case,
 )
+from src.interfaces.schemas.lead_schemas import UpdateLeadRequest
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +77,29 @@ async def list_leads(
 ) -> list[LeadOutput]:
     """GET /api/v1/leads — список лидов с опциональной фильтрацией."""
     data = ListLeadsInput(owner_id=owner_id, status=lead_status)
+    return await use_case.execute(data)
+
+
+@router.patch(
+    "/{lead_id}",
+    response_model=LeadOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Обновить лида",
+    description=(
+        "Обновляет статус и/или заметки лида. "
+        "Переходы статусов соответствуют машине состояний домена: "
+        "new→contacted/qualified/unqualified, contacted→qualified/unqualified, "
+        "qualified→unqualified, unqualified→qualified/contacted. "
+        "Статусы CONVERTED и NEW нельзя установить напрямую."
+    ),
+)
+async def update_lead(
+    lead_id: UUID,
+    body: UpdateLeadRequest,
+    use_case: UpdateLeadUseCase = Depends(get_update_lead_use_case),
+) -> LeadOutput:
+    """PATCH /api/v1/leads/{lead_id} — обновление статуса/заметок лида."""
+    data = UpdateLeadInput(lead_id=lead_id, status=body.status, notes=body.notes)
     return await use_case.execute(data)
 
 

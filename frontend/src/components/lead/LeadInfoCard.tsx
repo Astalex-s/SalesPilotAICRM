@@ -2,7 +2,8 @@ import BusinessIcon from '@mui/icons-material/Business';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SourceIcon from '@mui/icons-material/Source';
-import { Box, Card, Divider, Typography } from '@mui/material';
+import { Box, Card, CircularProgress, Divider, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Lead, type LeadStatus } from '../../types/lead';
 
@@ -70,13 +71,45 @@ function MetaRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+// Valid status transitions (mirrors domain state machine)
+const VALID_TRANSITIONS: Record<LeadStatus, LeadStatus[]> = {
+  new:         ['contacted', 'qualified', 'unqualified'],
+  contacted:   ['qualified', 'unqualified'],
+  qualified:   ['unqualified'],
+  unqualified: ['qualified', 'contacted'],
+  converted:   [],
+};
+
 interface LeadInfoCardProps {
   lead: Lead;
+  onStatusChange?: (newStatus: LeadStatus) => Promise<void>;
 }
 
-export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
+export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps) {
   const { t } = useTranslation();
   const s = STATUS_STYLE[lead.status];
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [statusLoading, setStatusLoading] = useState(false);
+
+  const validNext = VALID_TRANSITIONS[lead.status];
+  const canChange = validNext.length > 0 && !!onStatusChange;
+
+  const handleBadgeClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (!canChange) return;
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleStatusSelect = async (newStatus: LeadStatus) => {
+    setAnchorEl(null);
+    if (!onStatusChange) return;
+    setStatusLoading(true);
+    try {
+      await onStatusChange(newStatus);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
   return (
     <Card
@@ -138,22 +171,66 @@ export default function LeadInfoCard({ lead }: LeadInfoCardProps) {
             </Typography>
           )}
 
-          {/* Status badge */}
-          <Box
-            sx={{
-              mt: 1.25,
-              px: 1.5,
-              py: 0.4,
-              borderRadius: '20px',
-              bgcolor: s.bg,
-              color: s.color,
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 12,
-              fontWeight: 600,
-            }}
+          {/* Status badge — clickable when transitions are available */}
+          <Tooltip title={canChange ? t('leads.changeStatus') : ''} placement="top">
+            <Box
+              onClick={handleBadgeClick}
+              sx={{
+                mt: 1.25,
+                px: 1.5,
+                py: 0.4,
+                borderRadius: '20px',
+                bgcolor: s.bg,
+                color: s.color,
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 12,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                cursor: canChange ? 'pointer' : 'default',
+                userSelect: 'none',
+                transition: 'opacity 0.15s',
+                '&:hover': canChange ? { opacity: 0.8 } : {},
+              }}
+            >
+              {statusLoading
+                ? <CircularProgress size={12} sx={{ color: s.color }} />
+                : t(`leads.status.${lead.status}`)
+              }
+              {canChange && !statusLoading && (
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              )}
+            </Box>
+          </Tooltip>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+            PaperProps={{ sx: { borderRadius: '10px', boxShadow: '0 4px 20px rgba(13,33,68,0.12)', minWidth: 160 } }}
           >
-            {t(`leads.status.${lead.status}`)}
-          </Box>
+            {validNext.map((status) => {
+              const st = STATUS_STYLE[status];
+              return (
+                <MenuItem
+                  key={status}
+                  onClick={() => handleStatusSelect(status)}
+                  sx={{ fontFamily: 'Inter', fontSize: 13, gap: 1 }}
+                >
+                  <Box sx={{
+                    px: 1, py: 0.2, borderRadius: '12px',
+                    bgcolor: st.bg, color: st.color,
+                    fontSize: 12, fontWeight: 600,
+                  }}>
+                    {t(`leads.status.${status}`)}
+                  </Box>
+                </MenuItem>
+              );
+            })}
+          </Menu>
         </Box>
 
         <Divider sx={{ borderColor: '#F0F5FF', mb: 2 }} />
