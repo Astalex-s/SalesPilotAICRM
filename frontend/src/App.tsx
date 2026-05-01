@@ -12,9 +12,11 @@ import DashboardPage from './pages/DashboardPage';
 import DealsPage from './pages/DealsPage';
 import LeadDetailPage from './pages/LeadDetailPage';
 import LeadsPage from './pages/LeadsPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LoginPage from './pages/LoginPage';
 import PipelinePage from './pages/PipelinePage';
 import RegisterPage from './pages/RegisterPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import UsersPage from './pages/UsersPage';
 
 const theme = createTheme({
@@ -34,6 +36,8 @@ export default function App() {
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>

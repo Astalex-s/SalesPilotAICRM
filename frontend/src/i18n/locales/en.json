@@ -657,6 +657,23 @@
     "registerButton": "Create Account",
     "termsByCreating": "By creating an account, you agree to our",
     "tagline": "Close more deals.",
-    "taglineAccent": "Faster."
+    "taglineAccent": "Faster.",
+    "backToLogin": "Back to Sign In",
+    "forgotPasswordTitle": "Forgot Password",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
+    "sendResetLink": "Send Reset Link",
+    "checkYourEmail": "Check your email",
+    "resetLinkSent": "If an account with that email exists, you'll receive a password reset link shortly.",
+    "resetPasswordTitle": "Set New Password",
+    "resetPasswordSubtitle": "Enter your new password below",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "At least 6 characters",
+    "confirmNewPassword": "Confirm Password",
+    "confirmNewPasswordPlaceholder": "Repeat your new password",
+    "resetPasswordButton": "Reset Password",
+    "passwordResetSuccess": "Password changed",
+    "passwordResetSuccessMsg": "Your password has been updated. You can now sign in.",
+    "invalidResetToken": "This reset link is invalid or has expired.",
+    "passwordsMismatch": "Passwords do not match."
   }
 }

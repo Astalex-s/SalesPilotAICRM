@@ -187,7 +187,7 @@ export const inputSx = {
 
 /* ── Layout component ─────────────────────────────────────────────────────── */
 interface AuthLayoutProps {
-  activeTab: 'login' | 'register';
+  activeTab: 'login' | 'register' | 'forgot' | 'reset';
   children: React.ReactNode;
 }
 
@@ -269,38 +269,63 @@ export default function AuthLayout({ activeTab, children }: AuthLayoutProps) {
             <LangSwitcher />
           </Box>
 
-          {/* Tabs */}
-          <Box sx={{ display: 'flex', borderBottom: '1px solid #D6DAE0', mb: 4 }}>
-            {(['login', 'register'] as const).map((tab) => {
-              const active = activeTab === tab;
-              const label  = tab === 'login' ? t('auth.signIn') : t('auth.register');
-              return (
-                <Box
-                  key={tab}
-                  component="button"
-                  onClick={() => navigate(tab === 'login' ? '/login' : '/register')}
-                  sx={{
-                    flex: 1,
-                    pb: 1.5,
-                    textAlign: 'center',
-                    fontSize: 14,
-                    fontWeight: active ? 700 : 400,
-                    fontFamily: 'Inter, sans-serif',
-                    color: active ? '#00A8E8' : '#6E7881',
-                    border: 'none',
-                    background: 'none',
-                    cursor: active ? 'default' : 'pointer',
-                    borderBottom: active ? '2px solid #00A8E8' : '2px solid transparent',
-                    mb: '-1px',
-                    transition: 'color 0.15s',
-                    '&:hover': { color: active ? '#00A8E8' : '#171C20' },
-                  }}
-                >
-                  {label}
-                </Box>
-              );
-            })}
-          </Box>
+          {/* Tabs or back link */}
+          {activeTab === 'forgot' || activeTab === 'reset' ? (
+            <Box sx={{ mb: 4 }}>
+              <Box
+                component="button"
+                onClick={() => navigate('/login')}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#00A8E8',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  p: 0,
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                ← {t('auth.backToLogin')}
+              </Box>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', borderBottom: '1px solid #D6DAE0', mb: 4 }}>
+              {(['login', 'register'] as const).map((tab) => {
+                const active = activeTab === tab;
+                const label  = tab === 'login' ? t('auth.signIn') : t('auth.register');
+                return (
+                  <Box
+                    key={tab}
+                    component="button"
+                    onClick={() => navigate(tab === 'login' ? '/login' : '/register')}
+                    sx={{
+                      flex: 1,
+                      pb: 1.5,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      fontWeight: active ? 700 : 400,
+                      fontFamily: 'Inter, sans-serif',
+                      color: active ? '#00A8E8' : '#6E7881',
+                      border: 'none',
+                      background: 'none',
+                      cursor: active ? 'default' : 'pointer',
+                      borderBottom: active ? '2px solid #00A8E8' : '2px solid transparent',
+                      mb: '-1px',
+                      transition: 'color 0.15s',
+                      '&:hover': { color: active ? '#00A8E8' : '#171C20' },
+                    }}
+                  >
+                    {label}
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
 
           {/* Form content */}
           {children}

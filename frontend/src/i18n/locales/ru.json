@@ -657,6 +657,23 @@
     "registerButton": "Создать аккаунт",
     "termsByCreating": "Создавая аккаунт, вы соглашаетесь с",
     "tagline": "Закрывайте больше сделок.",
-    "taglineAccent": "Быстрее."
+    "taglineAccent": "Быстрее.",
+    "backToLogin": "Вернуться ко входу",
+    "forgotPasswordTitle": "Восстановление пароля",
+    "forgotPasswordSubtitle": "Введите email, и мы пришлём ссылку для сброса пароля",
+    "sendResetLink": "Отправить ссылку",
+    "checkYourEmail": "Проверьте почту",
+    "resetLinkSent": "Если аккаунт с таким email существует, вы получите ссылку для сброса пароля.",
+    "resetPasswordTitle": "Новый пароль",
+    "resetPasswordSubtitle": "Введите новый пароль для вашего аккаунта",
+    "newPassword": "Новый пароль",
+    "newPasswordPlaceholder": "Не менее 6 символов",
+    "confirmNewPassword": "Подтвердите пароль",
+    "confirmNewPasswordPlaceholder": "Повторите новый пароль",
+    "resetPasswordButton": "Сменить пароль",
+    "passwordResetSuccess": "Пароль изменён",
+    "passwordResetSuccessMsg": "Ваш пароль успешно обновлён. Теперь вы можете войти.",
+    "invalidResetToken": "Ссылка для сброса пароля недействительна или устарела.",
+    "passwordsMismatch": "Пароли не совпадают."
   }
 }

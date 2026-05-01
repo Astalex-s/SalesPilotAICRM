@@ -22,9 +22,12 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const tokenData = await login({ email, password });
-      localStorage.setItem('crm-auth', JSON.stringify({ state: { token: tokenData.access_token } }));
+      // Temporarily store token so getMe() interceptor can attach it
+      localStorage.setItem('crm-auth', JSON.stringify({
+        state: { token: tokenData.access_token, refreshToken: tokenData.refresh_token },
+      }));
       const user = await getMe();
-      setAuth(tokenData.access_token, user);
+      setAuth(tokenData.access_token, user, tokenData.refresh_token);
       navigate('/', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login error');
@@ -63,8 +66,8 @@ export default function LoginPage() {
               {t('auth.password')}
             </Typography>
             <Link
-              component="button"
-              type="button"
+              component={RouterLink}
+              to="/forgot-password"
               sx={{ fontSize: 12, color: '#00A8E8', textDecoration: 'none', fontFamily: 'Inter, sans-serif', '&:hover': { textDecoration: 'underline' } }}
             >
               {t('auth.forgotPassword')}
