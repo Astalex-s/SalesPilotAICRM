@@ -23,8 +23,8 @@
 - [x] Роли: admin, manager, sales_rep
 - [x] Зависимости: get_current_user, require_admin, require_manager
 - [x] PATCH /users/{id}/role (только admin)
-- [ ] Refresh-токены (сейчас только access token)
-- [ ] Сброс пароля по email
+- [x] Refresh-токены (сейчас только access token)
+- [x] Сброс пароля по email
 
 ### Лиды (Leads)
 - [x] CRUD лидов
