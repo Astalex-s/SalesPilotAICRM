@@ -91,6 +91,11 @@
       "won": "Won",
       "lost": "Lost"
     },
+    "close": {
+      "markWon": "Mark as Won",
+      "markLost": "Mark as Lost",
+      "closeError": "Failed to close deal"
+    },
     "dialog": {
       "title": "New Deal",
       "leadLabel": "Lead",

@@ -1,5 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Alert, Box, Button, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealsApi } from '../api/deals';
@@ -43,6 +45,7 @@ export default function DealsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [closingId, setClosingId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -59,6 +62,18 @@ export default function DealsPage() {
   /* When a new deal is created via the dialog, prepend it to the list */
   const handleDealCreated = (deal: Deal) => {
     setDeals((prev) => [deal, ...prev]);
+  };
+
+  const handleCloseDeal = async (dealId: string, outcome: 'won' | 'lost') => {
+    setClosingId(dealId);
+    try {
+      const updated = await dealsApi.close(dealId, outcome);
+      setDeals((prev) => prev.map((d) => d.id === dealId ? updated : d));
+    } catch {
+      setError(t('deals.close.closeError'));
+    } finally {
+      setClosingId(null);
+    }
   };
 
   /* Resolve stage name for a deal using loaded pipeline stages */
@@ -115,6 +130,7 @@ export default function DealsPage() {
                 [t('deals.table.stage'),     undefined],
                 [t('deals.table.status') || 'Status', '120px'],
                 [t('deals.table.closeDate'), undefined],
+                ['', '96px'],
               ] as [string, string | undefined][]).map(([label, width], i) => (
                 <TableCell
                   key={i}
@@ -140,7 +156,7 @@ export default function DealsPage() {
             {loading ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <TableRow key={i} sx={{ height: 56 }}>
-                  {Array.from({ length: 5 }).map((__, j) => (
+                  {Array.from({ length: 6 }).map((__, j) => (
                     <TableCell key={j} sx={{ border: 'none', borderTop: '1px solid #F0F5FF' }}>
                       <Skeleton variant="text" width="80%" />
                     </TableCell>
@@ -150,7 +166,7 @@ export default function DealsPage() {
             ) : deals.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={6}
                   align="center"
                   sx={{ py: 8, border: 'none', fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#94A3B8' }}
                 >
@@ -215,6 +231,50 @@ export default function DealsPage() {
                           ? new Date(deal.expected_close_date).toLocaleDateString()
                           : '—'}
                       </Typography>
+                    </TableCell>
+
+                    {/* Actions — Won / Lost buttons (only for open deals) */}
+                    <TableCell>
+                      {deal.status === 'open' && (
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          {closingId === deal.id ? (
+                            <CircularProgress size={18} sx={{ color: '#00A8E8' }} />
+                          ) : (
+                            <>
+                              <Tooltip title={t('deals.close.markWon')}>
+                                <Box
+                                  component="button"
+                                  onClick={() => handleCloseDeal(deal.id, 'won')}
+                                  sx={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    width: 28, height: 28, borderRadius: '6px',
+                                    border: '1px solid #D1FAE5', bgcolor: '#F0FDF4',
+                                    color: '#10B981', cursor: 'pointer',
+                                    '&:hover': { bgcolor: '#D1FAE5' },
+                                  }}
+                                >
+                                  <CheckIcon sx={{ fontSize: 15 }} />
+                                </Box>
+                              </Tooltip>
+                              <Tooltip title={t('deals.close.markLost')}>
+                                <Box
+                                  component="button"
+                                  onClick={() => handleCloseDeal(deal.id, 'lost')}
+                                  sx={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    width: 28, height: 28, borderRadius: '6px',
+                                    border: '1px solid #FEE2E2', bgcolor: '#FFF5F5',
+                                    color: '#EF4444', cursor: 'pointer',
+                                    '&:hover': { bgcolor: '#FEE2E2' },
+                                  }}
+                                >
+                                  <CloseIcon sx={{ fontSize: 15 }} />
+                                </Box>
+                              </Tooltip>
+                            </>
+                          )}
+                        </Box>
+                      )}
                     </TableCell>
                   </TableRow>
                 );

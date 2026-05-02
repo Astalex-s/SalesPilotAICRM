@@ -7,6 +7,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
+from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
 from src.application.use_cases.create_lead import CreateLeadUseCase
 from src.application.use_cases.get_analytics_overview import GetAnalyticsOverviewUseCase
@@ -183,6 +184,16 @@ def get_move_deal_stage_use_case(
     return MoveDealStageUseCase(
         deal_repo=SqlDealRepository(session),
         pipeline_repo=SqlPipelineRepository(session),
+        activity_repo=SqlActivityRepository(session),
+    )
+
+
+def get_close_deal_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> CloseDealUseCase:
+    """Фабрика CloseDealUseCase."""
+    return CloseDealUseCase(
+        deal_repo=SqlDealRepository(session),
         activity_repo=SqlActivityRepository(session),
     )
 

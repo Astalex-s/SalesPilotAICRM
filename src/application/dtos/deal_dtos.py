@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -44,6 +45,14 @@ class MoveDealStageInput(BaseModel):
     new_stage_id: UUID
     pipeline_id: UUID
     performed_by_id: UUID
+
+
+class CloseDealInput(BaseModel):
+    """Входные данные для закрытия сделки (победа или проигрыш)."""
+
+    deal_id: UUID
+    outcome: Literal["won", "lost"]
+    performed_by_id: UUID | None = None
 
 
 # ── Выходные DTO ───────────────────────────────────────────────────────────────

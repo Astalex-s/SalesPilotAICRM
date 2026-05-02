@@ -8,22 +8,27 @@ from __future__ import annotations
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
-from src.application.dtos.deal_dtos import ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
+from src.application.dtos.deal_dtos import CloseDealInput, ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
 from src.application.dtos.telegram_dtos import NotifyDealStageChangeInput
-from src.application.exceptions import TelegramNotConfiguredError
+from src.application.exceptions import DealNotFoundError, TelegramNotConfiguredError
+from src.domain.exceptions import DealAlreadyClosedError
+from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
 from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
+from src.interfaces.api.auth_dependencies import get_current_user
+from src.application.dtos.auth_dtos import UserOutput
 from src.interfaces.api.dependencies import (
+    get_close_deal_use_case,
     get_convert_lead_use_case,
     get_list_deals_use_case,
     get_move_deal_stage_use_case,
     get_notify_deal_stage_change_use_case,
 )
-from src.interfaces.schemas.deal_schemas import MoveDealStageRequest
+from src.interfaces.schemas.deal_schemas import CloseDealRequest, MoveDealStageRequest
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +112,37 @@ async def move_deal_stage(
     )
 
     return result
+
+
+@router.patch(
+    "/{deal_id}/close",
+    response_model=DealOutput,
+    status_code=status.HTTP_200_OK,
+    summary="Закрыть сделку (won / lost)",
+    description=(
+        "Закрывает открытую сделку как выигранную (won) или проигранную (lost). "
+        "Записывает событие в журнал активностей. "
+        "Уже закрытую сделку нельзя закрыть повторно (400)."
+    ),
+)
+async def close_deal(
+    deal_id: UUID,
+    body: CloseDealRequest,
+    use_case: CloseDealUseCase = Depends(get_close_deal_use_case),
+    current_user: UserOutput = Depends(get_current_user),
+) -> DealOutput:
+    """PATCH /api/v1/deals/{deal_id}/close — закрытие сделки."""
+    data = CloseDealInput(
+        deal_id=deal_id,
+        outcome=body.outcome,
+        performed_by_id=current_user.id,
+    )
+    try:
+        return await use_case.execute(data)
+    except DealNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except (DealAlreadyClosedError, ValueError) as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
 
 
 # ── Фоновые задачи ─────────────────────────────────────────────────────────────

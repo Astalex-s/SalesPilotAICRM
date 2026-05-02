@@ -1,4 +1,5 @@
 import { type ConvertLeadPayload, type Deal, type MoveDealStagePayload } from '../types/deal';
+type CloseOutcome = 'won' | 'lost';
 import axiosInstance from './axiosInstance';
 
 interface ListDealsParams {
@@ -23,6 +24,11 @@ export const dealsApi = {
       `/deals/${dealId}/stage`,
       payload,
     );
+    return data;
+  },
+
+  close: async (dealId: string, outcome: CloseOutcome): Promise<Deal> => {
+    const { data } = await axiosInstance.patch<Deal>(`/deals/${dealId}/close`, { outcome });
     return data;
   },
 };
