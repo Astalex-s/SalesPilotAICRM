@@ -55,6 +55,8 @@ services:
     env_file: .env
     environment:
       DEBUG: "false"
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -76,6 +78,8 @@ services:
       dockerfile: Dockerfile
       target: production
     restart: always
+    volumes:
+      - uploads_data:/app/uploads
     command:
       - celery
       - -A
@@ -124,6 +128,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  uploads_data:
 
 # ── Networks ──────────────────────────────────────────────────────────────────
 networks:

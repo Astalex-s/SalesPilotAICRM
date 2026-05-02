@@ -712,5 +712,18 @@
     "passwordResetSuccessMsg": "Your password has been updated. You can now sign in.",
     "invalidResetToken": "This reset link is invalid or has expired.",
     "passwordsMismatch": "Passwords do not match."
+  },
+  "attachments": {
+    "title": "Attachments",
+    "dropzone": "Click or drag a file here to upload",
+    "maxSize": "Max {{max}} MB",
+    "uploading": "Uploading...",
+    "empty": "No files attached yet",
+    "download": "Download",
+    "delete": "Delete",
+    "fileTooLarge": "File exceeds {{max}} MB limit",
+    "loadError": "Failed to load attachments",
+    "uploadError": "Failed to upload file",
+    "deleteError": "Failed to delete file"
   }
 }

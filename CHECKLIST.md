@@ -41,7 +41,7 @@
 - [x] PATCH /users/me — обновление профиля (имя + фамилия)
 - [x] POST /users/me/password — смена пароля (проверка текущего пароля)
 - [x] Закрытие сделки (won / lost) — PATCH /deals/{id}/close + кнопки Won/Lost в таблице сделок
-- [ ] Прикрепление файлов к сделке
+- [x] Прикрепление файлов к сделке (upload/list/delete/download + DealAttachmentsDialog)
 
 ### Воронка (Pipeline)
 - [x] GET /pipelines/{id} — воронка с этапами

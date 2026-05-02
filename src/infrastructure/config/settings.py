@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     TELEGRAM_NOTIFICATION_CHAT_ID: str = ""
     TELEGRAM_WEBHOOK_SECRET: str = ""
 
+    # Файловые вложения
+    UPLOADS_DIR: str = "/app/uploads"
+
     # Celery
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"

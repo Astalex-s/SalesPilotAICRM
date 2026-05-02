@@ -5,6 +5,7 @@
 from src.interfaces.api.v1.routers.ai import router as ai_router
 from src.interfaces.api.v1.routers.analytics import router as analytics_router
 from src.interfaces.api.v1.routers.auth import router as auth_router
+from src.interfaces.api.v1.routers.deal_attachments import router as deal_attachments_router
 from src.interfaces.api.v1.routers.deals import router as deals_router
 from src.interfaces.api.v1.routers.emails import router as emails_router
 from src.interfaces.api.v1.routers.gdpr import router as gdpr_router
@@ -19,6 +20,7 @@ __all__ = [
     "ai_router",
     "analytics_router",
     "auth_router",
+    "deal_attachments_router",
     "deals_router",
     "emails_router",
     "gdpr_router",

@@ -1,4 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
@@ -7,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { dealsApi } from '../api/deals';
 import { pipelinesApi } from '../api/pipelines';
 import AddDealDialog from '../components/deals/AddDealDialog';
+import DealAttachmentsDialog from '../components/deals/DealAttachmentsDialog';
 import { type Deal, type DealStatus } from '../types/deal';
 import { type Pipeline } from '../types/pipeline';
 
@@ -46,6 +48,7 @@ export default function DealsPage() {
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [closingId, setClosingId] = useState<string | null>(null);
+  const [attachmentsDeal, setAttachmentsDeal] = useState<Deal | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -233,10 +236,27 @@ export default function DealsPage() {
                       </Typography>
                     </TableCell>
 
-                    {/* Actions — Won / Lost buttons (only for open deals) */}
+                    {/* Actions — attachments + Won / Lost buttons */}
                     <TableCell>
+                      <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                        <Tooltip title={t('attachments.title')}>
+                          <Box
+                            component="button"
+                            onClick={() => setAttachmentsDeal(deal)}
+                            sx={{
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              width: 28, height: 28, borderRadius: '6px',
+                              border: '1px solid #E8EFF7', bgcolor: '#FAFBFD',
+                              color: '#8FA3B8', cursor: 'pointer',
+                              '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8', borderColor: '#C8D9EC' },
+                            }}
+                          >
+                            <AttachFileIcon sx={{ fontSize: 15 }} />
+                          </Box>
+                        </Tooltip>
+                      </Box>
                       {deal.status === 'open' && (
-                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
                           {closingId === deal.id ? (
                             <CircularProgress size={18} sx={{ color: '#00A8E8' }} />
                           ) : (
@@ -291,6 +311,16 @@ export default function DealsPage() {
         pipeline={pipeline}
         onDealCreated={handleDealCreated}
       />
+
+      {/* Attachments Dialog */}
+      {attachmentsDeal && (
+        <DealAttachmentsDialog
+          open={Boolean(attachmentsDeal)}
+          onClose={() => setAttachmentsDeal(null)}
+          dealId={attachmentsDeal.id}
+          dealTitle={attachmentsDeal.title}
+        />
+      )}
     </Box>
   );
 }

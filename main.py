@@ -17,6 +17,7 @@ from src.interfaces.api.v1.routers import (
     ai_router,
     analytics_router,
     auth_router,
+    deal_attachments_router,
     deals_router,
     emails_router,
     gdpr_router,
@@ -65,6 +66,7 @@ def create_app() -> FastAPI:
     application.include_router(users_router, prefix=_api_prefix)
     application.include_router(leads_router, prefix=_api_prefix)
     application.include_router(deals_router, prefix=_api_prefix)
+    application.include_router(deal_attachments_router, prefix=_api_prefix)
     application.include_router(analytics_router, prefix=_api_prefix)
     application.include_router(pipelines_router, prefix=_api_prefix)
     application.include_router(ai_router, prefix=_api_prefix)

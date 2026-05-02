@@ -4,6 +4,7 @@
 это необходимо для работы Alembic autogenerate.
 """
 from src.infrastructure.database.models.activity_model import ActivityModel
+from src.infrastructure.database.models.deal_attachment_model import DealAttachmentModel
 from src.infrastructure.database.models.deal_model import DealModel
 from src.infrastructure.database.models.email_message_model import EmailMessageModel
 from src.infrastructure.database.models.gdpr_audit_model import GdprAuditModel
@@ -14,6 +15,7 @@ from src.infrastructure.database.models.user_model import UserModel
 
 __all__ = [
     "ActivityModel",
+    "DealAttachmentModel",
     "DealModel",
     "EmailMessageModel",
     "GdprAuditModel",

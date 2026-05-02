@@ -9,6 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
 from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
+from src.application.use_cases.delete_deal_attachment import DeleteDealAttachmentUseCase
+from src.application.use_cases.list_deal_attachments import ListDealAttachmentsUseCase
+from src.application.use_cases.upload_deal_attachment import UploadDealAttachmentUseCase
 from src.application.use_cases.create_lead import CreateLeadUseCase
 from src.application.use_cases.get_analytics_overview import GetAnalyticsOverviewUseCase
 from src.application.use_cases.get_dashboard_analytics import GetDashboardAnalyticsUseCase
@@ -41,6 +44,7 @@ from src.application.use_cases.score_lead import ScoreLeadUseCase
 from src.application.use_cases.send_email import SendEmailUseCase
 from src.infrastructure.ai.ai_service import OpenAIService
 from src.infrastructure.database.repositories.activity_repository import SqlActivityRepository
+from src.infrastructure.database.repositories.deal_attachment_repository import SqlDealAttachmentRepository
 from src.infrastructure.database.repositories.deal_repository import SqlDealRepository
 from src.infrastructure.database.repositories.email_message_repository import SqlEmailMessageRepository
 from src.infrastructure.database.repositories.gdpr_audit_repository import SqlGdprAuditRepository
@@ -52,6 +56,7 @@ from src.infrastructure.gmail.token_storage import FileTokenStorage
 from src.infrastructure.celery.celery_task_service import CeleryTaskService
 from src.infrastructure.telegram.telegram_service import TelegramService
 from src.infrastructure.config.settings import settings
+from src.domain.repositories.deal_attachment_repository import IDealAttachmentRepository
 from src.domain.services.lead_anonymization_service import LeadAnonymizationService
 
 
@@ -405,4 +410,42 @@ def get_gdpr_audit_log_use_case(
     """Фабрика GetGdprAuditLogUseCase — чтение журнала аудита GDPR."""
     return GetGdprAuditLogUseCase(
         gdpr_audit_repo=SqlGdprAuditRepository(session),
+    )
+
+
+# ── Deal Attachments Use Case провайдеры ──────────────────────────────────────
+
+def get_attachment_repo(
+    session: AsyncSession = Depends(get_session),
+) -> IDealAttachmentRepository:
+    """Фабрика SqlDealAttachmentRepository."""
+    return SqlDealAttachmentRepository(session)
+
+
+def get_upload_attachment_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> UploadDealAttachmentUseCase:
+    """Фабрика UploadDealAttachmentUseCase."""
+    return UploadDealAttachmentUseCase(
+        deal_repo=SqlDealRepository(session),
+        attachment_repo=SqlDealAttachmentRepository(session),
+        uploads_dir=settings.UPLOADS_DIR,
+    )
+
+
+def get_list_attachments_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListDealAttachmentsUseCase:
+    """Фабрика ListDealAttachmentsUseCase."""
+    return ListDealAttachmentsUseCase(
+        attachment_repo=SqlDealAttachmentRepository(session),
+    )
+
+
+def get_delete_attachment_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeleteDealAttachmentUseCase:
+    """Фабрика DeleteDealAttachmentUseCase."""
+    return DeleteDealAttachmentUseCase(
+        attachment_repo=SqlDealAttachmentRepository(session),
     )
