@@ -55,3 +55,13 @@ class UserOutput(BaseModel):
 
 class UpdateUserRoleInput(BaseModel):
     role: UserRole
+
+
+class UpdateProfileInput(BaseModel):
+    first_name: str = Field(..., min_length=1, max_length=100)
+    last_name: str = Field(..., min_length=1, max_length=100)
+
+
+class ChangePasswordInput(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=6, max_length=128)

@@ -607,13 +607,15 @@
     "confirmPassword": "Confirm Password",
     "saveChanges": "Save Changes",
     "saved": "Changes saved!",
+    "saving": "Saving...",
     "passwordChanged": "Password changed!",
     "cancel": "Cancel",
     "passwordHint": "Leave blank to keep your current password",
     "errors": {
       "currentRequired": "Please enter your current password",
       "passwordMismatch": "Passwords do not match",
-      "passwordTooShort": "Password must be at least 8 characters"
+      "passwordTooShort": "Password must be at least 8 characters",
+      "saveFailed": "Failed to save. Please try again."
     }
   },
   "settings": {

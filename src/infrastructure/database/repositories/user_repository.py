@@ -89,6 +89,29 @@ class SqlUserRepository(IUserRepository):
         await self._session.flush()
         return True
 
+    async def find_by_id_with_hash(self, user_id: UUID) -> tuple[User, str] | None:
+        """Возвращает пользователя и хэш пароля (только для смены пароля)."""
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            return None
+        return model.to_entity(), model.password_hash
+
+    async def update_profile(self, user_id: UUID, first_name: str, last_name: str) -> User | None:
+        """Обновляет имя и фамилию пользователя."""
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            return None
+        model.first_name = first_name.strip()
+        model.last_name = last_name.strip()
+        await self._session.flush()
+        return model.to_entity()
+
     async def update_role(self, user_id: UUID, role: str) -> User | None:
         """Обновляет роль пользователя напрямую в БД."""
         result = await self._session.execute(

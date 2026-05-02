@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Dialog, DialogContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/useAuthStore';
+import { updateProfile, changePassword } from '../../api/users';
 
 /* ── Avatar color options ────────────────────────────────────────────────────── */
 const AVATAR_COLORS = [
@@ -59,12 +60,15 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
   const [avatarColor, setAvatarColor] = useState(
     localStorage.getItem('crm-avatar-color') ?? AVATAR_COLORS[0]
   );
-  const [currentPw, setCurrentPw] = useState('');
-  const [newPw,     setNewPw]     = useState('');
-  const [confirmPw, setConfirmPw] = useState('');
-  const [pwError,   setPwError]   = useState('');
-  const [saved,     setSaved]     = useState(false);
-  const [pwSaved,   setPwSaved]   = useState(false);
+  const [currentPw,   setCurrentPw]   = useState('');
+  const [newPw,       setNewPw]       = useState('');
+  const [confirmPw,   setConfirmPw]   = useState('');
+  const [pwError,     setPwError]     = useState('');
+  const [saved,       setSaved]       = useState(false);
+  const [saving,      setSaving]      = useState(false);
+  const [saveError,   setSaveError]   = useState('');
+  const [pwSaved,     setPwSaved]     = useState(false);
+  const [pwSaving,    setPwSaving]    = useState(false);
 
   if (!user) return null;
 
@@ -72,23 +76,40 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
   const roleLabel = ROLE_LABEL[user.role]?.[lang as 'en' | 'ru'] ?? user.role;
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || '??';
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     if (!firstName.trim() || !lastName.trim()) return;
-    setUser({ ...user, first_name: firstName.trim(), last_name: lastName.trim() });
-    localStorage.setItem('crm-avatar-color', avatarColor);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setSaving(true);
+    setSaveError('');
+    try {
+      const updated = await updateProfile(firstName.trim(), lastName.trim());
+      setUser({ ...user, first_name: updated.first_name, last_name: updated.last_name });
+      localStorage.setItem('crm-avatar-color', avatarColor);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch {
+      setSaveError(t('profile.errors.saveFailed'));
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async () => {
     setPwError('');
     if (!currentPw) { setPwError(t('profile.errors.currentRequired')); return; }
     if (newPw.length < 8) { setPwError(t('profile.errors.passwordTooShort')); return; }
     if (newPw !== confirmPw) { setPwError(t('profile.errors.passwordMismatch')); return; }
-    // No backend endpoint yet — show success visually
-    setCurrentPw(''); setNewPw(''); setConfirmPw('');
-    setPwSaved(true);
-    setTimeout(() => setPwSaved(false), 2500);
+    setPwSaving(true);
+    try {
+      await changePassword(currentPw, newPw);
+      setCurrentPw(''); setNewPw(''); setConfirmPw('');
+      setPwSaved(true);
+      setTimeout(() => setPwSaved(false), 2500);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      setPwError(msg ?? t('profile.errors.saveFailed'));
+    } finally {
+      setPwSaving(false);
+    }
   };
 
   return (
@@ -234,9 +255,15 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
         </Box>
 
         {/* Save profile button */}
+        {saveError && (
+          <Typography sx={{ fontSize: 12, color: '#EF4444', fontFamily: 'Inter, sans-serif', mb: 1 }}>
+            {saveError}
+          </Typography>
+        )}
         <Box
           component="button"
           onClick={handleSaveProfile}
+          disabled={saving}
           sx={{
             width: '100%',
             py: '10px',
@@ -245,13 +272,14 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
             bgcolor: saved ? '#10B981' : '#00A8E8',
             color: '#fff',
             fontSize: 14, fontWeight: 600, fontFamily: 'Inter, sans-serif',
-            cursor: 'pointer',
+            cursor: saving ? 'default' : 'pointer',
+            opacity: saving ? 0.7 : 1,
             transition: 'background 0.2s',
-            '&:hover': { bgcolor: saved ? '#10B981' : '#0096D1' },
+            '&:hover': { bgcolor: saved ? '#10B981' : saving ? '#00A8E8' : '#0096D1' },
             mb: 3,
           }}
         >
-          {saved ? t('profile.saved') : t('profile.saveChanges')}
+          {saved ? t('profile.saved') : saving ? t('profile.saving') : t('profile.saveChanges')}
         </Box>
 
         {/* Divider */}
@@ -320,6 +348,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
         <Box
           component="button"
           onClick={handleSavePassword}
+          disabled={pwSaving}
           sx={{
             width: '100%',
             py: '10px',
@@ -329,12 +358,13 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
             bgcolor: pwSaved ? '#10B981' : '#fff',
             color: pwSaved ? '#fff' : '#0D2144',
             fontSize: 14, fontWeight: 600, fontFamily: 'Inter, sans-serif',
-            cursor: 'pointer',
+            cursor: pwSaving ? 'default' : 'pointer',
+            opacity: pwSaving ? 0.7 : 1,
             transition: 'all 0.2s',
-            '&:hover': { bgcolor: pwSaved ? '#10B981' : '#F5F8FC', borderColor: '#BDC8D1' },
+            '&:hover': { bgcolor: pwSaved ? '#10B981' : pwSaving ? '#fff' : '#F5F8FC', borderColor: '#BDC8D1' },
           }}
         >
-          {pwSaved ? t('profile.passwordChanged') : t('profile.changePassword')}
+          {pwSaved ? t('profile.passwordChanged') : pwSaving ? t('profile.saving') : t('profile.changePassword')}
         </Box>
 
       </DialogContent>

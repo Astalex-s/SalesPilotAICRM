@@ -10,3 +10,18 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<Us
   const { data } = await axiosInstance.patch<User>(`/users/${userId}/role`, { role });
   return data;
 }
+
+export async function updateProfile(firstName: string, lastName: string): Promise<User> {
+  const { data } = await axiosInstance.patch<User>('/users/me', {
+    first_name: firstName,
+    last_name: lastName,
+  });
+  return data;
+}
+
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  await axiosInstance.post('/users/me/password', {
+    current_password: currentPassword,
+    new_password: newPassword,
+  });
+}

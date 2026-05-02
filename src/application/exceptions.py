@@ -111,6 +111,13 @@ class UserNotFoundError(EntityNotFoundError):
 
 # ── Ошибки GDPR-модуля ─────────────────────────────────────────────────────────
 
+class InvalidCurrentPasswordError(ApplicationError):
+    """Текущий пароль указан неверно."""
+
+    def __init__(self) -> None:
+        super().__init__("Текущий пароль неверен.")
+
+
 class GdprTargetNotFoundError(ApplicationError):
     """Субъект данных для GDPR-операции не найден."""
 

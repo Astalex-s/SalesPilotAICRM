@@ -31,13 +31,15 @@
 - [x] Статусы: new → contacted → qualified → unqualified → converted
 - [x] Источники лида (website, referral, cold_call и т.д.)
 - [x] Конвертация лида в сделку (POST /deals)
-- [ ] Bulk-импорт лидов из CSV
+- [x] Bulk-импорт лидов из CSV
 
 ### Сделки (Deals)
 - [x] Создание сделки из квалифицированного лида
 - [x] Список сделок с фильтрацией (pipeline_id, stage_id, owner_id)
 - [x] Смена этапа (PATCH /deals/{id}/stage)
 - [x] Telegram-уведомление при смене этапа (фоновая задача)
+- [x] PATCH /users/me — обновление профиля (имя + фамилия)
+- [x] POST /users/me/password — смена пароля (проверка текущего пароля)
 - [ ] Закрытие сделки (won / lost) — отдельный endpoint
 - [ ] Прикрепление файлов к сделке
 
@@ -150,6 +152,14 @@
 - [x] Пустой этап: пунктирная рамка по размеру карточки вместо текста
 - [x] Кнопка «+» внизу каждой колонки — открывает AddDealDialog с нужным этапом
 
+### Лиды в воронке (добавлено 2026-05-03)
+- [x] LeadCard — draggable карточка лида (имя, компания/email, статус-бейдж, кнопка перехода)
+- [x] LeadPoolColumn — нулевая колонка «Нераспределённые» (droppableId="leads-pool")
+- [x] useKanbanStore: leadsPool, loadLeadsPool, addLeadToPool, reorderLeadsPool, promoteLeadToDeal
+- [x] Drag лида в этап → auto-qualify + create deal (optimistic + rollback)
+- [x] Кнопка «+» в колонках показывает меню «Добавить лида / Добавить сделку»
+- [x] AddLeadDialog — создание лида прямо из воронки (components/leads/)
+
 ### Тестирование фронтенда
 - [x] 23 теста
 - [ ] Покрыть Add Deal диалог тестами
@@ -197,7 +207,7 @@
 - [x] Управление несколькими воронками через UI (PipelineManagerDialog + Sidebar switcher)
 
 ### Документация
-- [ ] README.md — запуск проекта, стек, скриншоты
+- [x] README.md — запуск проекта, стек, скриншоты
 - [ ] API документация (Swagger уже есть через FastAPI)
 - [ ] Гайд по локальной разработке (dev setup)
 - [ ] ARCHITECTURE.md — описание Clean Architecture
