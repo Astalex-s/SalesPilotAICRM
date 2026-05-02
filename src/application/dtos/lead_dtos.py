@@ -56,6 +56,41 @@ class UpdateLeadInput(BaseModel):
     notes: str | None = None
 
 
+class BulkImportLeadRow(BaseModel):
+    """Одна строка CSV для массового импорта."""
+
+    first_name: str
+    last_name: str
+    email: str
+    phone: str | None = None
+    company: str | None = None
+    source: LeadSource = LeadSource.OTHER
+
+    @field_validator("first_name", "last_name", "email")
+    @classmethod
+    def not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Поле не может быть пустым.")
+        return v.strip()
+
+
+class BulkImportInput(BaseModel):
+    """Входные данные для массового импорта лидов."""
+
+    rows: list[BulkImportLeadRow]
+    owner_id: UUID
+
+
+class BulkImportResult(BaseModel):
+    """Результат массового импорта лидов."""
+
+    created: int
+    skipped: int
+    error_count: int
+    errors: list[str]
+    leads: list[LeadOutput]
+
+
 # ── Выходные DTO ───────────────────────────────────────────────────────────────
 
 class LeadOutput(BaseModel):

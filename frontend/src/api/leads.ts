@@ -1,5 +1,5 @@
 import { type Activity } from '../types/activity';
-import { type CreateLeadPayload, type Lead, type LeadStatus, type UpdateLeadPayload } from '../types/lead';
+import { type BulkImportResult, type CreateLeadPayload, type Lead, type LeadStatus, type UpdateLeadPayload } from '../types/lead';
 import axiosInstance from './axiosInstance';
 
 interface ListLeadsParams {
@@ -32,6 +32,13 @@ export const leadsApi = {
 
   update: async (leadId: string, payload: UpdateLeadPayload): Promise<Lead> => {
     const { data } = await axiosInstance.patch<Lead>(`/leads/${leadId}`, payload);
+    return data;
+  },
+
+  bulkImport: async (file: File): Promise<BulkImportResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const { data } = await axiosInstance.post<BulkImportResult>('/leads/bulk-import', formData);
     return data;
   },
 };

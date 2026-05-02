@@ -37,3 +37,11 @@ export interface CreateLeadPayload {
   source?: LeadSource;
   owner_id: string;
 }
+
+export interface BulkImportResult {
+  created: number;
+  skipped: number;
+  error_count: number;
+  errors: string[];
+  leads: Lead[];
+}

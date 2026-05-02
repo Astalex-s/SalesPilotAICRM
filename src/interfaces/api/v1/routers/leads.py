@@ -5,24 +5,39 @@
 """
 from __future__ import annotations
 
+import csv
+import io
 import logging
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from fastapi import status as http_status
 
 from src.application.dtos.activity_dtos import ActivityOutput
-from src.application.dtos.lead_dtos import CreateLeadInput, GetLeadInput, LeadOutput, ListLeadsInput, UpdateLeadInput
+from src.application.dtos.lead_dtos import (
+    BulkImportInput,
+    BulkImportLeadRow,
+    BulkImportResult,
+    CreateLeadInput,
+    GetLeadInput,
+    LeadOutput,
+    ListLeadsInput,
+    UpdateLeadInput,
+)
 from src.application.dtos.telegram_dtos import NotifyNewLeadInput
+from src.application.dtos.auth_dtos import UserOutput
 from src.application.exceptions import TelegramNotConfiguredError
+from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
 from src.application.use_cases.create_lead import CreateLeadUseCase
 from src.application.use_cases.get_lead import GetLeadUseCase
 from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
-from src.domain.value_objects.enums import LeadStatus
+from src.domain.value_objects.enums import LeadSource, LeadStatus
+from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.dependencies import (
+    get_bulk_import_leads_use_case,
     get_create_lead_use_case,
     get_lead_use_case,
     get_list_lead_activities_use_case,
@@ -131,6 +146,55 @@ async def list_lead_activities(
 ) -> list[ActivityOutput]:
     """GET /api/v1/leads/{lead_id}/activities — журнал активностей."""
     return await use_case.execute(lead_id)
+
+
+@router.post(
+    "/bulk-import",
+    response_model=BulkImportResult,
+    status_code=http_status.HTTP_200_OK,
+    summary="Массовый импорт лидов из CSV",
+    description=(
+        "Принимает CSV-файл и создаёт лидов пакетно. "
+        "Обязательные колонки: first_name, last_name, email. "
+        "Опциональные: phone, company, source. "
+        "Дубли по e-mail пропускаются (skipped), не являются ошибкой."
+    ),
+)
+async def bulk_import_leads(
+    file: UploadFile = File(..., description="CSV-файл с лидами"),
+    use_case: BulkImportLeadsUseCase = Depends(get_bulk_import_leads_use_case),
+    current_user: UserOutput = Depends(get_current_user),
+) -> BulkImportResult:
+    """POST /api/v1/leads/bulk-import — массовый импорт из CSV."""
+    content = await file.read()
+    try:
+        text = content.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        text = content.decode("latin-1")
+
+    reader = csv.DictReader(io.StringIO(text))
+    rows: list[BulkImportLeadRow] = []
+
+    for raw_row in reader:
+        row = {k.strip().lower(): (v or "").strip() for k, v in raw_row.items() if k}
+        source_val = row.get("source", "other")
+        try:
+            source = LeadSource(source_val)
+        except ValueError:
+            source = LeadSource.OTHER
+
+        rows.append(
+            BulkImportLeadRow(
+                first_name=row.get("first_name", ""),
+                last_name=row.get("last_name", ""),
+                email=row.get("email", ""),
+                phone=row.get("phone") or None,
+                company=row.get("company") or None,
+                source=source,
+            )
+        )
+
+    return await use_case.execute(BulkImportInput(rows=rows, owner_id=current_user.id))
 
 
 # ── Фоновые задачи ─────────────────────────────────────────────────────────────

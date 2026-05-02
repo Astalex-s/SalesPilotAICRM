@@ -25,6 +25,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import CsvImportDialog from '../components/leads/CsvImportDialog';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLeadStore } from '../store/useLeadStore';
 import { type Lead, type LeadSource, type LeadStatus } from '../types/lead';
@@ -388,6 +389,7 @@ export default function LeadsPage() {
   const navigate = useNavigate();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
@@ -452,6 +454,25 @@ export default function LeadsPage() {
           )}
         </Box>
 
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
+          <Button
+            variant="outlined"
+            onClick={() => setCsvImportOpen(true)}
+            sx={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+              fontSize: 14,
+              color: '#0D2144',
+              borderColor: '#E2EAF4',
+              borderRadius: '10px',
+              px: 2.5,
+              textTransform: 'none',
+              '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: 'rgba(0,168,232,0.04)' },
+            }}
+          >
+            {t('leads.csvImport.button')}
+          </Button>
+
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -471,6 +492,7 @@ export default function LeadsPage() {
         >
           {t('leads.addLead')}
         </Button>
+        </Box>
       </Box>
 
       {error && (
@@ -550,6 +572,12 @@ export default function LeadsPage() {
       </Box>
 
       <AddLeadDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
+
+      <CsvImportDialog
+        open={csvImportOpen}
+        onClose={() => setCsvImportOpen(false)}
+        onImported={fetchLeads}
+      />
 
       {/* ── Table card ── */}
       <Box sx={CARD}>

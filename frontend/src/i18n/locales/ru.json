@@ -287,6 +287,28 @@
     "pagination": {
       "showing": "Показаны {{from}}–{{to}} из {{total}}"
     },
+    "csvImport": {
+      "button": "Импорт CSV",
+      "title": "Импорт лидов из CSV",
+      "downloadTemplate": "Скачать шаблон",
+      "dropzone": "Нажмите или перетащите CSV-файл сюда",
+      "supported": "Обязательные: first_name, last_name, email · Опциональные: phone, company, source",
+      "rows": "строк",
+      "preview": "Предпросмотр (первые {{count}} строк)",
+      "moreRows": "...и ещё {{count}} строк",
+      "importBtn": "Импортировать {{count}} лидов",
+      "importing": "Импортируем...",
+      "cancel": "Отмена",
+      "done": "Готово",
+      "resultTitle": "Импорт завершён",
+      "created": "создано",
+      "skipped": "дублей пропущено",
+      "errorsCount": "ошибок",
+      "errorList": "Детали ошибок:",
+      "noFile": "Выберите CSV-файл",
+      "parseError": "Отсутствуют обязательные колонки. CSV должен содержать: first_name, last_name, email",
+      "importError": "Импорт не удался. Попробуйте ещё раз."
+    },
     "dialog": {
       "title": "Новый лид",
       "firstName": "Имя",

@@ -287,6 +287,28 @@
     "pagination": {
       "showing": "Showing {{from}}–{{to}} of {{total}}"
     },
+    "csvImport": {
+      "button": "Import CSV",
+      "title": "Import Leads from CSV",
+      "downloadTemplate": "Download template",
+      "dropzone": "Click or drag a CSV file here",
+      "supported": "Required: first_name, last_name, email · Optional: phone, company, source",
+      "rows": "rows",
+      "preview": "Preview (first {{count}} rows)",
+      "moreRows": "...and {{count}} more rows",
+      "importBtn": "Import {{count}} leads",
+      "importing": "Importing...",
+      "cancel": "Cancel",
+      "done": "Done",
+      "resultTitle": "Import Complete",
+      "created": "created",
+      "skipped": "duplicates skipped",
+      "errorsCount": "errors",
+      "errorList": "Error details:",
+      "noFile": "Please select a CSV file",
+      "parseError": "Missing required columns. CSV must have: first_name, last_name, email",
+      "importError": "Import failed. Please try again."
+    },
     "dialog": {
       "title": "Add New Lead",
       "firstName": "First Name",
