@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { dealsApi } from '../api/deals';
+import { leadsApi } from '../api/leads';
 import { pipelinesApi } from '../api/pipelines';
 import { type Deal } from '../types/deal';
+import { type Lead } from '../types/lead';
 import { type Pipeline } from '../types/pipeline';
 
 /** Columns indexed by stage_id → ordered list of deals. */
@@ -11,6 +13,7 @@ interface KanbanState {
   pipeline: Pipeline | null;
   allPipelines: Pipeline[];
   columns: KanbanColumns;
+  leadsPool: Lead[];
   loading: boolean;
   error: string | null;
 
@@ -22,6 +25,26 @@ interface KanbanState {
 
   /** Reload the currently open board (used after stage edits). */
   reloadBoard: () => Promise<void>;
+
+  /** Load leads that have no deal (unassigned pool). */
+  loadLeadsPool: () => Promise<void>;
+
+  /** Add a single lead to the pool (after creating via AddLeadDialog). */
+  addLeadToPool: (lead: Lead) => void;
+
+  /** Reorder leads within the pool (visual only). */
+  reorderLeadsPool: (fromIndex: number, toIndex: number) => void;
+
+  /**
+   * Promote a lead to a deal: qualify it + create deal in the target stage.
+   * Optimistic remove from pool; reloads board on success; rolls back on error.
+   */
+  promoteLeadToDeal: (params: {
+    leadId: string;
+    stageId: string;
+    pipelineId: string;
+    performedById: string;
+  }) => Promise<void>;
 
   /**
    * Move a deal from one stage column to another.
@@ -54,6 +77,7 @@ export const useKanbanStore = create<KanbanState>((set, get) => ({
   pipeline: null,
   allPipelines: [],
   columns: {},
+  leadsPool: [],
   loading: false,
   error: null,
 
@@ -81,6 +105,61 @@ export const useKanbanStore = create<KanbanState>((set, get) => ({
       set({ pipeline, columns: buildColumns(pipeline, deals), loading: false });
     } catch (err) {
       set({ error: (err as Error).message, loading: false });
+    }
+    // Load leads pool alongside board (non-blocking)
+    get().loadLeadsPool();
+  },
+
+  loadLeadsPool: async () => {
+    try {
+      const leads = await leadsApi.list();
+      const pool = leads.filter(
+        (l) => l.status !== 'converted' && l.converted_deal_id === null,
+      );
+      set({ leadsPool: pool });
+    } catch (_) {
+      // non-critical — fail silently
+    }
+  },
+
+  addLeadToPool: (lead: Lead) => {
+    set((state) => ({ leadsPool: [...state.leadsPool, lead] }));
+  },
+
+  reorderLeadsPool: (fromIndex: number, toIndex: number) => {
+    const pool = [...get().leadsPool];
+    const [moved] = pool.splice(fromIndex, 1);
+    pool.splice(toIndex, 0, moved);
+    set({ leadsPool: pool });
+  },
+
+  promoteLeadToDeal: async ({ leadId, stageId, pipelineId, performedById }) => {
+    const { leadsPool } = get();
+    const lead = leadsPool.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    // Optimistic: remove from pool immediately
+    set({ leadsPool: leadsPool.filter((l) => l.id !== leadId) });
+
+    try {
+      // Qualify lead if needed
+      if (lead.status !== 'qualified') {
+        await leadsApi.update(leadId, { status: 'qualified' });
+      }
+      // Create deal in target stage
+      const dealTitle = `${lead.first_name} ${lead.last_name}${lead.company ? ` — ${lead.company}` : ''}`;
+      await dealsApi.create({
+        lead_id: leadId,
+        stage_id: stageId,
+        pipeline_id: pipelineId,
+        deal_title: dealTitle,
+        performed_by_id: performedById,
+      });
+      // Reload board to show the new deal
+      await get().loadBoard(pipelineId);
+    } catch (err) {
+      // Rollback: put lead back in pool
+      set({ leadsPool, error: (err as Error).message });
     }
   },
 

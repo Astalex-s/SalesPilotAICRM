@@ -1,5 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Popover, Typography } from '@mui/material';
 import { Droppable } from '@hello-pangea/dnd';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Deal } from '../../types/deal';
 import { type Stage } from '../../types/pipeline';
@@ -29,6 +30,8 @@ function translateStageName(name: string, t: (k: string) => string): string {
 interface KanbanColumnProps {
   stage: Stage;
   deals: Deal[];
+  onAddDeal?: () => void;
+  onAddLead?: () => void;
 }
 
 function formatColumnValue(deals: Deal[]): string {
@@ -57,44 +60,106 @@ function DropPlaceholder({ isDraggingOver }: { isDraggingOver: boolean }) {
   );
 }
 
-/* ── Add deal ghost card ── */
-function AddDealCard({ onClick }: { onClick?: () => void }) {
+/* ── Add card ghost button (with optional menu for lead/deal choice) ── */
+function AddCardButton({
+  onAddDeal,
+  onAddLead,
+}: {
+  onAddDeal?: () => void;
+  onAddLead?: () => void;
+}) {
+  const { t } = useTranslation();
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const hasMenu = !!(onAddDeal && onAddLead);
+
+  const handleClick = () => {
+    if (hasMenu) {
+      setMenuOpen(true);
+    } else if (onAddDeal) {
+      onAddDeal();
+    } else if (onAddLead) {
+      onAddLead();
+    }
+  };
+
+  const menuItems: { label: string; action: () => void }[] = [];
+  if (onAddLead) menuItems.push({ label: t('pipeline.addLead'), action: () => { setMenuOpen(false); onAddLead(); } });
+  if (onAddDeal) menuItems.push({ label: t('pipeline.addDeal'), action: () => { setMenuOpen(false); onAddDeal(); } });
+
+  const isClickable = !!(onAddDeal || onAddLead);
+
   return (
-    <Box
-      onClick={onClick}
-      sx={{
-        mt: 1.5,
-        height: 44,
-        borderRadius: '12px',
-        border: '1.5px dashed #D8E5F4',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 0.75,
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.15s ease',
-        '&:hover': onClick ? {
-          border: '1.5px dashed #00A8E8',
-          bgcolor: 'rgba(0,168,232,0.04)',
-          '& .add-icon': { color: '#00A8E8' },
-          '& .add-label': { color: '#00A8E8' },
-        } : {},
-      }}
-    >
+    <>
       <Box
-        className="add-icon"
-        sx={{ color: '#C4D4E8', display: 'flex', transition: 'color 0.15s' }}
+        ref={anchorRef}
+        onClick={handleClick}
+        sx={{
+          mt: 1.5,
+          height: 44,
+          borderRadius: '12px',
+          border: '1.5px dashed #D8E5F4',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: isClickable ? 'pointer' : 'default',
+          transition: 'all 0.15s ease',
+          '&:hover': isClickable ? {
+            border: '1.5px dashed #00A8E8',
+            bgcolor: 'rgba(0,168,232,0.04)',
+            '& .add-icon': { color: '#00A8E8' },
+          } : {},
+        }}
       >
-        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
+        <Box className="add-icon" sx={{ color: '#C4D4E8', display: 'flex', transition: 'color 0.15s' }}>
+          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </Box>
       </Box>
-    </Box>
+
+      {hasMenu && (
+        <Popover
+          open={menuOpen}
+          anchorEl={anchorRef.current}
+          onClose={() => setMenuOpen(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          PaperProps={{
+            sx: {
+              borderRadius: '10px',
+              boxShadow: '0 4px 20px rgba(13,33,68,0.12)',
+              border: '1px solid #E8EFF7',
+              minWidth: 160,
+              py: 0.5,
+            },
+          }}
+        >
+          {menuItems.map((item) => (
+            <Box
+              key={item.label}
+              onClick={item.action}
+              sx={{
+                px: 2, py: 1,
+                fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#0D2144',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 1,
+                '&:hover': { bgcolor: 'rgba(0,168,232,0.06)', color: '#00A8E8' },
+                transition: 'all 0.1s',
+              }}
+            >
+              {item.label}
+            </Box>
+          ))}
+        </Popover>
+      )}
+    </>
   );
 }
 
-export default function KanbanColumn({ stage, deals, onAddDeal }: KanbanColumnProps & { onAddDeal?: () => void }) {
+export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: KanbanColumnProps) {
   const { t } = useTranslation();
   const valueLabel = formatColumnValue(deals);
 
@@ -186,8 +251,8 @@ export default function KanbanColumn({ stage, deals, onAddDeal }: KanbanColumnPr
         )}
       </Droppable>
 
-      {/* Add deal ghost card — always visible below cards */}
-      <AddDealCard onClick={onAddDeal} />
+      {/* Add card button — shows menu when both lead and deal actions available */}
+      <AddCardButton onAddDeal={onAddDeal} onAddLead={onAddLead} />
     </Box>
   );
 }

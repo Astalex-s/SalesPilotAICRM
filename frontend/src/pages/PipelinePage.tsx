@@ -4,17 +4,20 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddDealDialog from '../components/deals/AddDealDialog';
 import KanbanBoard from '../components/kanban/KanbanBoard';
+import AddLeadDialog from '../components/leads/AddLeadDialog';
 import PipelineManagerDialog from '../components/pipeline/PipelineManagerDialog';
 import { useKanbanStore } from '../store/useKanbanStore';
+import type { Lead } from '../types/lead';
 import type { Pipeline } from '../types/pipeline';
 
 export default function PipelinePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pipelineId } = useParams<{ pipelineId: string }>();
-  const { pipeline, allPipelines, loadBoard, loadPipelines, reloadBoard } = useKanbanStore();
+  const { pipeline, allPipelines, loadBoard, loadPipelines, reloadBoard, addLeadToPool } = useKanbanStore();
   const [managerOpen, setManagerOpen] = useState(false);
   const [addDealStageId, setAddDealStageId] = useState<string | null>(null);
+  const [addLeadOpen, setAddLeadOpen] = useState(false);
 
   useEffect(() => {
     loadPipelines();
@@ -120,6 +123,7 @@ export default function PipelinePage() {
       <KanbanBoard
         pipelineId={pipelineId}
         onAddDeal={(stageId) => setAddDealStageId(stageId)}
+        onAddLead={() => setAddLeadOpen(true)}
       />
 
       <PipelineManagerDialog
@@ -134,6 +138,15 @@ export default function PipelinePage() {
         pipeline={pipeline ?? null}
         defaultStageId={addDealStageId ?? undefined}
         onDealCreated={() => { setAddDealStageId(null); reloadBoard(); }}
+      />
+
+      <AddLeadDialog
+        open={addLeadOpen}
+        onClose={() => setAddLeadOpen(false)}
+        onLeadCreated={(lead: Lead) => {
+          addLeadToPool(lead);
+          setAddLeadOpen(false);
+        }}
       />
     </Box>
   );

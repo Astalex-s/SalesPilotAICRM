@@ -228,7 +228,11 @@
     "overdue": "Overdue",
     "totalValue": "Total Pipeline Value",
     "totalDeals": "Total Deals",
-    "manage": "Manage Pipelines"
+    "totalUnassigned": "Unassigned",
+    "manage": "Manage Pipelines",
+    "leadsPool": "Unassigned",
+    "addLead": "Add Lead",
+    "addDeal": "Add Deal"
   },
   "pipelineManager": {
     "title": "Pipeline Manager",

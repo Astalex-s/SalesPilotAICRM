@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useKanbanStore } from '../../store/useKanbanStore';
 import KanbanColumn from './KanbanColumn';
+import LeadPoolColumn, { LEADS_POOL_ID } from './LeadPoolColumn';
 
 interface KanbanBoardProps {
   pipelineId: string;
   onAddDeal?: (stageId: string) => void;
+  onAddLead?: () => void;
 }
 
 /* ── Skeleton for loading state ── */
@@ -39,6 +41,7 @@ function BoardSkeleton() {
 /* ── Totals bar ── */
 function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typeof useKanbanStore.getState>['pipeline']>; columns: ReturnType<typeof useKanbanStore.getState>['columns'] }) {
   const { t } = useTranslation();
+  const leadsPool = useKanbanStore((s) => s.leadsPool);
 
   const totalValue = Object.values(columns)
     .flat()
@@ -89,6 +92,22 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
 
       <Box sx={{ flex: 1 }} />
 
+      {leadsPool.length > 0 && (
+        <>
+          <Box sx={{ width: '1px', height: 36, bgcolor: '#E2EAF4' }} />
+          <Box>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8' }}>
+              {t('pipeline.totalUnassigned')}
+            </Typography>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 20, fontWeight: 700, color: '#00A8E8' }}>
+              {leadsPool.length}
+            </Typography>
+          </Box>
+        </>
+      )}
+
+      <Box sx={{ width: '1px', height: 36, bgcolor: '#E2EAF4' }} />
+
       <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#94A3B8' }}>
         {pipeline.name}
       </Typography>
@@ -97,8 +116,8 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
 }
 
 /* ── Main board ── */
-export default function KanbanBoard({ pipelineId, onAddDeal }: KanbanBoardProps) {
-  const { pipeline, columns, loading, error, moveDeal } = useKanbanStore();
+export default function KanbanBoard({ pipelineId, onAddDeal, onAddLead }: KanbanBoardProps) {
+  const { pipeline, columns, leadsPool, loading, error, moveDeal, promoteLeadToDeal, reorderLeadsPool } = useKanbanStore();
   const userId = useAuthStore((s) => s.user?.id ?? '');
 
   const onDragEnd = (result: DropResult) => {
@@ -108,6 +127,26 @@ export default function KanbanBoard({ pipelineId, onAddDeal }: KanbanBoardProps)
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) return;
+
+    if (source.droppableId === LEADS_POOL_ID) {
+      if (destination.droppableId === LEADS_POOL_ID) {
+        // Reorder within pool — visual only
+        reorderLeadsPool(source.index, destination.index);
+      } else {
+        // Promote lead to deal in target stage
+        const leadId = draggableId.replace('lead-', '');
+        promoteLeadToDeal({
+          leadId,
+          stageId: destination.droppableId,
+          pipelineId,
+          performedById: userId,
+        });
+      }
+      return;
+    }
+
+    // Ignore drops of deals onto leads-pool
+    if (destination.droppableId === LEADS_POOL_ID) return;
 
     moveDeal({
       dealId: draggableId,
@@ -143,12 +182,18 @@ export default function KanbanBoard({ pipelineId, onAddDeal }: KanbanBoardProps)
             alignItems: 'flex-start',
           }}
         >
+          <LeadPoolColumn
+            leads={leadsPool}
+            onAddLead={onAddLead}
+          />
+
           {pipeline.stages.map((stage) => (
             <KanbanColumn
               key={stage.id}
               stage={stage}
               deals={columns[stage.id] ?? []}
               onAddDeal={onAddDeal ? () => onAddDeal(stage.id) : undefined}
+              onAddLead={onAddLead}
             />
           ))}
         </Box>
