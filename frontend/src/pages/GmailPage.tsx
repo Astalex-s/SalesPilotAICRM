@@ -1,3 +1,4 @@
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CreateIcon from '@mui/icons-material/Create';
 import InboxIcon from '@mui/icons-material/Inbox';
@@ -10,6 +11,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -33,7 +35,13 @@ import { useTranslation } from 'react-i18next';
 import { gmailApi } from '../api/gmail';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLeadStore } from '../store/useLeadStore';
-import type { EmailDirection, EmailMessage, SendEmailPayload } from '../types/email';
+import type {
+  EmailDirection,
+  EmailMessage,
+  EmailThreadDetail,
+  EmailThreadSummary,
+  SendEmailPayload,
+} from '../types/email';
 
 /* ── Design tokens ── */
 const CARD = {
@@ -454,6 +462,222 @@ function SkeletonRows() {
   );
 }
 
+/* ── Thread dialog ── */
+function ThreadDialog({
+  threadId,
+  onClose,
+}: {
+  threadId: string | null;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation();
+  const [detail, setDetail] = useState<EmailThreadDetail | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!threadId) { setDetail(null); return; }
+    setLoading(true);
+    gmailApi.getThread(threadId)
+      .then(setDetail)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [threadId]);
+
+  const open = threadId !== null;
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{ sx: { borderRadius: '20px', boxShadow: '0 24px 64px rgba(13,33,68,0.18)' } }}
+    >
+      <DialogTitle sx={{
+        fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: '#0D2144',
+        px: 3, pt: 3, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        {detail?.subject ?? '...'}
+        <IconButton onClick={onClose} size="small" sx={{ color: '#94A3B8' }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
+      <Divider sx={{ borderColor: '#E2EAF4' }} />
+      <DialogContent sx={{ px: 3, py: 2, maxHeight: '70vh', overflowY: 'auto' }}>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress sx={{ color: '#00A8E8' }} size={28} />
+          </Box>
+        ) : detail?.messages.map((msg, i) => (
+          <Box key={msg.id} sx={{
+            mb: 2, p: 2.5,
+            bgcolor: msg.direction === 'inbound' ? '#F8FAFC' : 'rgba(0,168,232,0.04)',
+            border: '1px solid #E8EFF7', borderRadius: '10px',
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{
+                  width: 28, height: 28, borderRadius: '50%',
+                  bgcolor: msg.direction === 'inbound' ? 'rgba(0,168,232,0.15)' : 'rgba(16,185,129,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'Inter', fontWeight: 700, fontSize: 11,
+                  color: msg.direction === 'inbound' ? '#0090CC' : '#059669',
+                  flexShrink: 0,
+                }}>
+                  {(msg.from_address[0] ?? '?').toUpperCase()}
+                </Box>
+                <Box>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: '#0D2144' }}>
+                    {msg.from_address}
+                  </Typography>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>
+                    {t(`gmail.direction.${msg.direction}`)} · {new Date(msg.received_at).toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </Typography>
+                </Box>
+              </Box>
+              <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#CBD5E8' }}>
+                #{i + 1}
+              </Typography>
+            </Box>
+            <Typography sx={{
+              fontFamily: 'Inter', fontSize: 13, color: '#334155',
+              lineHeight: 1.7, whiteSpace: 'pre-wrap',
+              borderTop: '1px solid #E8EFF7', pt: 1.5, mt: 0.5,
+            }}>
+              {msg.body || '(пустое тело письма)'}
+            </Typography>
+          </Box>
+        ))}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ── Threads view ── */
+function ThreadsView({
+  threads,
+  loading,
+  search,
+  leads,
+  onThreadClick,
+}: {
+  threads: EmailThreadSummary[];
+  loading: boolean;
+  search: string;
+  leads: { id: string; first_name: string; last_name: string }[];
+  onThreadClick: (threadId: string) => void;
+}) {
+  const { t } = useTranslation();
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return threads;
+    const q = search.toLowerCase();
+    return threads.filter(
+      (th) =>
+        th.subject.toLowerCase().includes(q) ||
+        th.participants.some((p) => p.toLowerCase().includes(q)),
+    );
+  }, [threads, search]);
+
+  if (loading) return (
+    <Box sx={CARD}>
+      <Table sx={{ tableLayout: 'fixed' }}>
+        <TableBody>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i} sx={{ height: 60 }}>
+              <TableCell sx={{ border: 'none', borderTop: '1px solid #F0F5FF' }}>
+                <Skeleton variant="text" width="60%" />
+                <Skeleton variant="text" width="40%" />
+              </TableCell>
+              <TableCell sx={{ border: 'none', borderTop: '1px solid #F0F5FF', width: 80 }}>
+                <Skeleton variant="rounded" width={50} height={20} sx={{ borderRadius: '20px' }} />
+              </TableCell>
+              <TableCell sx={{ border: 'none', borderTop: '1px solid #F0F5FF', width: 90 }}>
+                <Skeleton variant="text" width={70} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
+  );
+
+  if (filtered.length === 0) return (
+    <Box sx={{ ...CARD, py: 8, textAlign: 'center' }}>
+      <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: '#CBD5E8', mb: 1.5 }} />
+      <Typography sx={{ fontFamily: 'Inter', fontSize: 14, color: '#94A3B8' }}>
+        {t('gmail.threads.noThreads')}
+      </Typography>
+    </Box>
+  );
+
+  return (
+    <Box sx={CARD}>
+      <Table sx={{ tableLayout: 'fixed' }}>
+        <TableHead>
+          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableCell sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8', border: 'none', py: 1.5, pl: 2.5 }}>
+              {t('gmail.table.subject')}
+            </TableCell>
+            <TableCell sx={{ width: 90, fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8', border: 'none', py: 1.5 }}>
+              {t('gmail.table.from')}
+            </TableCell>
+            <TableCell sx={{ width: 80, fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8', border: 'none', py: 1.5 }}>
+              Msgs
+            </TableCell>
+            <TableCell sx={{ width: 100, fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8', border: 'none', py: 1.5, pr: 2.5 }}>
+              {t('gmail.table.date')}
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filtered.map((th) => {
+            const lead = th.lead_id ? leads.find((l) => l.id === th.lead_id) : null;
+            const date = new Date(th.last_message_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+            return (
+              <TableRow
+                key={th.thread_id}
+                onClick={() => onThreadClick(th.thread_id)}
+                sx={{
+                  height: 60, cursor: 'pointer',
+                  '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
+                  '&:hover': { bgcolor: '#F0F5FF' },
+                }}
+              >
+                <TableCell sx={{ py: 1, pl: 2.5 }}>
+                  <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
+                    {th.subject}
+                  </Typography>
+                  <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8', mt: 0.25 }}>
+                    {th.participants.slice(0, 2).join(', ')}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ py: 1 }}>
+                  {lead ? (
+                    <Box sx={{ display: 'inline-flex', px: 1, py: 0.3, borderRadius: '20px', bgcolor: 'rgba(13,33,68,0.08)', color: '#0D2144', fontFamily: 'Inter', fontSize: 11, fontWeight: 600 }}>
+                      {lead.first_name} {lead.last_name}
+                    </Box>
+                  ) : (
+                    <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#CBD5E8' }}>—</Typography>
+                  )}
+                </TableCell>
+                <TableCell sx={{ py: 1 }}>
+                  <Box sx={{ display: 'inline-flex', px: 1.25, py: 0.3, borderRadius: '20px', bgcolor: 'rgba(0,168,232,0.1)', color: '#0090CC', fontFamily: 'Inter', fontSize: 11, fontWeight: 600 }}>
+                    {t('gmail.threads.messages', { count: th.message_count })}
+                  </Box>
+                </TableCell>
+                <TableCell sx={{ py: 1, pr: 2.5 }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>{date}</Typography>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Box>
+  );
+}
+
 /* ── Main page ── */
 type AuthState = 'loading' | 'not_connected' | 'awaiting_auth' | 'connected';
 
@@ -464,15 +688,19 @@ export default function GmailPage() {
 
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [emails, setEmails] = useState<EmailMessage[]>([]);
+  const [threads, setThreads] = useState<EmailThreadSummary[]>([]);
   const [emailsLoading, setEmailsLoading] = useState(false);
+  const [threadsLoading, setThreadsLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [syncSuccess, setSyncSuccess] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [composeOpen, setComposeOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'flat' | 'threads'>('flat');
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
-  /* Check auth status on mount */
   useEffect(() => {
     checkStatus();
     fetchLeads();
@@ -485,6 +713,7 @@ export default function GmailPage() {
       if (status.authorized) {
         setAuthState('connected');
         loadEmails();
+        loadThreads();
       } else {
         setAuthState('not_connected');
       }
@@ -518,6 +747,7 @@ export default function GmailPage() {
       if (status.authorized) {
         setAuthState('connected');
         loadEmails();
+        loadThreads();
       } else {
         setAuthError(t('gmail.notConnected'));
       }
@@ -532,8 +762,7 @@ export default function GmailPage() {
     setEmailsLoading(true);
     setFetchError(null);
     try {
-      const data = await gmailApi.fetchEmails('', 100);
-      setEmails(data);
+      setEmails(await gmailApi.listEmails(100));
     } catch {
       setFetchError(t('gmail.errors.fetch'));
     } finally {
@@ -541,17 +770,27 @@ export default function GmailPage() {
     }
   }
 
+  async function loadThreads() {
+    setThreadsLoading(true);
+    try {
+      setThreads(await gmailApi.listThreads());
+    } catch {
+      // ignore — threads are a secondary view
+    } finally {
+      setThreadsLoading(false);
+    }
+  }
+
   async function handleSync() {
     setSyncing(true);
     setFetchError(null);
+    setSyncSuccess(false);
     try {
-      const data = await gmailApi.fetchEmails('', 50);
-      // Merge: add new messages not yet in list
-      setEmails((prev) => {
-        const existingIds = new Set(prev.map((e) => e.gmail_message_id));
-        const newOnes = data.filter((e) => !existingIds.has(e.gmail_message_id));
-        return [...newOnes, ...prev];
-      });
+      await gmailApi.triggerSync('', 100);
+      setSyncSuccess(true);
+      setTimeout(() => setSyncSuccess(false), 4000);
+      // Reload stored list after a brief delay to pick up new messages
+      setTimeout(() => { loadEmails(); loadThreads(); }, 3000);
     } catch {
       setFetchError(t('gmail.errors.fetch'));
     } finally {
@@ -561,6 +800,8 @@ export default function GmailPage() {
 
   function handleSent(msg: EmailMessage) {
     setEmails((prev) => [msg, ...prev]);
+    // Reload threads to include the new outbound message
+    loadThreads();
   }
 
   const filtered = useMemo(() => {
@@ -652,7 +893,38 @@ export default function GmailPage() {
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          {/* View toggle */}
+          <Box sx={{ display: 'flex', border: '1px solid #E2EAF4', borderRadius: '10px', overflow: 'hidden' }}>
+            <Button
+              onClick={() => setViewMode('flat')}
+              sx={{
+                fontFamily: 'Inter', fontWeight: 600, fontSize: 13,
+                color: viewMode === 'flat' ? '#fff' : '#64748B',
+                bgcolor: viewMode === 'flat' ? '#00A8E8' : 'transparent',
+                borderRadius: 0, px: 2, py: 0.75, textTransform: 'none',
+                '&:hover': { bgcolor: viewMode === 'flat' ? '#00A8E8' : '#F0F5FF' },
+              }}
+            >
+              <InboxIcon sx={{ fontSize: 15, mr: 0.75 }} />
+              {t('gmail.viewFlat')}
+            </Button>
+            <Button
+              onClick={() => setViewMode('threads')}
+              sx={{
+                fontFamily: 'Inter', fontWeight: 600, fontSize: 13,
+                color: viewMode === 'threads' ? '#fff' : '#64748B',
+                bgcolor: viewMode === 'threads' ? '#00A8E8' : 'transparent',
+                borderRadius: 0, px: 2, py: 0.75, textTransform: 'none',
+                borderLeft: '1px solid #E2EAF4',
+                '&:hover': { bgcolor: viewMode === 'threads' ? '#00A8E8' : '#F0F5FF' },
+              }}
+            >
+              <ChatBubbleOutlineIcon sx={{ fontSize: 15, mr: 0.75 }} />
+              {t('gmail.viewThreads')}
+            </Button>
+          </Box>
+
           <Button
             variant="outlined"
             startIcon={syncing ? <CircularProgress size={14} sx={{ color: '#00A8E8' }} /> : <SyncIcon />}
@@ -700,6 +972,12 @@ export default function GmailPage() {
         </Alert>
       )}
 
+      <Collapse in={syncSuccess}>
+        <Alert severity="success" sx={{ mb: 2.5, borderRadius: '12px' }}>
+          {t('gmail.syncQueued')}
+        </Alert>
+      </Collapse>
+
       {/* ── Search ── */}
       <Box sx={{ mb: 2.5 }}>
         <TextField
@@ -729,7 +1007,16 @@ export default function GmailPage() {
         />
       </Box>
 
-      {/* ── Email table ── */}
+      {/* ── Email table / Threads view ── */}
+      {viewMode === 'threads' ? (
+        <ThreadsView
+          threads={threads}
+          loading={threadsLoading}
+          search={search}
+          leads={leads}
+          onThreadClick={setActiveThreadId}
+        />
+      ) : (
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
@@ -939,6 +1226,10 @@ export default function GmailPage() {
           </TableBody>
         </Table>
       </Box>
+      )}
+
+      {/* ── Thread dialog ── */}
+      <ThreadDialog threadId={activeThreadId} onClose={() => setActiveThreadId(null)} />
 
       {/* ── Compose dialog ── */}
       <ComposeDialog

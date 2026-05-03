@@ -80,6 +80,45 @@ class EmailMessageOutput(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# ── Список сохранённых писем ───────────────────────────────────────────────────
+
+class ListStoredEmailsInput(BaseModel):
+    """Параметры для листинга писем из локальной БД (без Gmail API)."""
+
+    limit: int = Field(default=100, ge=1, le=500)
+    offset: int = Field(default=0, ge=0)
+
+
+# ── Фоновая синхронизация ──────────────────────────────────────────────────────
+
+class EmailSyncOutput(BaseModel):
+    """Результат постановки задачи синхронизации в очередь Celery."""
+
+    task_id: str
+    message: str = "Синхронизация почты поставлена в очередь."
+
+
+# ── Треды (цепочки писем) ──────────────────────────────────────────────────────
+
+class EmailThreadSummary(BaseModel):
+    """Краткая информация о треде (для листинга)."""
+
+    thread_id: str                  # gmail_thread_id
+    subject: str
+    message_count: int
+    last_message_at: datetime
+    participants: list[str]         # уникальные адреса из from + to
+    lead_id: UUID | None
+
+
+class EmailThreadDetail(BaseModel):
+    """Полный тред — все письма в хронологическом порядке."""
+
+    thread_id: str
+    subject: str
+    messages: list[EmailMessageOutput]
+
+
 # ── OAuth2 ─────────────────────────────────────────────────────────────────────
 
 class GmailAuthUrlOutput(BaseModel):

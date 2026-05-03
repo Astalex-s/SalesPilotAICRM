@@ -430,11 +430,19 @@
     "notConnected": "Not Connected",
     "connect": "Connect Gmail",
     "connectDesc": "Connect your Gmail account to send, receive and track emails directly in CRM.",
-    "sync": "Sync Inbox",
+    "sync": "Sync",
     "syncing": "Syncing...",
+    "syncQueued": "Sync started in background",
+    "viewFlat": "Inbox",
+    "viewThreads": "Threads",
     "compose": "Compose",
     "search": "Search emails...",
     "noEmails": "No emails yet. Click Sync to load your inbox.",
+    "threads": {
+      "messages": "{{count}} messages",
+      "noThreads": "No threads yet. Click Sync to load your inbox.",
+      "reply": "Reply in thread"
+    },
     "oauthHint": "A new tab has been opened. Complete authorization in Google, then click below.",
     "refreshStatus": "I've Authorized — Refresh",
     "direction": {

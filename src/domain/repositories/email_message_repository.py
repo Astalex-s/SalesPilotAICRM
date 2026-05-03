@@ -27,3 +27,8 @@ class IEmailMessageRepository(BaseRepository[EmailMessage]):
     async def find_all(self, limit: int = 50, offset: int = 0) -> list[EmailMessage]:
         """Возвращает письма с пагинацией (от новых к старым)."""
         ...
+
+    @abstractmethod
+    async def find_by_thread_id(self, thread_id: str) -> list[EmailMessage]:
+        """Возвращает все письма треда (по gmail_thread_id), отсортированные по дате."""
+        ...

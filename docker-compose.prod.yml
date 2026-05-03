@@ -98,6 +98,34 @@ services:
     networks:
       - internal
 
+  # ── Celery Beat (periodic task scheduler) ────────────────────────────────────
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    restart: always
+    volumes:
+      - uploads_data:/app/uploads
+    command:
+      - celery
+      - -A
+      - src.infrastructure.celery.celery_app
+      - beat
+      - --loglevel=info
+      - --scheduler=celery.beat.PersistentScheduler
+      - --schedule=/tmp/celerybeat-schedule
+    env_file: .env
+    environment:
+      DEBUG: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
   # ── Frontend (built static served by nginx) ───────────────────────────────────
   frontend:
     build:

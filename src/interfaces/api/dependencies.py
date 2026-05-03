@@ -8,6 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.use_cases.analyze_lost_deals import AnalyzeLostDealsUseCase
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
+from src.application.use_cases.get_email_thread import GetEmailThreadUseCase
+from src.application.use_cases.list_email_threads import ListEmailThreadsUseCase
+from src.application.use_cases.list_stored_emails import ListStoredEmailsUseCase
+from src.application.use_cases.trigger_email_sync import TriggerEmailSyncUseCase
 from src.application.use_cases.generate_pipeline_digest import GeneratePipelineDigestUseCase
 from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
@@ -332,6 +336,34 @@ def get_generate_pipeline_digest_use_case(
 
 
 # ── Gmail Use Case провайдеры ─────────────────────────────────────────────────
+
+def get_list_stored_emails_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListStoredEmailsUseCase:
+    """Фабрика ListStoredEmailsUseCase — листинг из БД без Gmail API."""
+    return ListStoredEmailsUseCase(email_repo=SqlEmailMessageRepository(session))
+
+
+def get_trigger_email_sync_use_case(
+    task_service: CeleryTaskService = Depends(get_task_service),
+) -> TriggerEmailSyncUseCase:
+    """Фабрика TriggerEmailSyncUseCase — постановка синхронизации в Celery."""
+    return TriggerEmailSyncUseCase(task_service=task_service)
+
+
+def get_list_email_threads_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListEmailThreadsUseCase:
+    """Фабрика ListEmailThreadsUseCase — группировка писем по тредам."""
+    return ListEmailThreadsUseCase(email_repo=SqlEmailMessageRepository(session))
+
+
+def get_email_thread_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetEmailThreadUseCase:
+    """Фабрика GetEmailThreadUseCase — все письма одного треда."""
+    return GetEmailThreadUseCase(email_repo=SqlEmailMessageRepository(session))
+
 
 def get_send_email_use_case(
     session: AsyncSession = Depends(get_session),

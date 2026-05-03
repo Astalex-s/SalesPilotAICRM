@@ -70,3 +70,13 @@ class SqlEmailMessageRepository(IEmailMessageRepository):
         )
         rows = await self._session.scalars(stmt)
         return [r.to_entity() for r in rows.all()]
+
+    async def find_by_thread_id(self, thread_id: str) -> list[EmailMessage]:
+        """Возвращает все письма треда (по gmail_thread_id), от старых к новым."""
+        stmt = (
+            select(EmailMessageModel)
+            .where(EmailMessageModel.gmail_thread_id == thread_id)
+            .order_by(EmailMessageModel.received_at.asc())
+        )
+        rows = await self._session.scalars(stmt)
+        return [r.to_entity() for r in rows.all()]

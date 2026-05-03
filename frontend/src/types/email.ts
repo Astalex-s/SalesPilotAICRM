@@ -32,3 +32,23 @@ export interface SendEmailPayload {
   lead_id?: string;
   thread_id?: string;
 }
+
+export interface EmailSyncResult {
+  task_id: string;
+  message: string;
+}
+
+export interface EmailThreadSummary {
+  thread_id: string;
+  subject: string;
+  message_count: number;
+  last_message_at: string;
+  participants: string[];
+  lead_id: string | null;
+}
+
+export interface EmailThreadDetail {
+  thread_id: string;
+  subject: string;
+  messages: EmailMessage[];
+}
