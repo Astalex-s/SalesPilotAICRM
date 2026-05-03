@@ -20,6 +20,7 @@ from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
 from src.application.use_cases.notify_new_deal import NotifyNewDealUseCase
+from src.application.use_cases.notify_overdue_deals import NotifyOverdueDealsUseCase
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.application.dtos.auth_dtos import UserOutput
 from src.interfaces.api.dependencies import (
@@ -29,6 +30,7 @@ from src.interfaces.api.dependencies import (
     get_move_deal_stage_use_case,
     get_notify_deal_stage_change_use_case,
     get_notify_new_deal_use_case,
+    get_notify_overdue_deals_use_case,
 )
 from src.interfaces.schemas.deal_schemas import CloseDealRequest, MoveDealStageRequest
 
@@ -149,6 +151,30 @@ async def close_deal(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except (DealAlreadyClosedError, ValueError) as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+
+@router.post(
+    "/notify-overdue",
+    status_code=status.HTTP_200_OK,
+    summary="Уведомить о просроченных сделках",
+    description=(
+        "Немедленно отправляет Telegram-уведомление о всех открытых сделках "
+        "с истёкшим expected_close_date. "
+        "Автоматически запускается Celery Beat раз в сутки."
+    ),
+)
+async def notify_overdue_deals(
+    use_case: NotifyOverdueDealsUseCase = Depends(get_notify_overdue_deals_use_case),
+) -> dict:
+    """POST /api/v1/deals/notify-overdue — ручной запуск уведомлений о просрочке."""
+    try:
+        count = await use_case.execute()
+        return {"overdue_count": count}
+    except TelegramNotConfiguredError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Telegram не настроен.",
+        )
 
 
 # ── Фоновые задачи ─────────────────────────────────────────────────────────────

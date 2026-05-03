@@ -4,6 +4,7 @@ IDealRepository — интерфейс репозитория домена дл�
 from __future__ import annotations
 
 from abc import abstractmethod
+from datetime import datetime
 from uuid import UUID
 
 from src.domain.entities.deal import Deal
@@ -42,4 +43,9 @@ class IDealRepository(BaseRepository[Deal]):
     @abstractmethod
     async def find_by_source_lead(self, lead_id: UUID) -> Deal | None:
         """Возвращает сделку, созданную из конкретного лида, или None."""
+        ...
+
+    @abstractmethod
+    async def find_overdue(self, now: datetime) -> list[Deal]:
+        """Возвращает открытые сделки, у которых expected_close_date < now."""
         ...

@@ -67,6 +67,7 @@ class Settings(BaseSettings):
     # GDPR
     GDPR_RETENTION_DAYS: int = 730  # 2 года — срок хранения данных до автоудаления
     CELERY_RETENTION_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки retention policy
+    CELERY_OVERDUE_DEALS_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки overdue deals
 
     @field_validator("DATABASE_URL")
     @classmethod

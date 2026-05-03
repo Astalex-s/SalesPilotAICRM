@@ -93,7 +93,7 @@
 - [x] Telegram-уведомления как фоновые задачи
 - [x] Периодическая синхронизация Gmail (Celery Beat, каждые 10 мин)
 - [x] GDPR retention policy (Celery Beat, раз в сутки)
-- [ ] Напоминания по сделкам (overdue deals)
+- [x] Напоминания по сделкам (overdue deals)
 - [x] Еженедельный AI-дайджест (on-demand через GET /ai/pipeline/{id}/weekly-digest)
 
 ### Тестирование бэкенда

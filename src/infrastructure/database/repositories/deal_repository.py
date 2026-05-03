@@ -3,6 +3,7 @@ SqlDealRepository — реализация IDealRepository на SQLAlchemy 2.0 a
 """
 from __future__ import annotations
 
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import select
@@ -79,3 +80,17 @@ class SqlDealRepository(IDealRepository):
         rows = await self._session.scalars(stmt)
         row = rows.first()
         return row.to_entity() if row is not None else None
+
+    async def find_overdue(self, now: datetime) -> list[Deal]:
+        """Возвращает открытые сделки с просроченным expected_close_date."""
+        stmt = (
+            select(DealModel)
+            .where(
+                DealModel.status == DealStatus.OPEN,
+                DealModel.expected_close_date.is_not(None),
+                DealModel.expected_close_date < now,
+            )
+            .order_by(DealModel.expected_close_date)
+        )
+        rows = await self._session.scalars(stmt)
+        return [r.to_entity() for r in rows.all()]

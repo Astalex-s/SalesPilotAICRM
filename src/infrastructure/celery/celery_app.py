@@ -17,6 +17,7 @@ celery_app = Celery(
     backend=settings.CELERY_RESULT_BACKEND,
     include=[
         "src.infrastructure.celery.tasks.ai_tasks",
+        "src.infrastructure.celery.tasks.deal_tasks",
         "src.infrastructure.celery.tasks.email_tasks",
         "src.infrastructure.celery.tasks.gdpr_tasks",
         "src.infrastructure.celery.tasks.sync_tasks",
@@ -57,6 +58,10 @@ celery_app.conf.update(
         "gdpr-retention-policy-daily": {
             "task": "tasks.gdpr.apply_retention_policy",
             "schedule": settings.CELERY_RETENTION_CHECK_INTERVAL,
+        },
+        "notify-overdue-deals-daily": {
+            "task": "tasks.deals.notify_overdue",
+            "schedule": settings.CELERY_OVERDUE_DEALS_CHECK_INTERVAL,
         },
     },
 )
