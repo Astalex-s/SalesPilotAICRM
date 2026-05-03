@@ -1,0 +1,129 @@
+# ── Development Docker Compose ─────────────────────────────────────────────────
+# Hot reload for backend (uvicorn --reload) and frontend (Vite HMR).
+# All services are in one bridge network; nginx(:80) is the only exposed port.
+#
+# Usage:
+#   cp .env.example .env          # fill secrets
+#   docker compose -f docker-compose.dev.yml up --build
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-salespilot}
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
+    ports:
+      - "5432:5432"        # exposed so you can connect with a local DB client
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-salespilot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev
+
+  # ── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"        # exposed for redis-cli / RedisInsight
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev
+
+  # ── Backend — uvicorn --reload (hot reload) ────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DEBUG: "true"
+    volumes:
+      - .:/app                      # bind-mount src for hot reload
+      - uploads_dev_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dev
+
+  # ── Celery Worker ──────────────────────────────────────────────────────────
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    command:
+      - celery
+      - -A
+      - src.infrastructure.celery.celery_app
+      - worker
+      - --loglevel=debug
+      - --concurrency=1
+    env_file: .env
+    environment:
+      DEBUG: "true"
+    volumes:
+      - .:/app
+      - uploads_dev_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dev
+
+  # ── Frontend — Vite dev server (HMR) ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    volumes:
+      - ./frontend/src:/app/src      # bind-mount src for HMR
+    networks:
+      - dev
+
+  # ── Nginx dev gateway (:80) ────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - dev
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  uploads_dev_data:
+
+networks:
+  dev:
+    driver: bridge

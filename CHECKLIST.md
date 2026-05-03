@@ -175,12 +175,12 @@
 - [x] nginx как gateway (:80)
 - [x] docker-compose.prod.yml
 - [x] Сервисы: nginx, frontend, backend, celery_worker, celery_beat, postgres, redis
-- [ ] Health checks в docker-compose
-- [ ] docker-compose.dev.yml с hot reload
+- [x] Health checks в docker-compose
+- [x] docker-compose.dev.yml с hot reload
 - [ ] Alembic миграции вместо create_all
 
 ### CI/CD
-- [ ] GitHub Actions: lint + тесты при push
+- [x] GitHub Actions: lint + тесты при push
 - [ ] Автодеплой на сервер при merge в main
 - [ ] Docker Hub или GHCR для образов
 
