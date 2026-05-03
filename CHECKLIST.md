@@ -91,7 +91,8 @@
 
 ### Celery / фоновые задачи
 - [x] Telegram-уведомления как фоновые задачи
-- [ ] Периодическая синхронизация Gmail
+- [x] Периодическая синхронизация Gmail (Celery Beat, каждые 10 мин)
+- [x] GDPR retention policy (Celery Beat, раз в сутки)
 - [ ] Напоминания по сделкам (overdue deals)
 - [x] Еженедельный AI-дайджест (on-demand через GET /ai/pipeline/{id}/weekly-digest)
 
@@ -173,7 +174,7 @@
 - [x] Multi-stage build (frontend, backend)
 - [x] nginx как gateway (:80)
 - [x] docker-compose.prod.yml
-- [x] Сервисы: nginx, frontend, backend, celery_worker, postgres, redis
+- [x] Сервисы: nginx, frontend, backend, celery_worker, celery_beat, postgres, redis
 - [ ] Health checks в docker-compose
 - [ ] docker-compose.dev.yml с hot reload
 - [ ] Alembic миграции вместо create_all
@@ -216,18 +217,39 @@
 
 ## ТЕКУЩЕЕ ПОЛОЖЕНИЕ
 
-**Где мы сейчас (2026-05-02):**
-Весь фундамент готов и стабильно работает в Docker.
-Бэкенд: все домены, AI, Gmail, Telegram, GDPR, Auth, refresh tokens, сброс пароля.
-Фронтенд: все 14 страниц, drag-drop воронка работает, переключатель воронок в sidebar,
-квалификация лидов из карточки, создание сделки прямо из колонки воронки.
+**Где мы сейчас (2026-05-03):**
+Проект в высокой степени готовности — всё ядро, все интеграции и весь GDPR-блок реализованы.
 
-**Следующий логичный шаг:**
-1. README.md — презентация проекта (КРИТИЧНО для портфолио)
-2. PATCH /users/me + POST /users/me/password — реальный бэкенд для профиля
-3. Health checks в docker-compose + docker-compose.dev.yml
-4. Пустые состояния (empty state) с иллюстрацией на страницах без данных
-5. Мобильная адаптация (responsive breakpoints)
+Бэкенд (полностью):
+- Clean Architecture, все домены, JWT Auth, роли, сброс пароля
+- AI: оценка лидов, прогноз сделки, NBA, генератор писем, анализ потерь, дайджест воронки
+- Gmail: OAuth, sync через Celery, треды, отправка, привязка к лиду
+- Telegram: webhook, уведомления (лид/сделка/смена этапа), команды /leads /deals
+- GDPR: удаление, анонимизация, экспорт (Art. 20), retention policy, журнал аудита
+- Celery Beat: Gmail sync (10 мин) + GDPR retention (24ч)
+
+Фронтенд (полностью):
+- 14 страниц, дизайн-система, i18n EN+RU
+- Kanban drag-drop, лиды в воронке, drag-в-этап → auto-qualify + create deal
+- Gmail: flat/threads view, sync, compose, привязка
+- AI Assistant: 5 табов
+
+Инфраструктура:
+- Docker: 7 сервисов (nginx, frontend, backend, celery_worker, celery_beat, postgres, redis)
+
+**Остаток (незакрытые пункты):**
+- Аналитика: детальный отчёт по менеджерам, экспорт CSV/PDF
+- Celery: напоминания по просроченным сделкам
+- Тесты: интеграционные, покрытие 90%+, E2E
+- Инфраструктура: health checks, docker-compose.dev.yml, Alembic, CI/CD, Sentry
+- UI polish: empty states, анимации, responsive, dark mode
+- Бизнес: комментарии, теги, задачи, календарь
+- Документация: ARCHITECTURE.md, dev setup guide
+
+**Следующий логичный шаг (для портфолио):**
+1. Health checks в docker-compose.prod.yml
+2. CI/CD — GitHub Actions (lint + тесты)
+3. README.md — скриншоты, GIF, описание архитектуры (КРИТИЧНО для портфолио)
 
 ---
 
