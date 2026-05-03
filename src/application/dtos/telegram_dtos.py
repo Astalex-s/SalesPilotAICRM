@@ -34,6 +34,16 @@ class NotifyDealStageChangeInput(BaseModel):
     pipeline_id: UUID
 
 
+class NotifyNewDealInput(BaseModel):
+    """Входные данные для уведомления о создании новой сделки."""
+
+    deal_id: UUID
+    deal_title: str
+    lead_name: str
+    value_amount: float
+    value_currency: str
+
+
 # ── Входные DTO — API ──────────────────────────────────────────────────────────
 
 class TelegramWebhookSetInput(BaseModel):

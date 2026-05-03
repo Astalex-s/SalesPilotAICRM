@@ -11,7 +11,7 @@ from uuid import UUID
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
 from src.application.dtos.deal_dtos import CloseDealInput, ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
-from src.application.dtos.telegram_dtos import NotifyDealStageChangeInput
+from src.application.dtos.telegram_dtos import NotifyDealStageChangeInput, NotifyNewDealInput
 from src.application.exceptions import DealNotFoundError, TelegramNotConfiguredError
 from src.domain.exceptions import DealAlreadyClosedError
 from src.application.use_cases.close_deal import CloseDealUseCase
@@ -19,6 +19,7 @@ from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseC
 from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
+from src.application.use_cases.notify_new_deal import NotifyNewDealUseCase
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.application.dtos.auth_dtos import UserOutput
 from src.interfaces.api.dependencies import (
@@ -27,6 +28,7 @@ from src.interfaces.api.dependencies import (
     get_list_deals_use_case,
     get_move_deal_stage_use_case,
     get_notify_deal_stage_change_use_case,
+    get_notify_new_deal_use_case,
 )
 from src.interfaces.schemas.deal_schemas import CloseDealRequest, MoveDealStageRequest
 
@@ -71,10 +73,14 @@ async def list_deals(
 )
 async def convert_lead_to_deal(
     body: ConvertLeadToDealInput,
+    background_tasks: BackgroundTasks,
     use_case: ConvertLeadToDealUseCase = Depends(get_convert_lead_use_case),
+    notify_use_case: NotifyNewDealUseCase = Depends(get_notify_new_deal_use_case),
 ) -> DealOutput:
     """POST /api/v1/deals — создание сделки из квалифицированного лида."""
-    return await use_case.execute(body)
+    result = await use_case.execute(body)
+    background_tasks.add_task(_send_new_deal_notification, notify_use_case, result, body)
+    return result
 
 
 @router.patch(
@@ -146,6 +152,27 @@ async def close_deal(
 
 
 # ── Фоновые задачи ─────────────────────────────────────────────────────────────
+
+async def _send_new_deal_notification(
+    use_case: NotifyNewDealUseCase,
+    deal: DealOutput,
+    body: ConvertLeadToDealInput,
+) -> None:
+    """Отправляет Telegram-уведомление о создании новой сделки в фоне."""
+    try:
+        data = NotifyNewDealInput(
+            deal_id=deal.id,
+            deal_title=deal.title,
+            lead_name=str(body.lead_id),
+            value_amount=float(deal.value_amount),
+            value_currency=deal.value_currency,
+        )
+        await use_case.execute(data)
+    except TelegramNotConfiguredError:
+        pass
+    except Exception:
+        logger.exception("Ошибка отправки Telegram-уведомления о новой сделке %s", deal.id)
+
 
 async def _send_deal_stage_notification(
     use_case: NotifyDealStageChangeUseCase,

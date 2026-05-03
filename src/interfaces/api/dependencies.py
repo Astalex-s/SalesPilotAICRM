@@ -44,7 +44,9 @@ from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.anonymize_lead import AnonymizeLeadUseCase
 from src.application.use_cases.delete_user_data import DeleteUserDataUseCase
 from src.application.use_cases.get_gdpr_audit_log import GetGdprAuditLogUseCase
+from src.application.use_cases.handle_bot_command import HandleBotCommandUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
+from src.application.use_cases.notify_new_deal import NotifyNewDealUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.application.use_cases.score_lead import ScoreLeadUseCase
 from src.application.use_cases.send_email import SendEmailUseCase
@@ -430,6 +432,25 @@ def get_notify_deal_stage_change_use_case(
     return NotifyDealStageChangeUseCase(
         telegram_service=telegram_service,
         pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+def get_notify_new_deal_use_case(
+    telegram_service: TelegramService = Depends(get_telegram_service),
+) -> NotifyNewDealUseCase:
+    """Фабрика NotifyNewDealUseCase."""
+    return NotifyNewDealUseCase(telegram_service=telegram_service)
+
+
+def get_handle_bot_command_use_case(
+    session: AsyncSession = Depends(get_session),
+    telegram_service: TelegramService = Depends(get_telegram_service),
+) -> HandleBotCommandUseCase:
+    """Фабрика HandleBotCommandUseCase."""
+    return HandleBotCommandUseCase(
+        telegram_service=telegram_service,
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
     )
 
 

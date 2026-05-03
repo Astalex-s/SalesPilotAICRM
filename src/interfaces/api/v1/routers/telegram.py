@@ -16,8 +16,9 @@ from src.application.dtos.telegram_dtos import (
     TelegramWebhookSetOutput,
 )
 from src.application.ports.telegram_service import ITelegramService
+from src.application.use_cases.handle_bot_command import HandleBotCommandUseCase
 from src.infrastructure.config.settings import settings
-from src.interfaces.api.dependencies import get_telegram_service
+from src.interfaces.api.dependencies import get_handle_bot_command_use_case, get_telegram_service
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,7 @@ async def telegram_webhook(
         alias="X-Telegram-Bot-Api-Secret-Token",
     ),
     telegram_service: ITelegramService = Depends(get_telegram_service),
+    bot_command_use_case: HandleBotCommandUseCase = Depends(get_handle_bot_command_use_case),
 ) -> Response:
     """POST /api/v1/telegram/webhook — приём обновлений от Telegram."""
     # Проверка секретного токена, если настроен
@@ -55,6 +57,7 @@ async def telegram_webhook(
 
     raw_update = await request.json()
     await telegram_service.process_update(raw_update)
+    await bot_command_use_case.execute(raw_update)
 
     # Telegram требует HTTP 200 в ответ — иначе повторная доставка
     return Response(status_code=http_status.HTTP_200_OK)
