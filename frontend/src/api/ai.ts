@@ -1,4 +1,4 @@
-import { type AiTone, type DealForecast, type GeneratedEmail, type LeadScore, type NextBestAction } from '../types/ai';
+import { type AiTone, type DealForecast, type GeneratedEmail, type LeadScore, type LostDealsAnalysis, type NextBestAction, type PipelineDigest } from '../types/ai';
 import axiosInstance from './axiosInstance';
 
 export const aiApi = {
@@ -32,6 +32,18 @@ export const aiApi = {
       `/ai/leads/${leadId}/generate-email`,
       null,
       { params: { tone, ...(extraContext ? { extra_context: extraContext } : {}) } },
+    );
+    return data;
+  },
+
+  analyzeLostDeals: async (): Promise<LostDealsAnalysis> => {
+    const { data } = await axiosInstance.post<LostDealsAnalysis>('/ai/deals/lost-analysis');
+    return data;
+  },
+
+  pipelineWeeklyDigest: async (pipelineId: string): Promise<PipelineDigest> => {
+    const { data } = await axiosInstance.get<PipelineDigest>(
+      `/ai/pipeline/${pipelineId}/weekly-digest`,
     );
     return data;
   },

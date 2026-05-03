@@ -18,16 +18,22 @@ from src.application.dtos.ai_dtos import (
     GenerateEmailOutput,
     LeadScoreInput,
     LeadScoreOutput,
+    LostDealsAnalysisOutput,
     NextBestActionInput,
     NextBestActionOutput,
+    PipelineDigestOutput,
 )
+from src.application.use_cases.analyze_lost_deals import AnalyzeLostDealsUseCase
 from src.application.use_cases.forecast_deal import ForecastDealUseCase
 from src.application.use_cases.generate_email import GenerateEmailUseCase
+from src.application.use_cases.generate_pipeline_digest import GeneratePipelineDigestUseCase
 from src.application.use_cases.get_next_best_action import GetNextBestActionUseCase
 from src.application.use_cases.score_lead import ScoreLeadUseCase
 from src.interfaces.api.dependencies import (
+    get_analyze_lost_deals_use_case,
     get_forecast_deal_use_case,
     get_generate_email_use_case,
+    get_generate_pipeline_digest_use_case,
     get_next_best_action_use_case,
     get_score_lead_use_case,
 )
@@ -114,3 +120,40 @@ async def generate_email(
         extra_context=extra_context,
     )
     return await use_case.execute(data)
+
+
+@router.post(
+    "/deals/lost-analysis",
+    response_model=LostDealsAnalysisOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Batch AI-анализ потерянных сделок",
+    description=(
+        "Загружает все сделки со статусом LOST и выполняет AI-анализ: "
+        "выявляет общие паттерны потерь, возможные причины и даёт "
+        "рекомендации по улучшению win rate."
+    ),
+)
+async def analyze_lost_deals(
+    use_case: AnalyzeLostDealsUseCase = Depends(get_analyze_lost_deals_use_case),
+) -> LostDealsAnalysisOutput:
+    """POST /api/v1/ai/deals/lost-analysis — batch-анализ проигранных сделок."""
+    return await use_case.execute()
+
+
+@router.get(
+    "/pipeline/{pipeline_id}/weekly-digest",
+    response_model=PipelineDigestOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Еженедельная AI-сводка по воронке",
+    description=(
+        "Агрегирует текущую статистику воронки и формирует AI-дайджест: "
+        "резюме состояния, ключевые метрики, риски, возможности и сделки, "
+        "требующие первоочередного внимания."
+    ),
+)
+async def pipeline_weekly_digest(
+    pipeline_id: UUID,
+    use_case: GeneratePipelineDigestUseCase = Depends(get_generate_pipeline_digest_use_case),
+) -> PipelineDigestOutput:
+    """GET /api/v1/ai/pipeline/{pipeline_id}/weekly-digest — дайджест воронки."""
+    return await use_case.execute(pipeline_id)

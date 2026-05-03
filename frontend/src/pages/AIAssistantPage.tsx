@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   CircularProgress,
   FormControl,
   InputLabel,
@@ -16,8 +17,9 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { aiApi } from '../api/ai';
 import { dealsApi } from '../api/deals';
+import { useKanbanStore } from '../store/useKanbanStore';
 import { useLeadStore } from '../store/useLeadStore';
-import type { AiTone, DealForecast, GeneratedEmail, LeadScore, NextBestAction } from '../types/ai';
+import type { AiTone, DealForecast, GeneratedEmail, LeadScore, LostDealsAnalysis, NextBestAction, PipelineDigest } from '../types/ai';
 import type { Deal } from '../types/deal';
 
 /* ── shared style tokens ────────────────────────────────────────────────────── */
@@ -501,6 +503,243 @@ function EmailGenTab() {
   );
 }
 
+/* ── Bullet list helper ──────────────────────────────────────────────────────── */
+function BulletList({ items, color = '#00A8E8' }: { items: string[]; color?: string }) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+      {items.map((item, i) => (
+        <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+          <Box sx={{ mt: 0.6, width: 6, height: 6, borderRadius: '50%', bgcolor: color, flexShrink: 0 }} />
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
+            {item}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+/* ── Lost Deals Analysis Tab ─────────────────────────────────────────────────── */
+function LostDealsAnalysisTab() {
+  const { t } = useTranslation();
+  const [result, setResult] = useState<LostDealsAnalysis | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setResult(await aiApi.analyzeLostDeals());
+    } catch {
+      setError(t('aiAssistant.errors.lostAnalysis'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Box sx={{ ...card, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#475569', flex: 1 }}>
+          {t('aiAssistant.lostAnalysis.description')}
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={run}
+          disabled={loading}
+          sx={{
+            bgcolor: '#FF6B35', color: '#fff', fontFamily: 'Inter', fontWeight: 600,
+            fontSize: 13, borderRadius: '8px', textTransform: 'none', boxShadow: 'none',
+            px: 2.5, height: 40, whiteSpace: 'nowrap',
+            '&:hover': { bgcolor: '#e05a27', boxShadow: 'none' },
+            '&.Mui-disabled': { bgcolor: '#CBD5E8', color: '#fff' },
+          }}
+        >
+          {loading ? t('aiAssistant.lostAnalysis.running') : t('aiAssistant.lostAnalysis.runButton')}
+        </Button>
+      </Box>
+
+      {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
+
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress sx={{ color: '#FF6B35' }} />
+        </Box>
+      )}
+
+      {result && !loading && (
+        <>
+          {result.total_deals === 0 ? (
+            <Alert severity="info" sx={{ borderRadius: '10px' }}>{t('aiAssistant.lostAnalysis.noDeals')}</Alert>
+          ) : (
+            <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+              {/* Stats */}
+              <Box sx={{ ...card, flex: '1 1 200px', display: 'flex', gap: 3 }}>
+                <Box>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', mb: 0.5 }}>
+                    {t('aiAssistant.lostAnalysis.totalDeals')}
+                  </Typography>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 28, fontWeight: 800, color: '#FF6B35' }}>
+                    {result.total_deals}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', mb: 0.5 }}>
+                    {t('aiAssistant.lostAnalysis.totalValue')}
+                  </Typography>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 28, fontWeight: 800, color: '#DC2626' }}>
+                    ${result.total_lost_value.toLocaleString()}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Summary */}
+              <Box sx={{ ...card, flex: '1 1 100%' }}>
+                <Typography sx={sectionTitle}>{t('aiAssistant.lostAnalysis.summary')}</Typography>
+                <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#475569', lineHeight: 1.7 }}>
+                  {result.summary}
+                </Typography>
+              </Box>
+
+              {/* Loss patterns */}
+              <Box sx={{ ...card, flex: '1 1 260px' }}>
+                <Typography sx={sectionTitle}>{t('aiAssistant.lostAnalysis.patterns')}</Typography>
+                <BulletList items={result.loss_patterns} color="#DC2626" />
+              </Box>
+
+              {/* Recommendations */}
+              <Box sx={{ ...card, flex: '1 1 260px' }}>
+                <Typography sx={sectionTitle}>{t('aiAssistant.lostAnalysis.recommendations')}</Typography>
+                <BulletList items={result.recommendations} color="#059669" />
+              </Box>
+            </Box>
+          )}
+        </>
+      )}
+    </Box>
+  );
+}
+
+/* ── Pipeline Digest Tab ─────────────────────────────────────────────────────── */
+function PipelineDigestTab() {
+  const { t } = useTranslation();
+  const allPipelines = useKanbanStore((s) => s.allPipelines);
+  const loadPipelines = useKanbanStore((s) => s.loadPipelines);
+  useEffect(() => { if (allPipelines.length === 0) loadPipelines(); }, []);
+
+  const [pipelineId, setPipelineId] = useState('');
+  const [result, setResult] = useState<PipelineDigest | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async () => {
+    if (!pipelineId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      setResult(await aiApi.pipelineWeeklyDigest(pipelineId));
+    } catch {
+      setError(t('aiAssistant.errors.pipelineDigest'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+      <Box sx={{ ...card, display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+        <FormControl size="small" sx={{ flex: 1 }}>
+          <InputLabel sx={{ fontFamily: 'Inter', fontSize: 13 }}>{t('aiAssistant.digest.selectPipeline')}</InputLabel>
+          <Select
+            value={pipelineId}
+            label={t('aiAssistant.digest.selectPipeline')}
+            onChange={(e) => { setPipelineId(e.target.value); setResult(null); }}
+            sx={{ fontFamily: 'Inter', fontSize: 13, borderRadius: '8px' }}
+          >
+            {allPipelines.map((p) => (
+              <MenuItem key={p.id} value={p.id} sx={{ fontFamily: 'Inter', fontSize: 13 }}>
+                {p.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button
+          variant="contained"
+          onClick={run}
+          disabled={!pipelineId || loading}
+          sx={{
+            bgcolor: '#00A8E8', color: '#fff', fontFamily: 'Inter', fontWeight: 600,
+            fontSize: 13, borderRadius: '8px', textTransform: 'none', boxShadow: 'none',
+            px: 2.5, height: 40, whiteSpace: 'nowrap',
+            '&:hover': { bgcolor: '#0090CC', boxShadow: 'none' },
+            '&.Mui-disabled': { bgcolor: '#CBD5E8', color: '#fff' },
+          }}
+        >
+          {loading ? t('aiAssistant.digest.running') : t('aiAssistant.digest.runButton')}
+        </Button>
+      </Box>
+
+      {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
+
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress sx={{ color: '#00A8E8' }} />
+        </Box>
+      )}
+
+      {result && !loading && (
+        <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+          {/* Summary */}
+          <Box sx={{ ...card, flex: '1 1 100%' }}>
+            <Typography sx={sectionTitle}>{t('aiAssistant.digest.summary')}</Typography>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#475569', lineHeight: 1.7 }}>
+              {result.summary}
+            </Typography>
+          </Box>
+
+          {/* Key metrics */}
+          <Box sx={{ ...card, flex: '1 1 260px' }}>
+            <Typography sx={{ ...sectionTitle, mb: 1.5 }}>{t('aiAssistant.digest.keyMetrics')}</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {result.key_metrics.map((m, i) => (
+                <Chip
+                  key={i}
+                  label={m}
+                  size="small"
+                  sx={{
+                    fontFamily: 'Inter', fontSize: 12, fontWeight: 500,
+                    bgcolor: 'rgba(0,168,232,0.1)', color: '#00A8E8',
+                    border: '1px solid rgba(0,168,232,0.2)',
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          {/* Risks */}
+          <Box sx={{ ...card, flex: '1 1 260px' }}>
+            <Typography sx={sectionTitle}>{t('aiAssistant.digest.risks')}</Typography>
+            <BulletList items={result.risks} color="#DC2626" />
+          </Box>
+
+          {/* Opportunities */}
+          <Box sx={{ ...card, flex: '1 1 260px' }}>
+            <Typography sx={sectionTitle}>{t('aiAssistant.digest.opportunities')}</Typography>
+            <BulletList items={result.opportunities} color="#059669" />
+          </Box>
+
+          {/* Focus deals */}
+          <Box sx={{ ...card, flex: '1 1 260px' }}>
+            <Typography sx={sectionTitle}>{t('aiAssistant.digest.focusDeals')}</Typography>
+            <BulletList items={result.focus_deals} color="#F59E0B" />
+          </Box>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
 /* ── Main page ──────────────────────────────────────────────────────────────── */
 export default function AIAssistantPage() {
   const { t } = useTranslation();
@@ -558,6 +797,8 @@ export default function AIAssistantPage() {
           <Tab label={t('aiAssistant.tabs.leadScore')} />
           <Tab label={t('aiAssistant.tabs.dealForecast')} />
           <Tab label={t('aiAssistant.tabs.emailGen')} />
+          <Tab label={t('aiAssistant.tabs.lostAnalysis')} />
+          <Tab label={t('aiAssistant.tabs.pipelineDigest')} />
         </Tabs>
       </Box>
 
@@ -565,6 +806,8 @@ export default function AIAssistantPage() {
       {tab === 0 && <LeadScoreTab />}
       {tab === 1 && <DealForecastTab />}
       {tab === 2 && <EmailGenTab />}
+      {tab === 3 && <LostDealsAnalysisTab />}
+      {tab === 4 && <PipelineDigestTab />}
     </Box>
   );
 }

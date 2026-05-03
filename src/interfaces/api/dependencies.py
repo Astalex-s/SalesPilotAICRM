@@ -6,7 +6,9 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.use_cases.analyze_lost_deals import AnalyzeLostDealsUseCase
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
+from src.application.use_cases.generate_pipeline_digest import GeneratePipelineDigestUseCase
 from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
 from src.application.use_cases.delete_deal_attachment import DeleteDealAttachmentUseCase
@@ -302,6 +304,29 @@ def get_generate_email_use_case(
     """Фабрика GenerateEmailUseCase."""
     return GenerateEmailUseCase(
         lead_repo=SqlLeadRepository(session),
+        ai_service=ai_service,
+    )
+
+
+def get_analyze_lost_deals_use_case(
+    session: AsyncSession = Depends(get_session),
+    ai_service: OpenAIService = Depends(get_ai_service),
+) -> AnalyzeLostDealsUseCase:
+    """Фабрика AnalyzeLostDealsUseCase."""
+    return AnalyzeLostDealsUseCase(
+        deal_repo=SqlDealRepository(session),
+        ai_service=ai_service,
+    )
+
+
+def get_generate_pipeline_digest_use_case(
+    session: AsyncSession = Depends(get_session),
+    ai_service: OpenAIService = Depends(get_ai_service),
+) -> GeneratePipelineDigestUseCase:
+    """Фабрика GeneratePipelineDigestUseCase."""
+    return GeneratePipelineDigestUseCase(
+        deal_repo=SqlDealRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
         ai_service=ai_service,
     )
 

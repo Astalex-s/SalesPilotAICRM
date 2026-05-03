@@ -24,16 +24,22 @@ from src.application.ports.ai_service import (
     EmailDraft,
     IAIService,
     LeadScore,
+    LostDealsAnalysis,
     NextBestAction,
+    PipelineDigest,
 )
 from src.infrastructure.ai.prompts import (
+    ANALYZE_LOST_DEALS_SYSTEM,
     FORECAST_DEAL_SYSTEM,
     GENERATE_EMAIL_SYSTEM,
     NEXT_BEST_ACTION_LEAD_SYSTEM,
+    PIPELINE_DIGEST_SYSTEM,
     SCORE_LEAD_SYSTEM,
+    analyze_lost_deals_user,
     forecast_deal_user,
     generate_email_user,
     next_best_action_user,
+    pipeline_digest_user,
     score_lead_user,
 )
 from src.infrastructure.config.settings import settings
@@ -144,6 +150,53 @@ class OpenAIService(IAIService):
         return EmailDraft(
             subject=raw["subject"],
             body=raw["body"],
+        )
+
+    async def analyze_lost_deals(
+        self, deals_context: list[dict[str, Any]]
+    ) -> LostDealsAnalysis:
+        """Batch-анализ потерянных сделок."""
+        logger.debug("analyze_lost_deals: анализ %d сделок", len(deals_context))
+
+        total_value = sum(d.get("value_amount", 0) for d in deals_context)
+
+        raw = await self._chat_json(
+            system=ANALYZE_LOST_DEALS_SYSTEM,
+            user=analyze_lost_deals_user(deals_context),
+        )
+
+        logger.debug("analyze_lost_deals: получены паттерны: %d", len(raw.get("loss_patterns", [])))
+
+        return LostDealsAnalysis(
+            total_deals=len(deals_context),
+            total_lost_value=float(total_value),
+            loss_patterns=raw.get("loss_patterns", []),
+            recommendations=raw.get("recommendations", []),
+            summary=raw.get("summary", ""),
+        )
+
+    async def generate_pipeline_digest(
+        self, pipeline_context: dict[str, Any]
+    ) -> PipelineDigest:
+        """Генерирует еженедельный дайджест воронки."""
+        logger.debug(
+            "generate_pipeline_digest: воронка '%s'",
+            pipeline_context.get("pipeline_name"),
+        )
+
+        raw = await self._chat_json(
+            system=PIPELINE_DIGEST_SYSTEM,
+            user=pipeline_digest_user(pipeline_context),
+        )
+
+        logger.debug("generate_pipeline_digest: дайджест сформирован")
+
+        return PipelineDigest(
+            summary=raw.get("summary", ""),
+            key_metrics=raw.get("key_metrics", []),
+            risks=raw.get("risks", []),
+            opportunities=raw.get("opportunities", []),
+            focus_deals=raw.get("focus_deals", []),
         )
 
     # ── Внутренние методы ─────────────────────────────────────────────────────

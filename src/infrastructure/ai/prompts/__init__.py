@@ -3,8 +3,12 @@
 Все промпты изолированы здесь — не разбросаны по сервисам.
 """
 from src.infrastructure.ai.prompts.deal_prompts import (
+    ANALYZE_LOST_DEALS_SYSTEM,
     FORECAST_DEAL_SYSTEM,
+    PIPELINE_DIGEST_SYSTEM,
+    analyze_lost_deals_user,
     forecast_deal_user,
+    pipeline_digest_user,
 )
 from src.infrastructure.ai.prompts.email_prompts import (
     GENERATE_EMAIL_SYSTEM,
@@ -26,4 +30,8 @@ __all__ = [
     "next_best_action_user",
     "GENERATE_EMAIL_SYSTEM",
     "generate_email_user",
+    "ANALYZE_LOST_DEALS_SYSTEM",
+    "analyze_lost_deals_user",
+    "PIPELINE_DIGEST_SYSTEM",
+    "pipeline_digest_user",
 ]

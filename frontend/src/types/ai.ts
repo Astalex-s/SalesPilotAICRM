@@ -29,3 +29,21 @@ export interface DealForecast {
   risk_factors: string[];
   opportunities: string[];
 }
+
+export interface LostDealsAnalysis {
+  total_deals: number;
+  total_lost_value: number;
+  loss_patterns: string[];
+  recommendations: string[];
+  summary: string;
+}
+
+export interface PipelineDigest {
+  pipeline_id: string;
+  pipeline_name: string;
+  summary: string;
+  key_metrics: string[];
+  risks: string[];
+  opportunities: string[];
+  focus_deals: string[];
+}

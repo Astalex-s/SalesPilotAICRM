@@ -516,7 +516,9 @@
     "tabs": {
       "leadScore": "Lead Scoring",
       "dealForecast": "Deal Forecast",
-      "emailGen": "Email Generator"
+      "emailGen": "Email Generator",
+      "lostAnalysis": "Lost Deals Analysis",
+      "pipelineDigest": "Pipeline Digest"
     },
     "selectLead": "Select a lead",
     "selectDeal": "Select a deal",
@@ -555,10 +557,33 @@
       "medium": "Medium",
       "low": "Low"
     },
+    "lostAnalysis": {
+      "description": "AI will analyze all lost deals and identify common loss patterns and recommendations.",
+      "runButton": "Run Analysis",
+      "running": "Analyzing...",
+      "totalDeals": "Lost Deals",
+      "totalValue": "Total Lost Value",
+      "patterns": "Loss Patterns",
+      "recommendations": "Recommendations",
+      "summary": "Summary",
+      "noDeals": "No lost deals found"
+    },
+    "digest": {
+      "selectPipeline": "Select pipeline",
+      "runButton": "Generate Digest",
+      "running": "Generating...",
+      "summary": "Pipeline Summary",
+      "keyMetrics": "Key Metrics",
+      "risks": "Risks",
+      "opportunities": "Opportunities",
+      "focusDeals": "Focus Deals"
+    },
     "errors": {
       "score": "Failed to score lead",
       "forecast": "Failed to forecast deal",
-      "email": "Failed to generate email"
+      "email": "Failed to generate email",
+      "lostAnalysis": "Failed to analyze lost deals",
+      "pipelineDigest": "Failed to generate pipeline digest"
     }
   },
   "notifications": {

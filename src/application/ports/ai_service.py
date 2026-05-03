@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -49,6 +49,28 @@ class EmailDraft:
 
     subject: str
     body: str
+
+
+@dataclass(frozen=True)
+class LostDealsAnalysis:
+    """Batch-анализ потерянных сделок AI-моделью."""
+
+    total_deals: int
+    total_lost_value: float
+    loss_patterns: list[str]        # общие причины потерь
+    recommendations: list[str]     # рекомендации по улучшению win rate
+    summary: str                   # краткое резюме
+
+
+@dataclass(frozen=True)
+class PipelineDigest:
+    """Еженедельная AI-сводка по состоянию воронки продаж."""
+
+    summary: str                   # общее резюме состояния воронки
+    key_metrics: list[str]         # ключевые метрики в виде текстовых строк
+    risks: list[str]               # выявленные риски
+    opportunities: list[str]       # возможности для роста
+    focus_deals: list[str]         # сделки, требующие внимания
 
 
 # ── Интерфейс AI-сервиса ───────────────────────────────────────────────────────
@@ -114,5 +136,31 @@ class IAIService(ABC):
             extra_context: дополнительный контекст от менеджера (опционально).
         Returns:
             EmailDraft с темой и телом письма.
+        """
+        ...
+
+    @abstractmethod
+    async def analyze_lost_deals(
+        self, deals_context: list[dict[str, Any]]
+    ) -> LostDealsAnalysis:
+        """Batch-анализ потерянных сделок: выявляет паттерны и даёт рекомендации.
+
+        Args:
+            deals_context: список сериализованных данных проигранных сделок.
+        Returns:
+            LostDealsAnalysis с паттернами потерь и рекомендациями.
+        """
+        ...
+
+    @abstractmethod
+    async def generate_pipeline_digest(
+        self, pipeline_context: dict[str, Any]
+    ) -> PipelineDigest:
+        """Генерирует еженедельную AI-сводку по воронке продаж.
+
+        Args:
+            pipeline_context: агрегированные данные воронки (сделки, этапы, метрики).
+        Returns:
+            PipelineDigest с резюме, рисками и возможностями.
         """
         ...

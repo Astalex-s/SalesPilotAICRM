@@ -84,3 +84,29 @@ class GenerateEmailOutput(BaseModel):
     subject: str
     body: str
     tone: Literal["formal", "friendly", "assertive"]
+
+
+# ── Анализ потерянных сделок ────────────────────────────────────────────────────
+
+class LostDealsAnalysisOutput(BaseModel):
+    """Результат batch-анализа потерянных сделок."""
+
+    total_deals: int
+    total_lost_value: float
+    loss_patterns: list[str]
+    recommendations: list[str]
+    summary: str
+
+
+# ── Дайджест воронки ────────────────────────────────────────────────────────────
+
+class PipelineDigestOutput(BaseModel):
+    """Еженедельный AI-дайджест воронки продаж."""
+
+    pipeline_id: UUID
+    pipeline_name: str
+    summary: str
+    key_metrics: list[str]
+    risks: list[str]
+    opportunities: list[str]
+    focus_deals: list[str]
