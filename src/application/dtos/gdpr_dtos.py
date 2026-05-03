@@ -13,6 +13,63 @@ from pydantic import BaseModel, Field
 from src.domain.value_objects.enums import GdprEventType
 
 
+# ── Экспорт данных (Art. 20) ──────────────────────────────────────────────────
+
+class LeadExportItem(BaseModel):
+    id: UUID
+    first_name: str
+    last_name: str
+    email: str
+    status: str
+    source: str
+    company: str | None = None
+    phone: str | None = None
+    notes: str | None = None
+    created_at: datetime
+
+
+class DealExportItem(BaseModel):
+    id: UUID
+    title: str
+    status: str
+    value_amount: float
+    value_currency: str
+    created_at: datetime
+
+
+class EmailExportItem(BaseModel):
+    id: str
+    subject: str
+    from_address: str
+    to_addresses: list[str]
+    direction: str
+    received_at: datetime
+
+
+class UserDataExportOutput(BaseModel):
+    """Полный экспорт данных пользователя — GDPR Art. 20 Right to Portability."""
+
+    user_id: UUID
+    exported_at: datetime
+    leads: list[LeadExportItem]
+    deals: list[DealExportItem]
+    emails: list[EmailExportItem]
+    audit_entry_id: UUID
+
+
+# ── Retention policy ──────────────────────────────────────────────────────────
+
+class RetentionPolicyOutput(BaseModel):
+    """Результат применения политики хранения данных."""
+
+    retention_days: int
+    leads_deleted: int = Field(ge=0)
+    deals_deleted: int = Field(ge=0)
+    emails_deleted: int = Field(ge=0)
+    activities_erased: int = Field(ge=0)
+    audit_entry_id: UUID
+
+
 class GdprAuditEntryOutput(BaseModel):
     """Запись журнала аудита GDPR для API-ответа."""
 

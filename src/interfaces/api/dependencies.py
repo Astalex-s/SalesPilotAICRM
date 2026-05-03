@@ -42,7 +42,9 @@ from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.anonymize_lead import AnonymizeLeadUseCase
+from src.application.use_cases.apply_retention_policy import ApplyRetentionPolicyUseCase
 from src.application.use_cases.delete_user_data import DeleteUserDataUseCase
+from src.application.use_cases.export_user_data import ExportUserDataUseCase
 from src.application.use_cases.get_gdpr_audit_log import GetGdprAuditLogUseCase
 from src.application.use_cases.handle_bot_command import HandleBotCommandUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
@@ -487,6 +489,31 @@ def get_gdpr_audit_log_use_case(
 ) -> GetGdprAuditLogUseCase:
     """Фабрика GetGdprAuditLogUseCase — чтение журнала аудита GDPR."""
     return GetGdprAuditLogUseCase(
+        gdpr_audit_repo=SqlGdprAuditRepository(session),
+    )
+
+
+def get_export_user_data_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ExportUserDataUseCase:
+    """Фабрика ExportUserDataUseCase — GDPR Art. 20 Right to Portability."""
+    return ExportUserDataUseCase(
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
+        email_repo=SqlEmailMessageRepository(session),
+        gdpr_audit_repo=SqlGdprAuditRepository(session),
+    )
+
+
+def get_apply_retention_policy_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ApplyRetentionPolicyUseCase:
+    """Фабрика ApplyRetentionPolicyUseCase — ручной запуск retention policy."""
+    return ApplyRetentionPolicyUseCase(
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
+        email_repo=SqlEmailMessageRepository(session),
+        activity_repo=SqlActivityRepository(session),
         gdpr_audit_repo=SqlGdprAuditRepository(session),
     )
 

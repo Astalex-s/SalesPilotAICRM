@@ -8,18 +8,26 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 from fastapi import status as http_status
+from fastapi.responses import Response
 
 from src.application.dtos.gdpr_dtos import (
     AnonymizeLeadOutput,
     DeleteUserDataOutput,
     GdprAuditLogOutput,
+    RetentionPolicyOutput,
+    UserDataExportOutput,
 )
 from src.application.use_cases.anonymize_lead import AnonymizeLeadUseCase
+from src.application.use_cases.apply_retention_policy import ApplyRetentionPolicyUseCase
 from src.application.use_cases.delete_user_data import DeleteUserDataUseCase
+from src.application.use_cases.export_user_data import ExportUserDataUseCase
 from src.application.use_cases.get_gdpr_audit_log import GetGdprAuditLogUseCase
+from src.infrastructure.config.settings import settings
 from src.interfaces.api.dependencies import (
     get_anonymize_lead_use_case,
+    get_apply_retention_policy_use_case,
     get_delete_user_data_use_case,
+    get_export_user_data_use_case,
     get_gdpr_audit_log_use_case,
 )
 
@@ -80,3 +88,47 @@ async def get_audit_log(
 ) -> GdprAuditLogOutput:
     """GET /api/v1/gdpr/audit-log — журнал GDPR-событий."""
     return await use_case.execute(limit=limit, offset=offset)
+
+
+@router.get(
+    "/users/{user_id}/export",
+    status_code=http_status.HTTP_200_OK,
+    summary="Экспорт данных пользователя (GDPR Art. 20)",
+    description=(
+        "Экспортирует все персональные данные пользователя: лиды, сделки, email-сообщения. "
+        "Возвращает JSON-файл для скачивания. Фиксирует событие в журнале аудита GDPR."
+    ),
+)
+async def export_user_data(
+    user_id: UUID,
+    use_case: ExportUserDataUseCase = Depends(get_export_user_data_use_case),
+) -> Response:
+    """GET /api/v1/gdpr/users/{user_id}/export — Right to Data Portability."""
+    data: UserDataExportOutput = await use_case.execute(user_id=user_id)
+    json_bytes = data.model_dump_json(indent=2).encode("utf-8")
+    return Response(
+        content=json_bytes,
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="user_{user_id}_gdpr_export.json"',
+        },
+    )
+
+
+@router.post(
+    "/retention/apply",
+    response_model=RetentionPolicyOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Применить политику хранения данных",
+    description=(
+        "Немедленно удаляет лиды и сделки, созданные более чем "
+        f"GDPR_RETENTION_DAYS дней назад (по умолчанию {settings.GDPR_RETENTION_DAYS} дней). "
+        "Автоматически запускается Celery Beat раз в сутки. "
+        "Данный эндпоинт позволяет запустить вручную."
+    ),
+)
+async def apply_retention_policy(
+    use_case: ApplyRetentionPolicyUseCase = Depends(get_apply_retention_policy_use_case),
+) -> RetentionPolicyOutput:
+    """POST /api/v1/gdpr/retention/apply — ручной запуск retention policy."""
+    return await use_case.execute(retention_days=settings.GDPR_RETENTION_DAYS)

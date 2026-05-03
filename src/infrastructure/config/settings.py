@@ -64,6 +64,10 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
     CELERY_EMAIL_SYNC_INTERVAL_SECONDS: int = 600  # 10 минут
 
+    # GDPR
+    GDPR_RETENTION_DAYS: int = 730  # 2 года — срок хранения данных до автоудаления
+    CELERY_RETENTION_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки retention policy
+
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_database_url(cls, v: str) -> str:

@@ -80,8 +80,8 @@
 - [x] Удаление всех данных пользователя (POST /gdpr/users/{id}/delete)
 - [x] Анонимизация лида (POST /gdpr/leads/{id}/anonymize)
 - [x] Журнал аудита (GET /gdpr/audit-log)
-- [ ] Экспорт данных пользователя (Art. 20 — Right to Portability)
-- [ ] Автоматическое удаление по расписанию (retention policy)
+- [x] Экспорт данных пользователя (Art. 20 — Right to Portability)
+- [x] Автоматическое удаление по расписанию (retention policy)
 
 ### Аналитика
 - [x] Обзор (GET /analytics) — win rate, avg deal, closed revenue, forecast

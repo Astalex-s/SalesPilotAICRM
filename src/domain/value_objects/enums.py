@@ -57,5 +57,7 @@ class EmailDirection(str, Enum):
 
 class GdprEventType(str, Enum):
     """Тип события в журнале аудита GDPR."""
-    USER_DATA_DELETED = "user_data_deleted"    # полное удаление данных пользователя
-    LEAD_ANONYMIZED = "lead_anonymized"        # анонимизация PII лида
+    USER_DATA_DELETED = "user_data_deleted"          # полное удаление данных пользователя
+    LEAD_ANONYMIZED = "lead_anonymized"              # анонимизация PII лида
+    USER_DATA_EXPORTED = "user_data_exported"        # экспорт данных (Art. 20)
+    RETENTION_POLICY_APPLIED = "retention_policy_applied"  # автоудаление по retention policy

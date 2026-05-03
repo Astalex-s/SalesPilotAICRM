@@ -18,6 +18,7 @@ celery_app = Celery(
     include=[
         "src.infrastructure.celery.tasks.ai_tasks",
         "src.infrastructure.celery.tasks.email_tasks",
+        "src.infrastructure.celery.tasks.gdpr_tasks",
         "src.infrastructure.celery.tasks.sync_tasks",
     ],
 )
@@ -52,6 +53,10 @@ celery_app.conf.update(
             "task": "tasks.sync.fetch_emails_periodic",
             "schedule": settings.CELERY_EMAIL_SYNC_INTERVAL_SECONDS,
             "kwargs": {"query": "", "max_results": 100},
+        },
+        "gdpr-retention-policy-daily": {
+            "task": "tasks.gdpr.apply_retention_policy",
+            "schedule": settings.CELERY_RETENTION_CHECK_INTERVAL,
         },
     },
 )
