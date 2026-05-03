@@ -530,6 +530,12 @@
       "avgDeal": "Ср. сделка",
       "overdue": "Просрочка",
       "noData": "Нет данных по менеджерам"
+    },
+    "export": {
+      "button": "Экспорт",
+      "csv": "Скачать CSV",
+      "pdf": "Печать / PDF",
+      "downloading": "Загрузка..."
     }
   },
   "aiAssistant": {

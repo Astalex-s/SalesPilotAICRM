@@ -4,12 +4,19 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WorkIcon from '@mui/icons-material/Work';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import PrintIcon from '@mui/icons-material/Print';
 import Chip from '@mui/material/Chip';
 import {
   Alert,
   Box,
+  Button,
   Grid,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Skeleton,
   Table,
   TableBody,
@@ -19,8 +26,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import {
   Bar,
   BarChart,
@@ -599,6 +607,9 @@ export default function AnalyticsPage() {
   const [managers, setManagers] = useState<ManagersReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exportAnchor, setExportAnchor] = useState<null | HTMLElement>(null);
+  const [csvLoading, setCsvLoading] = useState(false);
+  const downloadLinkRef = useRef<HTMLAnchorElement>(null);
 
   const load = async () => {
     setLoading(true);
@@ -621,8 +632,44 @@ export default function AnalyticsPage() {
 
   useEffect(() => { load(); }, []);
 
+  const handleCsvDownload = async () => {
+    setExportAnchor(null);
+    setCsvLoading(true);
+    try {
+      const blob = await analyticsApi.exportCsv();
+      const url = URL.createObjectURL(blob);
+      const a = downloadLinkRef.current!;
+      a.href = url;
+      a.download = `analytics_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // silently ignore — user sees no data change
+    } finally {
+      setCsvLoading(false);
+    }
+  };
+
+  const handlePrint = () => {
+    setExportAnchor(null);
+    window.print();
+  };
+
   return (
     <Box>
+      <GlobalStyles styles={{
+        '@media print': {
+          'header, nav, aside, [data-testid="sidebar"], [data-testid="topbar"]': { display: 'none !important' },
+          '#root > div > div:first-of-type': { display: 'none !important' }, // sidebar
+          body: { background: '#fff !important' },
+          '.MuiDrawer-root, .MuiAppBar-root': { display: 'none !important' },
+        },
+      }} />
+
+      {/* Hidden anchor for CSV download */}
+      {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
+      <a ref={downloadLinkRef} style={{ display: 'none' }} />
+
       {/* ── Header ── */}
       <Box
         sx={{
@@ -648,21 +695,78 @@ export default function AnalyticsPage() {
             {t('analytics.greeting')}
           </Typography>
         </Box>
-        <Tooltip title={t('analytics.refresh')}>
-          <IconButton
-            onClick={load}
-            disabled={loading}
+
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Tooltip title={t('analytics.refresh')}>
+            <IconButton
+              onClick={load}
+              disabled={loading}
+              size="small"
+              sx={{
+                border: '1px solid #E2EAF4',
+                borderRadius: '10px',
+                color: '#4B6080',
+                '&:hover': { bgcolor: '#F0F5FF' },
+              }}
+            >
+              <RefreshIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Button
             size="small"
+            variant="outlined"
+            startIcon={<FileDownloadIcon fontSize="small" />}
+            onClick={(e) => setExportAnchor(e.currentTarget)}
+            disabled={loading}
             sx={{
-              border: '1px solid #E2EAF4',
-              borderRadius: '10px',
+              borderColor: '#E2EAF4',
               color: '#4B6080',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              borderRadius: '10px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 500,
+              fontSize: 13,
+              textTransform: 'none',
+              '&:hover': { bgcolor: '#F0F5FF', borderColor: '#C8D8F0' },
             }}
           >
-            <RefreshIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+            {csvLoading ? t('analytics.export.downloading') : t('analytics.export.button')}
+          </Button>
+
+          <Menu
+            anchorEl={exportAnchor}
+            open={Boolean(exportAnchor)}
+            onClose={() => setExportAnchor(null)}
+            PaperProps={{
+              sx: {
+                borderRadius: '12px',
+                border: '1px solid #E8EFF7',
+                boxShadow: '0 8px 24px rgba(13,33,68,0.10)',
+                mt: 0.5,
+                minWidth: 160,
+              },
+            }}
+          >
+            <MenuItem onClick={handleCsvDownload} sx={{ gap: 1, py: 1.25 }}>
+              <ListItemIcon sx={{ minWidth: 28 }}>
+                <FileDownloadIcon fontSize="small" sx={{ color: '#00A8E8' }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={t('analytics.export.csv')}
+                primaryTypographyProps={{ fontFamily: 'Inter', fontSize: 13 }}
+              />
+            </MenuItem>
+            <MenuItem onClick={handlePrint} sx={{ gap: 1, py: 1.25 }}>
+              <ListItemIcon sx={{ minWidth: 28 }}>
+                <PrintIcon fontSize="small" sx={{ color: '#8B5CF6' }} />
+              </ListItemIcon>
+              <ListItemText
+                primary={t('analytics.export.pdf')}
+                primaryTypographyProps={{ fontFamily: 'Inter', fontSize: 13 }}
+              />
+            </MenuItem>
+          </Menu>
+        </Box>
       </Box>
 
       {error && (

@@ -530,6 +530,12 @@
       "avgDeal": "Avg Deal",
       "overdue": "Overdue",
       "noData": "No manager data available"
+    },
+    "export": {
+      "button": "Export",
+      "csv": "Download CSV",
+      "pdf": "Print / PDF",
+      "downloading": "Downloading..."
     }
   },
   "aiAssistant": {

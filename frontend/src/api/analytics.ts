@@ -21,4 +21,11 @@ export const analyticsApi = {
     const { data } = await axiosInstance.get<ManagersReport>('/analytics/managers');
     return data;
   },
+
+  exportCsv: async (): Promise<Blob> => {
+    const { data } = await axiosInstance.get('/analytics/export/csv', {
+      responseType: 'blob',
+    });
+    return data as Blob;
+  },
 };
