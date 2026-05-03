@@ -54,6 +54,31 @@ export interface AnalyticsOverview {
   pipeline_stats: PipelineStatsEntry[];
 }
 
+// ── Managers Report ───────────────────────────────────────────────────────────
+
+export interface ManagerReportEntry {
+  manager_id: string;
+  manager_name: string;
+  manager_email: string;
+  total_leads: number;
+  converted_leads: number;
+  conversion_rate: number;
+  total_deals: number;
+  open_deals: number;
+  won_deals: number;
+  lost_deals: number;
+  win_rate: number;
+  pipeline_value: number;
+  won_revenue: number;
+  avg_deal_size: number;
+  overdue_deals: number;
+}
+
+export interface ManagersReport {
+  managers: ManagerReportEntry[];
+  total_managers: number;
+}
+
 // ── Revenue Forecast ──────────────────────────────────────────────────────────
 
 export interface PipelineForecastEntry {

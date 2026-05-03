@@ -86,7 +86,7 @@
 ### Аналитика
 - [x] Обзор (GET /analytics) — win rate, avg deal, closed revenue, forecast
 - [x] Прогноз выручки (GET /analytics/forecast)
-- [ ] Детальный отчёт по менеджерам
+- [x] Детальный отчёт по менеджерам
 - [ ] Экспорт отчётов в CSV / PDF
 
 ### Celery / фоновые задачи

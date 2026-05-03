@@ -10,14 +10,17 @@ from fastapi import status as http_status
 from src.application.dtos.analytics_dtos import (
     AnalyticsOverviewOutput,
     DashboardAnalyticsOutput,
+    ManagersReportOutput,
     RevenueForecastOutput,
 )
 from src.application.use_cases.get_analytics_overview import GetAnalyticsOverviewUseCase
 from src.application.use_cases.get_dashboard_analytics import GetDashboardAnalyticsUseCase
+from src.application.use_cases.get_managers_report import GetManagersReportUseCase
 from src.application.use_cases.get_revenue_forecast import GetRevenueForecastUseCase
 from src.interfaces.api.dependencies import (
     get_analytics_overview_use_case,
     get_dashboard_analytics_use_case,
+    get_managers_report_use_case,
     get_revenue_forecast_use_case,
 )
 
@@ -77,4 +80,22 @@ async def get_dashboard(
     use_case: GetDashboardAnalyticsUseCase = Depends(get_dashboard_analytics_use_case),
 ) -> DashboardAnalyticsOutput:
     """GET /api/v1/analytics/dashboard — метрики для главного дашборда."""
+    return await use_case.execute()
+
+
+@router.get(
+    "/managers",
+    response_model=ManagersReportOutput,
+    status_code=http_status.HTTP_200_OK,
+    summary="Детальный отчёт по менеджерам",
+    description=(
+        "Возвращает аналитику по каждому менеджеру: лиды, конверсию, "
+        "сделки (open/won/lost), win rate, выручку, avg deal size, просрочку. "
+        "Отсортировано по won_revenue убыванием."
+    ),
+)
+async def get_managers_report(
+    use_case: GetManagersReportUseCase = Depends(get_managers_report_use_case),
+) -> ManagersReportOutput:
+    """GET /api/v1/analytics/managers — детальный отчёт по менеджерам."""
     return await use_case.execute()

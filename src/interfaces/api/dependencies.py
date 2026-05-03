@@ -22,6 +22,7 @@ from src.application.use_cases.create_lead import CreateLeadUseCase
 from src.application.use_cases.get_analytics_overview import GetAnalyticsOverviewUseCase
 from src.application.use_cases.get_dashboard_analytics import GetDashboardAnalyticsUseCase
 from src.application.use_cases.get_lead import GetLeadUseCase
+from src.application.use_cases.get_managers_report import GetManagersReportUseCase
 from src.application.use_cases.get_revenue_forecast import GetRevenueForecastUseCase
 from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
@@ -61,6 +62,7 @@ from src.infrastructure.database.repositories.email_message_repository import Sq
 from src.infrastructure.database.repositories.gdpr_audit_repository import SqlGdprAuditRepository
 from src.infrastructure.database.repositories.lead_repository import SqlLeadRepository
 from src.infrastructure.database.repositories.pipeline_repository import SqlPipelineRepository
+from src.infrastructure.database.repositories.user_repository import SqlUserRepository
 from src.infrastructure.database.session import get_db
 from src.infrastructure.gmail.gmail_service import GmailService
 from src.infrastructure.gmail.token_storage import FileTokenStorage
@@ -157,6 +159,17 @@ def get_dashboard_analytics_use_case(
         lead_repo=SqlLeadRepository(session),
         deal_repo=SqlDealRepository(session),
         pipeline_repo=SqlPipelineRepository(session),
+    )
+
+
+def get_managers_report_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> GetManagersReportUseCase:
+    """Фабрика GetManagersReportUseCase — детальный отчёт по менеджерам."""
+    return GetManagersReportUseCase(
+        user_repo=SqlUserRepository(session),
+        lead_repo=SqlLeadRepository(session),
+        deal_repo=SqlDealRepository(session),
     )
 
 

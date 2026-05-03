@@ -109,6 +109,43 @@ class RevenueForecastOutput(BaseModel):
     by_stage: list[StageForecastEntry]
 
 
+# ── Manager Report DTOs ────────────────────────────────────────────────────────
+
+class ManagerReportEntry(BaseModel):
+    """Аналитика по одному менеджеру."""
+
+    manager_id: UUID
+    manager_name: str
+    manager_email: str
+
+    # Лиды
+    total_leads: int = Field(ge=0)
+    converted_leads: int = Field(ge=0)
+    conversion_rate: float = Field(ge=0.0, le=100.0, description="converted / total_leads * 100")
+
+    # Сделки
+    total_deals: int = Field(ge=0)
+    open_deals: int = Field(ge=0)
+    won_deals: int = Field(ge=0)
+    lost_deals: int = Field(ge=0)
+    win_rate: float = Field(ge=0.0, le=100.0, description="won / (won + lost) * 100")
+
+    # Финансы
+    pipeline_value: float = Field(ge=0.0, description="Сумма активных сделок")
+    won_revenue: float = Field(ge=0.0, description="Выручка по WON-сделкам")
+    avg_deal_size: float = Field(ge=0.0, description="Средний размер активной сделки")
+
+    # Риски
+    overdue_deals: int = Field(ge=0, description="Просроченные открытые сделки")
+
+
+class ManagersReportOutput(BaseModel):
+    """Детальный отчёт по всем менеджерам."""
+
+    managers: list[ManagerReportEntry]
+    total_managers: int = Field(ge=0)
+
+
 # ── Dashboard DTO (STEP 14) ───────────────────────────────────────────────────
 
 class DashboardAnalyticsOutput(BaseModel):

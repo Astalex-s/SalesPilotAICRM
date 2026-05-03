@@ -516,6 +516,20 @@
       "winRate": "Win Rate",
       "avgDeal": "Avg Deal",
       "noData": "No pipeline data available"
+    },
+    "managers": {
+      "title": "Manager Performance",
+      "subtitle": "Individual stats per sales rep",
+      "manager": "Manager",
+      "leads": "Leads",
+      "conversion": "Conv. Rate",
+      "deals": "Deals",
+      "winRate": "Win Rate",
+      "revenue": "Revenue",
+      "pipeline": "Pipeline",
+      "avgDeal": "Avg Deal",
+      "overdue": "Overdue",
+      "noData": "No manager data available"
     }
   },
   "aiAssistant": {

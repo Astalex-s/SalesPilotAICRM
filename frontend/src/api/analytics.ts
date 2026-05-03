@@ -1,4 +1,4 @@
-import { type AnalyticsOverview, type DashboardAnalytics, type RevenueForecast } from '../types/analytics';
+import { type AnalyticsOverview, type DashboardAnalytics, type ManagersReport, type RevenueForecast } from '../types/analytics';
 import axiosInstance from './axiosInstance';
 
 export const analyticsApi = {
@@ -14,6 +14,11 @@ export const analyticsApi = {
 
   getForecast: async (): Promise<RevenueForecast> => {
     const { data } = await axiosInstance.get<RevenueForecast>('/analytics/forecast');
+    return data;
+  },
+
+  getManagersReport: async (): Promise<ManagersReport> => {
+    const { data } = await axiosInstance.get<ManagersReport>('/analytics/managers');
     return data;
   },
 };

@@ -1,8 +1,10 @@
+import PeopleIcon from '@mui/icons-material/People';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WorkIcon from '@mui/icons-material/Work';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import Chip from '@mui/material/Chip';
 import {
   Alert,
   Box,
@@ -31,7 +33,7 @@ import {
 } from 'recharts';
 import StatCard from '../components/dashboard/StatCard';
 import { analyticsApi } from '../api/analytics';
-import { type AnalyticsOverview, type RevenueForecast } from '../types/analytics';
+import { type AnalyticsOverview, type ManagerReportEntry, type ManagersReport, type RevenueForecast } from '../types/analytics';
 
 /* ── Design tokens ── */
 const CARD = {
@@ -466,12 +468,135 @@ function PipelineStatsTable({
   );
 }
 
+/* ── Managers Table ── */
+const TH_SX = {
+  fontFamily: 'Inter, sans-serif',
+  fontSize: 11,
+  fontWeight: 500,
+  letterSpacing: '0.07em',
+  textTransform: 'uppercase' as const,
+  color: '#94A3B8',
+  border: 'none',
+  py: 1.5,
+  whiteSpace: 'nowrap',
+};
+const TD_SX = { border: 'none', borderTop: '1px solid #F0F5FF', py: 1.25 };
+
+function ManagersTable({ report, loading }: { report: ManagersReport | null; loading: boolean }) {
+  const { t } = useTranslation();
+
+  return (
+    <Box sx={{ ...CARD, mt: 2.5 }}>
+      <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <PeopleIcon sx={{ fontSize: 18, color: '#00A8E8' }} />
+        <Box>
+          <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+            {t('analytics.managers.title')}
+          </Typography>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
+            {t('analytics.managers.subtitle')}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Table sx={{ tableLayout: 'fixed' }}>
+        <TableHead>
+          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableCell sx={{ ...TH_SX, pl: 2.5 }}>{t('analytics.managers.manager')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 90 }}>{t('analytics.managers.leads')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 90 }}>{t('analytics.managers.conversion')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 200 }}>{t('analytics.managers.deals')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 90 }}>{t('analytics.managers.winRate')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 110 }}>{t('analytics.managers.revenue')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 110, pr: 2.5 }}>{t('analytics.managers.pipeline')}</TableCell>
+            <TableCell sx={{ ...TH_SX, width: 80 }}>{t('analytics.managers.overdue')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <TableRow key={i}>
+                {Array.from({ length: 8 }).map((__, j) => (
+                  <TableCell key={j} sx={TD_SX}>
+                    <Skeleton variant="text" width="80%" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : !report || report.managers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} align="center" sx={{ ...TD_SX, py: 6, fontFamily: 'Inter', fontSize: 14, color: '#94A3B8' }}>
+                {t('analytics.managers.noData')}
+              </TableCell>
+            </TableRow>
+          ) : (
+            report.managers.map((m: ManagerReportEntry) => (
+              <TableRow key={m.manager_id} sx={{ '&:hover': { bgcolor: '#F8FAFC' } }}>
+                <TableCell sx={{ ...TD_SX, pl: 2.5 }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: '#0D2144' }}>
+                    {m.manager_name}
+                  </Typography>
+                  <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>
+                    {m.manager_email}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                    {m.total_leads}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: m.conversion_rate >= 20 ? '#10B981' : '#4B6080' }}>
+                    {m.conversion_rate.toFixed(1)}%
+                  </Typography>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                    <Chip label={`${m.open_deals} open`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(0,168,232,0.1)', color: '#0090CC', fontFamily: 'Inter' }} />
+                    <Chip label={`${m.won_deals} won`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(16,185,129,0.1)', color: '#059669', fontFamily: 'Inter' }} />
+                    {m.lost_deals > 0 && (
+                      <Chip label={`${m.lost_deals} lost`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(239,68,68,0.1)', color: '#DC2626', fontFamily: 'Inter' }} />
+                    )}
+                  </Box>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: m.win_rate >= 50 ? '#10B981' : '#F59E0B' }}>
+                    {m.win_rate.toFixed(1)}%
+                  </Typography>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
+                    {fmt(m.won_revenue)}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ ...TD_SX, pr: 2.5 }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                    {fmt(m.pipeline_value)}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={TD_SX}>
+                  {m.overdue_deals > 0 ? (
+                    <Chip label={m.overdue_deals} size="small" sx={{ fontSize: 11, height: 20, bgcolor: 'rgba(255,107,53,0.12)', color: '#FF6B35', fontWeight: 700, fontFamily: 'Inter' }} />
+                  ) : (
+                    <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#CBD5E8' }}>—</Typography>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </Box>
+  );
+}
+
 /* ── Main page ── */
 export default function AnalyticsPage() {
   const { t } = useTranslation();
 
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [forecast, setForecast] = useState<RevenueForecast | null>(null);
+  const [managers, setManagers] = useState<ManagersReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -479,12 +604,14 @@ export default function AnalyticsPage() {
     setLoading(true);
     setError(null);
     try {
-      const [ov, fc] = await Promise.all([
+      const [ov, fc, mgr] = await Promise.all([
         analyticsApi.getOverview(),
         analyticsApi.getForecast(),
+        analyticsApi.getManagersReport(),
       ]);
       setOverview(ov);
       setForecast(fc);
+      setManagers(mgr);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -597,6 +724,9 @@ export default function AnalyticsPage() {
 
       {/* ── Row 3: Pipeline stats table ── */}
       <PipelineStatsTable overview={overview} loading={loading} />
+
+      {/* ── Row 4: Managers report table ── */}
+      <ManagersTable report={managers} loading={loading} />
     </Box>
   );
 }
