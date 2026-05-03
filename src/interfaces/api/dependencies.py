@@ -353,6 +353,13 @@ def get_generate_pipeline_digest_use_case(
     )
 
 
+# ── Celery task service ───────────────────────────────────────────────────────
+
+def get_task_service() -> CeleryTaskService:
+    """Фабрика CeleryTaskService — точка входа в очередь задач."""
+    return CeleryTaskService()
+
+
 # ── Gmail Use Case провайдеры ─────────────────────────────────────────────────
 
 def get_list_stored_emails_use_case(
@@ -433,11 +440,6 @@ def get_notify_new_lead_use_case(
 ) -> NotifyNewLeadUseCase:
     """Фабрика NotifyNewLeadUseCase."""
     return NotifyNewLeadUseCase(telegram_service=telegram_service)
-
-
-def get_task_service() -> CeleryTaskService:
-    """Фабрика CeleryTaskService — точка входа в очередь задач."""
-    return CeleryTaskService()
 
 
 def get_notify_deal_stage_change_use_case(

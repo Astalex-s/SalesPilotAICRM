@@ -9,11 +9,17 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock
 
+from src.application.dtos.auth_dtos import UserOutput
 from src.application.dtos.pipeline_dtos import PipelineOutput, StageOutput
 from src.application.exceptions import PipelineNotFoundError
+from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.exception_handlers import register_exception_handlers
 from src.interfaces.api.v1.routers.pipelines import router
 from src.interfaces.api.dependencies import get_pipeline_use_case
+
+
+def _fake_current_user() -> UserOutput:
+    return UserOutput(id=uuid4(), email="test@test.com", first_name="T", last_name="U", role="admin", is_active=True)
 
 
 # ── Вспомогательные функции ────────────────────────────────────────────────────
@@ -47,6 +53,7 @@ def build_app(pipeline_uc: AsyncMock | None = None) -> FastAPI:
     register_exception_handlers(app)
     app.include_router(router, prefix="/api/v1")
 
+    app.dependency_overrides[get_current_user] = _fake_current_user
     if pipeline_uc is not None:
         app.dependency_overrides[get_pipeline_use_case] = lambda: pipeline_uc
 

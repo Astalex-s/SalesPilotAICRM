@@ -124,3 +124,7 @@ class TestPhone:
         p = Phone("+1 555 000 0000")
         with pytest.raises(Exception):
             p.value = "+1 999 999 9999"  # type: ignore[misc]
+
+    def test_invalid_format_raises(self) -> None:
+        with pytest.raises(InvalidPhoneError):
+            Phone("not-a-phone!")

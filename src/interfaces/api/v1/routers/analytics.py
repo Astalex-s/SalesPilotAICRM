@@ -27,9 +27,9 @@ from src.interfaces.api.dependencies import (
     get_dashboard_analytics_use_case,
     get_managers_report_use_case,
     get_revenue_forecast_use_case,
-    get_current_user,
 )
-from src.domain.entities.user import User
+from src.interfaces.api.auth_dependencies import get_current_user
+from src.application.dtos.auth_dtos import UserOutput
 
 router = APIRouter(prefix="/analytics", tags=["Аналитика"])
 
@@ -122,7 +122,7 @@ async def export_analytics_csv(
     overview_uc: GetAnalyticsOverviewUseCase = Depends(get_analytics_overview_use_case),
     forecast_uc: GetRevenueForecastUseCase = Depends(get_revenue_forecast_use_case),
     managers_uc: GetManagersReportUseCase = Depends(get_managers_report_use_case),
-    _current_user: User = Depends(get_current_user),
+    _current_user: UserOutput = Depends(get_current_user),
 ) -> StreamingResponse:
     """GET /api/v1/analytics/export/csv — полный CSV-экспорт аналитики."""
     overview, forecast, managers_report = await _gather_analytics(

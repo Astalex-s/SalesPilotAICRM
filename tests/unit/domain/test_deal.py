@@ -138,3 +138,25 @@ class TestDealValue:
         open_deal.win()
         with pytest.raises(DealAlreadyClosedError):
             open_deal.update_value(Money(Decimal("1"), "USD"))
+
+
+# ── DealAttachment domain validators ──────────────────────────────────────────
+
+class TestDealAttachmentValidators:
+    def test_empty_filename_raises(self) -> None:
+        from src.domain.entities.deal_attachment import DealAttachment
+        with pytest.raises(ValueError, match="Имя файла не может быть пустым"):
+            DealAttachment(
+                id=uuid4(), deal_id=uuid4(), filename="   ",
+                storage_path="/tmp/f", content_type="application/pdf",
+                size_bytes=100, uploaded_by_id=uuid4(),
+            )
+
+    def test_negative_size_raises(self) -> None:
+        from src.domain.entities.deal_attachment import DealAttachment
+        with pytest.raises(ValueError, match="Размер файла не может быть отрицательным"):
+            DealAttachment(
+                id=uuid4(), deal_id=uuid4(), filename="file.pdf",
+                storage_path="/tmp/f", content_type="application/pdf",
+                size_bytes=-1, uploaded_by_id=uuid4(),
+            )
