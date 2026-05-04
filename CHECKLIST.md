@@ -1,6 +1,6 @@
 # SalesPilotAI CRM — Project Checklist
 
-> Статус: **В разработке** | Последнее обновление: 2026-05-02
+> Статус: **В разработке** | Последнее обновление: 2026-05-04
 > Стек: FastAPI · React 18 · PostgreSQL · Redis · Docker · OpenAI · Gmail · Telegram
 
 ---
@@ -15,7 +15,7 @@
 - [x] Append-only лог активности
 - [x] Pydantic v2 DTO на всех границах
 - [x] FastAPI async + SQLAlchemy 2.0 async
-- [x] Base.metadata.create_all в lifespan (без Alembic)
+- [x] Alembic миграции в lifespan (заменил create_all — см. раздел Инфраструктура)
 
 ### Аутентификация и роли
 - [x] JWT (bcrypt + токен доступа)
@@ -23,7 +23,7 @@
 - [x] Роли: admin, manager, sales_rep
 - [x] Зависимости: get_current_user, require_admin, require_manager
 - [x] PATCH /users/{id}/role (только admin)
-- [x] Refresh-токены (сейчас только access token)
+- [x] Refresh-токены (access + refresh, автоматический refresh в axios interceptor)
 - [x] Сброс пароля по email
 
 ### Лиды (Leads)
@@ -217,39 +217,41 @@
 
 ## ТЕКУЩЕЕ ПОЛОЖЕНИЕ
 
-**Где мы сейчас (2026-05-03):**
-Проект в высокой степени готовности — всё ядро, все интеграции и весь GDPR-блок реализованы.
+**Где мы сейчас (2026-05-04):**
+Проект в высокой степени готовности для портфолио. Всё ядро реализовано и задеплоено.
 
 Бэкенд (полностью):
-- Clean Architecture, все домены, JWT Auth, роли, сброс пароля
+- Clean Architecture, все домены, JWT Auth + Refresh, роли, сброс пароля
 - AI: оценка лидов, прогноз сделки, NBA, генератор писем, анализ потерь, дайджест воронки
 - Gmail: OAuth, sync через Celery, треды, отправка, привязка к лиду
 - Telegram: webhook, уведомления (лид/сделка/смена этапа), команды /leads /deals
 - GDPR: удаление, анонимизация, экспорт (Art. 20), retention policy, журнал аудита
 - Celery Beat: Gmail sync (10 мин) + GDPR retention (24ч)
+- 692 теста, 90% покрытие, интеграционные тесты
 
 Фронтенд (полностью):
-- 14 страниц, дизайн-система, i18n EN+RU
+- 14 страниц, дизайн-система, i18n EN+RU, dark mode, мобильная адаптация
 - Kanban drag-drop, лиды в воронке, drag-в-этап → auto-qualify + create deal
 - Gmail: flat/threads view, sync, compose, привязка
 - AI Assistant: 5 табов
+- 48 Vitest тестов + Playwright E2E (auth, dashboard, leads, settings)
 
 Инфраструктура:
 - Docker: 7 сервисов (nginx, frontend, backend, celery_worker, celery_beat, postgres, redis)
+- Alembic миграции (2 ревизии), health checks, docker-compose.dev.yml
+- GitHub Actions CI/CD
 
 **Остаток (незакрытые пункты):**
-- Аналитика: детальный отчёт по менеджерам, экспорт CSV/PDF
-- Celery: напоминания по просроченным сделкам
-- Тесты: интеграционные, покрытие 90%+, E2E
-- Инфраструктура: health checks, docker-compose.dev.yml, Alembic, CI/CD, Sentry
-- UI polish: empty states, анимации, responsive, dark mode
-- Бизнес: комментарии, теги, задачи, календарь
+- CI/CD: автодеплой при merge в main, Docker Hub / GHCR
+- Мониторинг: Sentry, Structured logging, Prometheus+Grafana
+- UI polish: empty states, анимации переходов, skeleton на всех секциях
+- Бизнес: комментарии к сделкам, теги лидов, задачи, календарь
 - Документация: ARCHITECTURE.md, dev setup guide
 
 **Следующий логичный шаг (для портфолио):**
-1. Health checks в docker-compose.prod.yml
-2. CI/CD — GitHub Actions (lint + тесты)
-3. README.md — скриншоты, GIF, описание архитектуры (КРИТИЧНО для портфолио)
+1. ARCHITECTURE.md — описание Clean Architecture для рекрутёров
+2. Structured logging (JSON) в бэкенде
+3. Empty states на ключевых страницах
 
 ---
 
