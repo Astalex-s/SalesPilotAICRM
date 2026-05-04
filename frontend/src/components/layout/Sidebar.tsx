@@ -1,4 +1,4 @@
-import { Box, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { Box, Menu, MenuItem, Tooltip, Typography, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -30,18 +30,22 @@ const ICONS = {
   menu:        'M3 12h18 M3 6h18 M3 18h18',
 };
 
-/* ── Colour tokens ───────────────────────────────────────────────────────────── */
-const C = {
-  bg:          '#FFFFFF',
-  border:      '#E8EFF7',
-  active:      '#F0F8FF',
-  activeLine:  '#00A8E8',
-  activeText:  '#00A8E8',
-  hoverBg:     '#F5F8FC',
-  iconDefault: '#3E4850',
-  sectionCap:  '#8FA3B8',
-  text:        '#191C1E',
-};
+/* ── Theme-aware colour tokens (computed inside components via hook) ─────────── */
+function useSidebarColors() {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
+  return {
+    bg:          theme.palette.background.paper,
+    border:      theme.palette.divider,
+    active:      dark ? 'rgba(0,168,232,0.15)' : '#F0F8FF',
+    activeLine:  '#00A8E8',
+    activeText:  '#00A8E8',
+    hoverBg:     dark ? 'rgba(255,255,255,0.06)' : '#F5F8FC',
+    iconDefault: dark ? '#94A3B8' : '#3E4850',
+    sectionCap:  theme.palette.text.secondary,
+    text:        theme.palette.text.primary,
+  };
+}
 
 /* ── Single nav item ─────────────────────────────────────────────────────────── */
 interface NavItemProps {
@@ -55,6 +59,7 @@ interface NavItemProps {
 }
 
 function NavItem({ iconPath, label, active, onClick, expanded, badge, cyan }: NavItemProps) {
+  const C = useSidebarColors();
   const color = cyan ? C.activeLine : active ? C.activeText : C.iconDefault;
 
   const inner = (
@@ -112,6 +117,7 @@ function NavItem({ iconPath, label, active, onClick, expanded, badge, cyan }: Na
 
 /* ── Section label (expanded only) ──────────────────────────────────────────── */
 function SectionLabel({ label }: { label: string }) {
+  const C = useSidebarColors();
   return (
     <Typography sx={{
       fontSize: 11, fontWeight: 600, letterSpacing: '0.06em',
@@ -138,6 +144,7 @@ const PulsingDot = () => (
 
 /* ── Pipeline nav item with pipeline switcher flyout ────────────────────────── */
 function PipelineNavItem({ expanded }: { expanded: boolean }) {
+  const C = useSidebarColors();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -236,7 +243,8 @@ function PipelineNavItem({ expanded }: { expanded: boolean }) {
           sx: {
             borderRadius: '10px',
             boxShadow: '0 4px 20px rgba(13,33,68,0.12)',
-            border: '1px solid #E8EFF7',
+            border: `1px solid`,
+            borderColor: 'divider',
             minWidth: 200,
             ml: 0.5,
           },
@@ -289,7 +297,7 @@ function UserAvatar({ firstName, lastName, size = 32 }: { firstName: string; las
   return (
     <Box sx={{
       width: size, height: size, borderRadius: '50%',
-      bgcolor: '#0D2144', color: '#fff',
+      bgcolor: '#00A8E8', color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size * 0.38, fontWeight: 700, fontFamily: 'Inter, sans-serif',
       flexShrink: 0,
@@ -301,6 +309,7 @@ function UserAvatar({ firstName, lastName, size = 32 }: { firstName: string; las
 
 /* ── Main Sidebar ────────────────────────────────────────────────────────────── */
 export default function Sidebar() {
+  const C = useSidebarColors();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();

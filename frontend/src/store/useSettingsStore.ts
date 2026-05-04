@@ -7,6 +7,7 @@ export interface AppSettings {
   notifLead: boolean;
   notifSystem: boolean;
   sidebarDefaultOpen: boolean;
+  darkMode: boolean;
 }
 
 interface SettingsState extends AppSettings {
@@ -21,6 +22,7 @@ export const useSettingsStore = create<SettingsState>()(
       notifLead: true,
       notifSystem: true,
       sidebarDefaultOpen: true,
+      darkMode: false,
 
       update: (patch) => set((s) => ({ ...s, ...patch })),
     }),

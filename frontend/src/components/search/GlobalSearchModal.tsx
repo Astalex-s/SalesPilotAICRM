@@ -6,7 +6,7 @@
  * Группировка результатов: Leads | Deals. Клик → навигация.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { leadsApi } from '../../api/leads';
@@ -14,17 +14,22 @@ import { dealsApi } from '../../api/deals';
 import type { Lead } from '../../types/lead';
 import type { Deal } from '../../types/deal';
 
-/* ── Shared styles ───────────────────────────────────────────────────────────── */
-const C = {
-  navy:   '#0D2144',
-  cyan:   '#00A8E8',
-  bg:     '#F7F9FC',
-  border: '#E8EFF7',
-  text:   '#191C1E',
-  sub:    '#5E6E82',
-  muted:  '#8FA3B8',
-  hover:  '#F5F8FC',
-};
+/* ── Design tokens ───────────────────────────────────────────────────────────── */
+function useColors() {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
+  return {
+    cyan:   '#00A8E8',
+    bg:     theme.palette.background.default,
+    paper:  theme.palette.background.paper,
+    border: theme.palette.divider,
+    text:   theme.palette.text.primary,
+    sub:    theme.palette.text.secondary,
+    muted:  dark ? '#7F93AC' : '#8FA3B8',
+    hover:  dark ? 'rgba(255,255,255,0.05)' : '#F5F8FC',
+    kbd:    dark ? theme.palette.background.paper : '#fff',
+  };
+}
 
 /* ── Result row ──────────────────────────────────────────────────────────────── */
 function ResultRow({
@@ -33,6 +38,7 @@ function ResultRow({
   label: string; sub?: string; badge?: string; badgeColor?: string;
   onClick: () => void; active: boolean;
 }) {
+  const C = useColors();
   return (
     <Box
       onClick={onClick}
@@ -78,6 +84,7 @@ function ResultRow({
 
 /* ── Section header ──────────────────────────────────────────────────────────── */
 function SectionLabel({ label, count }: { label: string; count: number }) {
+  const C = useColors();
   return (
     <Box sx={{ px: 3, pt: 1.5, pb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
       <Typography sx={{
@@ -114,6 +121,7 @@ export interface GlobalSearchModalProps {
 
 export default function GlobalSearchModal({ open, onClose }: GlobalSearchModalProps) {
   const { t } = useTranslation();
+  const C = useColors();
   const navigate = useNavigate();
 
   const [query, setQuery] = useState('');
@@ -183,7 +191,7 @@ export default function GlobalSearchModal({ open, onClose }: GlobalSearchModalPr
         onClick={onClose}
         sx={{
           position: 'fixed', inset: 0, zIndex: 1200,
-          bgcolor: 'rgba(13,33,68,0.35)',
+          bgcolor: 'rgba(13,33,68,0.45)',
           backdropFilter: 'blur(4px)',
           animation: 'fadeIn 0.15s ease',
           '@keyframes fadeIn': { from: { opacity: 0 }, to: { opacity: 1 } },
@@ -195,7 +203,7 @@ export default function GlobalSearchModal({ open, onClose }: GlobalSearchModalPr
         sx={{
           position: 'fixed', top: '15%', left: '50%', transform: 'translateX(-50%)',
           zIndex: 1201, width: '100%', maxWidth: 560,
-          bgcolor: '#fff', borderRadius: '16px',
+          bgcolor: C.paper, borderRadius: '16px',
           border: `1px solid ${C.border}`,
           boxShadow: '0 24px 64px rgba(13,33,68,0.18)',
           overflow: 'hidden',
@@ -311,7 +319,7 @@ export default function GlobalSearchModal({ open, onClose }: GlobalSearchModalPr
             <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Box sx={{
                 px: '5px', py: '1px', borderRadius: '4px',
-                border: `1px solid ${C.border}`, bgcolor: '#fff',
+                border: `1px solid ${C.border}`, bgcolor: C.kbd,
                 fontSize: 10, fontWeight: 600, fontFamily: 'Inter, sans-serif', color: C.muted,
               }}>
                 {key}

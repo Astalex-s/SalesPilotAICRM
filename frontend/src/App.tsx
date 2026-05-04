@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { useMemo } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
@@ -18,16 +19,43 @@ import PipelinePage from './pages/PipelinePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import UsersPage from './pages/UsersPage';
+import { useSettingsStore } from './store/useSettingsStore';
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: { main: '#1976d2' },
-    secondary: { main: '#9c27b0' },
-  },
-});
+function buildTheme(dark: boolean) {
+  return createTheme({
+    palette: {
+      mode: dark ? 'dark' : 'light',
+      primary:   { main: '#00A8E8' },
+      secondary: { main: '#FF6B35' },
+      ...(dark ? {
+        background: { default: '#0F1724', paper: '#172133' },
+        text:       { primary: '#E2EAF4', secondary: '#7F93AC' },
+        divider:    '#243448',
+      } : {
+        background: { default: '#F7F9FC', paper: '#FFFFFF' },
+        text:       { primary: '#191C1E', secondary: '#5E6E82' },
+        divider:    '#E8EFF7',
+      }),
+    },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: { fontFamily: 'Inter, sans-serif' },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: { backgroundImage: 'none' },
+        },
+      },
+    },
+  });
+}
 
 export default function App() {
+  const darkMode = useSettingsStore((s) => s.darkMode);
+  const theme = useMemo(() => buildTheme(darkMode), [darkMode]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

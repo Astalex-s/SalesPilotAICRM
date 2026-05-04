@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -97,6 +97,8 @@ function Avatar({ firstName, lastName }: { firstName: string; lastName: string }
 /* ── TopBar ──────────────────────────────────────────────────────────────────── */
 export default function TopBar() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
   const user = useAuthStore((s) => s.user);
   const title = usePageTitle();
 
@@ -138,9 +140,10 @@ export default function TopBar() {
         alignItems: 'center',
         justifyContent: 'space-between',
         px: 3,
-        bgcolor: 'rgba(255,255,255,0.88)',
+        bgcolor: dark ? 'rgba(23,33,51,0.92)' : 'rgba(255,255,255,0.88)',
         backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #E8EFF7',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
         position: 'sticky',
         top: 0,
         zIndex: 50,

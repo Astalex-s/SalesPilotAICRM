@@ -8,7 +8,7 @@ export default function AppLayout() {
   useSSE();
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: '#F7F9FC' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: 'background.default' }}>
       {/* Sidebar — sticky, full height */}
       <Sidebar />
 

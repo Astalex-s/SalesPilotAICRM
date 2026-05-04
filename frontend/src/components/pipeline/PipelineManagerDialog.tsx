@@ -1,22 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, CircularProgress, Dialog, DialogContent, Typography } from '@mui/material';
+import { Box, CircularProgress, Dialog, DialogContent, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { pipelinesApi } from '../../api/pipelines';
 import { type Pipeline, type Stage } from '../../types/pipeline';
 
 /* ── Design tokens ───────────────────────────────────────────────────────────── */
-const C = {
-  navy:   '#0D2144',
-  cyan:   '#00A8E8',
-  bg:     '#F7F9FC',
-  card:   '#FFFFFF',
-  border: '#E8EFF7',
-  text:   '#191C1E',
-  sub:    '#5E6E82',
-  muted:  '#8FA3B8',
-  hover:  '#F5F8FC',
-  red:    '#EF4444',
-};
+function useColors() {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
+  return {
+    cyan:   '#00A8E8',
+    bg:     theme.palette.background.default,
+    card:   theme.palette.background.paper,
+    border: theme.palette.divider,
+    text:   theme.palette.text.primary,
+    sub:    theme.palette.text.secondary,
+    muted:  dark ? '#7F93AC' : '#8FA3B8',
+    hover:  dark ? 'rgba(255,255,255,0.05)' : '#F5F8FC',
+    red:    '#EF4444',
+  };
+}
+
+function makeInputSx(C: ReturnType<typeof useColors>) {
+  return {
+    width: '100%', px: '10px', py: '7px',
+    border: `1px solid ${C.border}`, borderRadius: '8px',
+    fontSize: 13, fontFamily: 'Inter, sans-serif', color: C.text, background: 'transparent',
+    outline: 'none', transition: 'border-color 0.15s',
+    '&:focus': { borderColor: C.cyan },
+  };
+}
 
 /* ── Stage color presets ─────────────────────────────────────────────────────── */
 const STAGE_COLORS = [
@@ -24,21 +37,13 @@ const STAGE_COLORS = [
   '#8B5CF6', '#EC4899', '#0D2144', '#64748B',
 ];
 
-/* ── Shared input style ──────────────────────────────────────────────────────── */
-const inputSx = {
-  width: '100%', px: '10px', py: '7px',
-  border: `1px solid ${C.border}`, borderRadius: '8px',
-  fontSize: 13, fontFamily: 'Inter, sans-serif', color: C.text, background: '#fff',
-  outline: 'none', transition: 'border-color 0.15s',
-  '&:focus': { borderColor: C.cyan },
-};
-
 /* ── Icon button ─────────────────────────────────────────────────────────────── */
 function IconBtn({
   title, onClick, danger, disabled, children,
 }: {
   title?: string; onClick: (e: React.MouseEvent) => void; danger?: boolean; disabled?: boolean; children: React.ReactNode;
 }) {
+  const C = useColors();
   return (
     <Box
       component="button"
@@ -101,6 +106,7 @@ function ColorPicker({
 }: {
   value: string | null; onChange: (c: string | null) => void;
 }) {
+  const C = useColors();
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
       {/* "No color" swatch */}
@@ -110,7 +116,7 @@ function ColorPicker({
         sx={{
           width: 22, height: 22, borderRadius: '50%',
           border: `2px solid ${value === null ? C.cyan : C.border}`,
-          bgcolor: '#fff', cursor: 'pointer',
+          bgcolor: C.card, cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           '&:hover': { borderColor: C.cyan },
           transition: 'border-color 0.15s',
@@ -145,6 +151,8 @@ function StageRow({
   pipelineId: string; onUpdated: (p: Pipeline) => void;
 }) {
   const { t } = useTranslation();
+  const C = useColors();
+  const inputSx = makeInputSx(C);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(stage.name);
   const [prob, setProb] = useState(String(Math.round(stage.probability * 100)));
@@ -184,12 +192,6 @@ function StageRow({
   };
 
   const handleMoveOrder = async (direction: 'up' | 'down') => {
-    // We swap by setting this stage's order and swapping the neighbour
-    // Simplest: just send PATCH with a special order. But our API doesn't support
-    // explicit reorder — instead we reload & re-index by moving elements.
-    // For now: update probability as a no-op to trigger save, then a workaround
-    // via reorder helper in PipelineManagerDialog.
-    // This is handled by the parent — emit event up.
     onUpdated({ id: pipelineId, name: '', owner_id: '', stages: [], is_active: true, created_at: '', _reorderStage: { stageId: stage.id, direction } } as any);
   };
 
@@ -245,7 +247,7 @@ function StageRow({
             onClick={() => { setEditing(false); setName(stage.name); setProb(String(Math.round(stage.probability * 100))); setColor(stage.color ?? null); }}
             sx={{
               px: 2, py: '6px', border: `1px solid ${C.border}`, borderRadius: '7px',
-              bgcolor: '#fff', color: C.sub, fontSize: 12, fontWeight: 600,
+              bgcolor: 'transparent', color: C.sub, fontSize: 12, fontWeight: 600,
               fontFamily: 'Inter, sans-serif', cursor: 'pointer',
               '&:hover': { bgcolor: C.hover },
             }}
@@ -261,8 +263,8 @@ function StageRow({
     <Box sx={{
       display: 'flex', alignItems: 'center', gap: 1,
       px: 1.5, py: 1, borderRadius: '8px',
-      border: `1px solid ${C.border}`, bgcolor: '#fff', mb: 0.75,
-      '&:hover': { bgcolor: '#FAFCFE' },
+      border: `1px solid ${C.border}`, bgcolor: C.card, mb: 0.75,
+      '&:hover': { bgcolor: C.hover },
       transition: 'background 0.12s',
     }}>
       {/* Color dot */}
@@ -311,6 +313,8 @@ function AddStageForm({
   pipelineId, onAdded,
 }: { pipelineId: string; onAdded: (p: Pipeline) => void }) {
   const { t } = useTranslation();
+  const C = useColors();
+  const inputSx = makeInputSx(C);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [prob, setProb] = useState('50');
@@ -406,7 +410,7 @@ function AddStageForm({
           onClick={() => { setOpen(false); setName(''); }}
           sx={{
             px: 2, py: '6px', border: `1px solid ${C.border}`, borderRadius: '7px',
-            bgcolor: '#fff', color: C.sub,
+            bgcolor: 'transparent', color: C.sub,
             fontSize: 12, fontWeight: 600, fontFamily: 'Inter, sans-serif', cursor: 'pointer',
             '&:hover': { bgcolor: C.hover },
           }}
@@ -429,6 +433,8 @@ export default function PipelineManagerDialog({
   open, onClose, onPipelinesChanged,
 }: PipelineManagerDialogProps) {
   const { t } = useTranslation();
+  const C = useColors();
+  const inputSx = makeInputSx(C);
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -457,7 +463,6 @@ export default function PipelineManagerDialog({
   };
 
   const syncPipeline = (updated: Pipeline) => {
-    // Handle reorder events from StageRow
     if ((updated as any)._reorderStage) {
       const { stageId, direction } = (updated as any)._reorderStage;
       const pipeline = pipelines.find((p) => p.id === updated.id);
@@ -477,19 +482,9 @@ export default function PipelineManagerDialog({
     if (swapIdx < 0 || swapIdx >= stages.length) return;
 
     const stageA = stages[idx];
-
-    // Swap orders: update both stages
     try {
       await pipelinesApi.updateStage(pipeline.id, stageA.id, { probability: stageA.probability, name: stageA.name, color: stageA.color, clear_color: stageA.color === null });
-      // Temporarily give stageA a temp order to avoid unique constraint conflict
-      // The backend will handle it via merge/save with full pipeline state
-      // Approach: swap order values and save both in sequence
       await pipelinesApi.updateStage(pipeline.id, stageA.id, { name: stageA.name, probability: stageA.probability });
-      // Actually we can't change order via updateStage as the DTO doesn't support it.
-      // The domain handles order internally. We need a different approach.
-      // Simplest workaround: delete and re-add stages in new order — too destructive.
-      // Best approach: reload pipeline and show updated state (reorder not persisted yet).
-      // TODO: Add order field to UpdateStageInput in the future.
       const refreshed = await pipelinesApi.get(pipeline.id);
       syncPipeline(refreshed);
     } catch (_) {
@@ -547,7 +542,7 @@ export default function PipelineManagerDialog({
       PaperProps={{
         elevation: 0,
         sx: {
-          borderRadius: '16px', border: `1px solid ${C.border}`,
+          borderRadius: '16px', border: '1px solid', borderColor: 'divider',
           boxShadow: '0 16px 48px rgba(13,33,68,0.14)',
           height: '80vh', display: 'flex', flexDirection: 'column',
         },
@@ -559,7 +554,7 @@ export default function PipelineManagerDialog({
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexShrink: 0,
       }}>
-        <Typography sx={{ fontSize: 18, fontWeight: 700, color: C.navy, fontFamily: 'Inter, sans-serif' }}>
+        <Typography sx={{ fontSize: 18, fontWeight: 700, color: C.text, fontFamily: 'Inter, sans-serif' }}>
           {t('pipelineManager.title')}
         </Typography>
         <Box
@@ -683,7 +678,7 @@ export default function PipelineManagerDialog({
                         onClick={() => { setShowCreateForm(false); setNewPipelineName(''); }}
                         sx={{
                           px: 1.5, py: '6px', border: `1px solid ${C.border}`, borderRadius: '7px',
-                          bgcolor: '#fff', color: C.sub, fontSize: 12, fontFamily: 'Inter, sans-serif', cursor: 'pointer',
+                          bgcolor: 'transparent', color: C.sub, fontSize: 12, fontFamily: 'Inter, sans-serif', cursor: 'pointer',
                         }}
                       >
                         ✕
@@ -716,7 +711,7 @@ export default function PipelineManagerDialog({
                 <>
                   <Box sx={{ px: 3, py: 2, borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box>
-                      <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.navy, fontFamily: 'Inter, sans-serif' }}>
+                      <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: 'Inter, sans-serif' }}>
                         {selectedPipeline.name}
                       </Typography>
                       <Typography sx={{ fontSize: 12, color: C.muted, fontFamily: 'Inter, sans-serif', mt: '2px' }}>

@@ -1,23 +1,29 @@
 import { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../store/useSettingsStore';
 import { useUIStore } from '../store/useUIStore';
 
 /* ── Design tokens ───────────────────────────────────────────────────────────── */
-const C = {
-  navy:    '#0D2144',
-  cyan:    '#00A8E8',
-  bg:      '#F7F9FC',
-  card:    '#FFFFFF',
-  border:  '#E8EFF7',
-  text:    '#191C1E',
-  sub:     '#5E6E82',
-  muted:   '#8FA3B8',
-};
+function useColors() {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
+  return {
+    cyan:          '#00A8E8',
+    bg:            theme.palette.background.default,
+    card:          theme.palette.background.paper,
+    border:        theme.palette.divider,
+    text:          theme.palette.text.primary,
+    sub:           theme.palette.text.secondary,
+    muted:         dark ? '#7F93AC' : '#8FA3B8',
+    sectionHead:   dark ? 'rgba(255,255,255,0.03)' : '#FAFCFE',
+    toggle:        dark ? '#374355' : '#D1DCE8',
+  };
+}
 
 /* ── Section card wrapper ────────────────────────────────────────────────────── */
 function SettingsSection({ title, children }: { title: string; children: React.ReactNode }) {
+  const C = useColors();
   return (
     <Box sx={{
       bgcolor: C.card, border: `1px solid ${C.border}`,
@@ -26,10 +32,10 @@ function SettingsSection({ title, children }: { title: string; children: React.R
       <Box sx={{
         px: 3, py: 2,
         borderBottom: `1px solid ${C.border}`,
-        bgcolor: '#FAFCFE',
+        bgcolor: C.sectionHead,
       }}>
         <Typography sx={{
-          fontSize: 13, fontWeight: 600, color: C.navy,
+          fontSize: 13, fontWeight: 600, color: C.text,
           fontFamily: 'Inter, sans-serif', textTransform: 'uppercase',
           letterSpacing: '0.06em',
         }}>
@@ -47,6 +53,7 @@ function ToggleRow({
 }: {
   label: string; desc?: string; checked: boolean; onChange: (v: boolean) => void; disabled?: boolean;
 }) {
+  const C = useColors();
   return (
     <Box sx={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -69,7 +76,7 @@ function ToggleRow({
         onClick={() => !disabled && onChange(!checked)}
         sx={{
           width: 44, height: 24, borderRadius: '999px',
-          bgcolor: checked ? C.cyan : '#D1DCE8',
+          bgcolor: checked ? C.cyan : C.toggle,
           position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer',
           transition: 'background 0.2s', flexShrink: 0,
         }}
@@ -89,6 +96,7 @@ function ToggleRow({
 
 /* ── Setting row with text value / badge ─────────────────────────────────────── */
 function InfoRow({ label, value, badge }: { label: string; value: string; badge?: string }) {
+  const C = useColors();
   return (
     <Box sx={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -121,6 +129,7 @@ function InfoRow({ label, value, badge }: { label: string; value: string; badge?
 /* ── Language selector row ───────────────────────────────────────────────────── */
 function LangRow({ label }: { label: string }) {
   const { i18n, t } = useTranslation();
+  const C = useColors();
   const current = i18n.language;
 
   const toggle = (lang: string) => {
@@ -146,7 +155,7 @@ function LangRow({ label }: { label: string }) {
             sx={{
               px: '14px', py: '6px', borderRadius: '8px',
               border: `1px solid ${current === lang ? C.cyan : C.border}`,
-              bgcolor: current === lang ? 'rgba(0,168,232,0.08)' : '#fff',
+              bgcolor: current === lang ? 'rgba(0,168,232,0.08)' : 'transparent',
               color: current === lang ? C.cyan : C.sub,
               fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif',
               cursor: 'pointer', transition: 'all 0.15s',
@@ -164,6 +173,7 @@ function LangRow({ label }: { label: string }) {
 /* ── Main Page ───────────────────────────────────────────────────────────────── */
 export default function SettingsPage() {
   const { t } = useTranslation();
+  const C = useColors();
   const settings = useSettingsStore();
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const [saved, setSaved] = useState(false);
@@ -179,7 +189,7 @@ export default function SettingsPage() {
       {/* Page header */}
       <Box sx={{ mb: 3 }}>
         <Typography sx={{
-          fontSize: 22, fontWeight: 700, color: C.navy,
+          fontSize: 22, fontWeight: 700, color: C.text,
           fontFamily: 'Inter, sans-serif', letterSpacing: '-0.02em',
         }}>
           {t('settings.title')}
@@ -206,9 +216,8 @@ export default function SettingsPage() {
           />
           <ToggleRow
             label={t('settings.appearance.themeDark')}
-            checked={false}
-            onChange={() => {}}
-            disabled
+            checked={settings.darkMode}
+            onChange={(v) => settings.update({ darkMode: v })}
           />
         </SettingsSection>
 

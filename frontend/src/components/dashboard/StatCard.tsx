@@ -1,6 +1,6 @@
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { Box, Card, Skeleton, Typography } from '@mui/material';
+import { Box, Card, Skeleton, Typography, useTheme } from '@mui/material';
 import type { ReactNode } from 'react';
 
 interface StatCardProps {
@@ -22,6 +22,7 @@ export default function StatCard({
   accentColor = '#00A8E8',
   trend,
 }: StatCardProps) {
+  const theme = useTheme();
   const isPositive = trend ? trend.value >= 0 : null;
 
   return (
@@ -29,8 +30,8 @@ export default function StatCard({
       elevation={0}
       sx={{
         height: '100%',
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        border: '1px solid',
+        borderColor: theme.palette.divider,
         borderRadius: '16px',
         boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
         position: 'relative',
@@ -99,7 +100,7 @@ export default function StatCard({
               fontFamily: 'Inter, sans-serif',
               fontSize: 32,
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
               lineHeight: 1.1,
               mb: 0.75,
             }}
