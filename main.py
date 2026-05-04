@@ -2,16 +2,17 @@
 Точка входа приложения — только инициализация FastAPI.
 Бизнес-логики нет. Роутеры и обработчики регистрируются в фабрике.
 """
+import asyncio
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 
+from alembic import command as alembic_command
+from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI
 
 from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
-from src.infrastructure.database.base import Base
 from src.infrastructure.database.session import engine
-import src.infrastructure.database.models  # noqa: F401 — регистрирует все ORM-модели в Base.metadata
 from src.interfaces.api.exception_handlers import register_exception_handlers
 from src.interfaces.api.v1.routers import (
     ai_router,
@@ -31,12 +32,24 @@ from src.interfaces.api.v1.routers import (
 )
 
 
+def _run_migrations() -> None:
+    """Apply pending Alembic migrations synchronously.
+
+    Called from a thread-pool executor inside lifespan so it doesn't
+    block the event loop.  env.py uses asyncio.run() internally, which
+    requires a thread without a running event loop — the executor provides that.
+    """
+    cfg = AlembicConfig("alembic.ini")
+    alembic_command.upgrade(cfg, "head")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Управляет запуском и корректным завершением работы инфраструктурных соединений."""
     # --- Запуск ---
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Применяем миграции в отдельном потоке (env.py вызывает asyncio.run() внутри)
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, _run_migrations)
     await init_redis()
 
     yield

@@ -162,9 +162,9 @@
 - [x] AddLeadDialog — создание лида прямо из воронки (components/leads/)
 
 ### Тестирование фронтенда
-- [x] 23 теста
-- [ ] Покрыть Add Deal диалог тестами
-- [ ] E2E тесты (Playwright или Cypress)
+- [x] 48 тестов (Vitest)
+- [x] Покрыть Add Deal диалог тестами (25 unit-тестов AddDealDialog)
+- [x] E2E тесты (Playwright) — auth, dashboard, leads, settings
 
 ---
 
@@ -177,7 +177,7 @@
 - [x] Сервисы: nginx, frontend, backend, celery_worker, celery_beat, postgres, redis
 - [x] Health checks в docker-compose
 - [x] docker-compose.dev.yml с hot reload
-- [ ] Alembic миграции вместо create_all
+- [x] Alembic миграции вместо create_all (alembic.ini + async env.py + 0001_initial)
 
 ### CI/CD
 - [x] GitHub Actions: lint + тесты при push
