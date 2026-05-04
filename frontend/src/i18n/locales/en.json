@@ -649,6 +649,14 @@
       "aiAnalysisReady": {
         "title": "AI analysis ready",
         "msg": "Lead score for {{name}}: {{score}}%"
+      },
+      "dealCreated": {
+        "title": "New deal created",
+        "msg": "\"{{deal}}\" — {{amount}} {{currency}}"
+      },
+      "dealClosed": {
+        "title": "Deal closed",
+        "msg": "\"{{deal}}\" marked as {{outcome}}"
       }
     }
   },

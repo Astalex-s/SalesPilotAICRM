@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 from uuid import UUID
 
@@ -21,6 +22,7 @@ from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
 from src.application.use_cases.notify_new_deal import NotifyNewDealUseCase
 from src.application.use_cases.notify_overdue_deals import NotifyOverdueDealsUseCase
+from src.infrastructure.notifications.notification_bus import bus
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.application.dtos.auth_dtos import UserOutput
 from src.interfaces.api.dependencies import (
@@ -82,6 +84,21 @@ async def convert_lead_to_deal(
     """POST /api/v1/deals — создание сделки из квалифицированного лида."""
     result = await use_case.execute(body)
     background_tasks.add_task(_send_new_deal_notification, notify_use_case, result, body)
+    background_tasks.add_task(
+        bus.publish,
+        {
+            "type": "deal",
+            "title_key": "notifications.items.dealCreated.title",
+            "msg_key": "notifications.items.dealCreated.msg",
+            "params": {
+                "deal": result.title,
+                "amount": str(result.value_amount),
+                "currency": result.value_currency,
+            },
+            "link": "/deals",
+            "timestamp": result.created_at.isoformat(),
+        },
+    )
     return result
 
 
@@ -111,12 +128,26 @@ async def move_deal_stage(
     )
     result = await use_case.execute(data)
 
-    # Фоновое уведомление — не блокирует ответ клиенту
+    # Фоновые задачи — не блокируют ответ клиенту
     background_tasks.add_task(
         _send_deal_stage_notification,
         notify_use_case,
         result,
         body.new_stage_id,
+    )
+    background_tasks.add_task(
+        bus.publish,
+        {
+            "type": "deal",
+            "title_key": "notifications.items.dealStageChanged.title",
+            "msg_key": "notifications.items.dealStageChanged.msg",
+            "params": {
+                "deal": result.title,
+                "stage": str(body.new_stage_id),
+            },
+            "link": "/pipeline",
+            "timestamp": result.updated_at.isoformat(),
+        },
     )
 
     return result
@@ -146,11 +177,29 @@ async def close_deal(
         performed_by_id=current_user.id,
     )
     try:
-        return await use_case.execute(data)
+        result = await use_case.execute(data)
     except DealNotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except (DealAlreadyClosedError, ValueError) as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    # SSE-событие о закрытии сделки (fire-and-forget, не блокирует ответ)
+    asyncio.ensure_future(
+        bus.publish(
+            {
+                "type": "deal",
+                "title_key": "notifications.items.dealClosed.title",
+                "msg_key": "notifications.items.dealClosed.msg",
+                "params": {
+                    "deal": result.title,
+                    "outcome": body.outcome,
+                },
+                "link": "/deals",
+                "timestamp": result.updated_at.isoformat(),
+            }
+        )
+    )
+    return result
 
 
 @router.post(

@@ -35,6 +35,7 @@ from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.domain.value_objects.enums import LeadSource, LeadStatus
+from src.infrastructure.notifications.notification_bus import bus
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.dependencies import (
     get_bulk_import_leads_use_case,
@@ -68,8 +69,22 @@ async def create_lead(
     """POST /api/v1/leads — создание нового лида."""
     result = await use_case.execute(body)
 
-    # Фоновое уведомление — не блокирует ответ клиенту
+    # Фоновые задачи — не блокируют ответ клиенту
     background_tasks.add_task(_send_new_lead_notification, notify_use_case, result)
+    background_tasks.add_task(
+        bus.publish,
+        {
+            "type": "lead",
+            "title_key": "notifications.items.leadCreated.title",
+            "msg_key": "notifications.items.leadCreated.msg",
+            "params": {
+                "name": result.full_name,
+                "company": result.company or "—",
+            },
+            "link": f"/leads/{result.id}",
+            "timestamp": result.created_at.isoformat(),
+        },
+    )
 
     return result
 

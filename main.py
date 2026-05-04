@@ -23,6 +23,7 @@ from src.interfaces.api.v1.routers import (
     gdpr_router,
     gmail_auth_router,
     leads_router,
+    notifications_router,
     pipelines_router,
     tasks_router,
     telegram_router,
@@ -73,6 +74,7 @@ def create_app() -> FastAPI:
     application.include_router(gmail_auth_router, prefix=_api_prefix)
     application.include_router(emails_router, prefix=_api_prefix)
     application.include_router(telegram_router, prefix=_api_prefix)
+    application.include_router(notifications_router, prefix=_api_prefix)
     application.include_router(tasks_router, prefix=_api_prefix)
     application.include_router(gdpr_router, prefix=_api_prefix)
 

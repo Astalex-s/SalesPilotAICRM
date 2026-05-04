@@ -649,6 +649,14 @@
       "aiAnalysisReady": {
         "title": "ИИ-анализ готов",
         "msg": "Оценка лида {{name}}: {{score}}%"
+      },
+      "dealCreated": {
+        "title": "Новая сделка создана",
+        "msg": "«{{deal}}» — {{amount}} {{currency}}"
+      },
+      "dealClosed": {
+        "title": "Сделка закрыта",
+        "msg": "«{{deal}}» отмечена как {{outcome}}"
       }
     }
   },

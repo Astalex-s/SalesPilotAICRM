@@ -1,9 +1,12 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
+import { useSSE } from '../../hooks/useSSE';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
 export default function AppLayout() {
+  useSSE();
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: '#F7F9FC' }}>
       {/* Sidebar — sticky, full height */}
