@@ -308,15 +308,22 @@ function UserAvatar({ firstName, lastName, size = 32 }: { firstName: string; las
 }
 
 /* ── Main Sidebar ────────────────────────────────────────────────────────────── */
-export default function Sidebar() {
+export default function Sidebar({
+  forceExpanded = false,
+  inDrawer = false,
+}: {
+  forceExpanded?: boolean;
+  inDrawer?: boolean;
+}) {
   const C = useSidebarColors();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const { sidebarOpen: expanded, toggleSidebar } = useUIStore();
+  const { sidebarOpen, toggleSidebar } = useUIStore();
 
+  const expanded = forceExpanded || sidebarOpen;
   const W = expanded ? 220 : 64;
 
   const isActive = (path: string) =>
@@ -372,17 +379,15 @@ export default function Sidebar() {
     <Box sx={{
       width: W,
       minWidth: W,
-      height: '100vh',
+      height: inDrawer ? '100%' : '100vh',
       bgcolor: C.bg,
-      borderRight: `1px solid ${C.border}`,
+      borderRight: inDrawer ? 'none' : `1px solid ${C.border}`,
       display: 'flex',
       flexDirection: 'column',
       transition: 'width 0.22s ease, min-width 0.22s ease',
       overflow: 'hidden',
       flexShrink: 0,
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
+      ...(inDrawer ? {} : { position: 'sticky', top: 0, zIndex: 100 }),
     }}>
 
       {/* Logo / toggle */}

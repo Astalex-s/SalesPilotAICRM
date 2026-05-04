@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -7,6 +7,7 @@ import {
   useNotificationStore,
   SEED_NOTIFICATIONS,
 } from '../../store/useNotificationStore';
+import { useUIStore } from '../../store/useUIStore';
 import GlobalSearchModal from '../search/GlobalSearchModal';
 import NotificationPanel from '../notifications/NotificationPanel';
 import UserProfileDialog from '../profile/UserProfileDialog';
@@ -94,11 +95,25 @@ function Avatar({ firstName, lastName }: { firstName: string; lastName: string }
   );
 }
 
+/* ── Hamburger icon ──────────────────────────────────────────────────────────── */
+function HamburgerIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+
 /* ── TopBar ──────────────────────────────────────────────────────────────────── */
 export default function TopBar() {
   const { t } = useTranslation();
   const theme = useTheme();
   const dark = theme.palette.mode === 'dark';
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { setMobileSidebarOpen } = useUIStore();
   const user = useAuthStore((s) => s.user);
   const title = usePageTitle();
 
@@ -150,14 +165,29 @@ export default function TopBar() {
         flexShrink: 0,
       }}>
 
-        {/* Left: page title */}
-        <Typography sx={{
-          fontSize: 16, fontWeight: 600, color: '#191C1E',
-          fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
-          whiteSpace: 'nowrap',
-        }}>
-          {title}
-        </Typography>
+        {/* Left: hamburger (mobile) + page title */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+          {isMobile && (
+            <Box
+              onClick={() => setMobileSidebarOpen(true)}
+              sx={{
+                display: 'flex', p: '4px', borderRadius: '8px',
+                color: dark ? '#94A3B8' : '#3E4850', cursor: 'pointer', flexShrink: 0,
+                '&:hover': { color: '#00A8E8', bgcolor: dark ? 'rgba(255,255,255,0.06)' : '#F0F8FF' },
+                transition: 'all 0.15s',
+              }}
+            >
+              <HamburgerIcon />
+            </Box>
+          )}
+          <Typography sx={{
+            fontSize: 16, fontWeight: 600, color: 'text.primary',
+            fontFamily: 'Inter, sans-serif', letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {title}
+          </Typography>
+        </Box>
 
         {/* Center: search pill — opens GlobalSearchModal */}
         <Box

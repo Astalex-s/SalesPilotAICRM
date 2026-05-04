@@ -36,6 +36,7 @@ const CARD = {
   border: '1px solid #E2EAF4',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
+  overflowX: 'auto' as const,
 };
 
 /* ── Avatar helpers ── */
