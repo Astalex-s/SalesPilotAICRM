@@ -77,6 +77,11 @@ frontend/node_modules/
 
 # ── Vite build cache ───────────────────────────────────────────────────────────
 frontend/.vite/
+
+# ── Playwright ─────────────────────────────────────────────────────────────────
+frontend/e2e/auth-state.json
+frontend/playwright-report/
+frontend/test-results/
 frontend/dist/
 
 # ── Дизайн-референсы (не для репозитория) ─────────────────────────────────────
