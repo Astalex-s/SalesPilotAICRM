@@ -3,17 +3,17 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Skeleton,
   Tab,
   Tabs,
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { aiApi } from '../api/ai';
 import { dealsApi } from '../api/deals';
@@ -38,6 +38,21 @@ const sectionTitle = {
   color: '#0D2144',
   mb: 1,
 };
+
+/* ── Skeleton helpers ───────────────────────────────────────────────────────── */
+function SkeletonCard({ flex = '1 1 260px', children }: { flex?: string; children: ReactNode }) {
+  return <Box sx={{ ...card, flex }}>{children}</Box>;
+}
+
+function SkeletonLines({ count = 3, lastWidth = '60%' }: { count?: number; lastWidth?: string }) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Skeleton key={i} variant="text" width={i === count - 1 ? lastWidth : '100%'} height={16} />
+      ))}
+    </Box>
+  );
+}
 
 /* ── Priority pill ──────────────────────────────────────────────────────────── */
 const PRIORITY_STYLE: Record<string, { bg: string; color: string }> = {
@@ -164,8 +179,24 @@ function LeadScoreTab() {
       {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#00A8E8' }} />
+        <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+          <SkeletonCard flex="1 1 260px">
+            <Box sx={{ display: 'flex', gap: 2.5, alignItems: 'flex-start' }}>
+              <Skeleton variant="circular" width={96} height={96} sx={{ flexShrink: 0 }} />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton variant="text" width={120} height={18} sx={{ mb: 1 }} />
+                <SkeletonLines count={4} />
+              </Box>
+            </Box>
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={140} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 100%">
+            <Skeleton variant="text" width={160} height={18} sx={{ mb: 1 }} />
+            <SkeletonLines count={3} />
+          </SkeletonCard>
         </Box>
       )}
 
@@ -292,8 +323,22 @@ function DealForecastTab() {
       {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#00A8E8' }} />
+        <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+          <SkeletonCard flex="1 1 280px">
+            <Skeleton variant="text" width={140} height={18} sx={{ mb: 2 }} />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Skeleton variant="rounded" sx={{ flex: 1, height: 10, borderRadius: '8px' }} />
+              <Skeleton variant="text" width={52} height={32} />
+            </Box>
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={120} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={120} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} />
+          </SkeletonCard>
         </Box>
       )}
 
@@ -463,8 +508,12 @@ function EmailGenTab() {
       {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#00A8E8' }} />
+        <Box sx={card}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Skeleton variant="text" width={200} height={20} />
+            <Skeleton variant="text" width={60} height={20} />
+          </Box>
+          <Skeleton variant="rounded" width="100%" height={160} sx={{ borderRadius: '8px' }} />
         </Box>
       )}
 
@@ -563,8 +612,31 @@ function LostDealsAnalysisTab() {
       {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#FF6B35' }} />
+        <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+          <SkeletonCard flex="1 1 200px">
+            <Box sx={{ display: 'flex', gap: 3 }}>
+              <Box>
+                <Skeleton variant="text" width={80} height={14} sx={{ mb: 0.5 }} />
+                <Skeleton variant="text" width={48} height={40} />
+              </Box>
+              <Box>
+                <Skeleton variant="text" width={80} height={14} sx={{ mb: 0.5 }} />
+                <Skeleton variant="text" width={72} height={40} />
+              </Box>
+            </Box>
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 100%">
+            <Skeleton variant="text" width={120} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} lastWidth="75%" />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={120} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={140} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} />
+          </SkeletonCard>
         </Box>
       )}
 
@@ -683,8 +755,31 @@ function PipelineDigestTab() {
       {error && <Alert severity="error" sx={{ borderRadius: '10px' }}>{error}</Alert>}
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#00A8E8' }} />
+        <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+          <SkeletonCard flex="1 1 100%">
+            <Skeleton variant="text" width={120} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={4} lastWidth="70%" />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={100} height={18} sx={{ mb: 1.5 }} />
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} variant="rounded" width={80 + i * 12} height={24} sx={{ borderRadius: '16px' }} />
+              ))}
+            </Box>
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={80} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={3} />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={110} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={3} />
+          </SkeletonCard>
+          <SkeletonCard flex="1 1 260px">
+            <Skeleton variant="text" width={100} height={18} sx={{ mb: 1.5 }} />
+            <SkeletonLines count={3} />
+          </SkeletonCard>
         </Box>
       )}
 

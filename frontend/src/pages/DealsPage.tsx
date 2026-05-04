@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealsApi } from '../api/deals';
 import { pipelinesApi } from '../api/pipelines';
+import EmptyState from '../components/common/EmptyState';
 import AddDealDialog from '../components/deals/AddDealDialog';
 import DealAttachmentsDialog from '../components/deals/DealAttachmentsDialog';
 import { type Deal, type DealStatus } from '../types/deal';
@@ -169,12 +170,13 @@ export default function DealsPage() {
               ))
             ) : deals.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  align="center"
-                  sx={{ py: 8, border: 'none', fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#94A3B8' }}
-                >
-                  {t('deals.noDeals')}
+                <TableCell colSpan={6} sx={{ border: 'none' }}>
+                  <EmptyState
+                    icon="deals"
+                    title={t('deals.noDeals')}
+                    subtitle={t('deals.noDealsSubtitle')}
+                    action={{ label: t('deals.addDeal'), onClick: () => setDialogOpen(true) }}
+                  />
                 </TableCell>
               </TableRow>
             ) : (

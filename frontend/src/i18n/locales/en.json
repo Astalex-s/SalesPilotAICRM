@@ -51,6 +51,7 @@
       "unqualified": "Unqualified",
       "converted": "Converted",
       "noLeads": "No leads yet",
+      "noLeadsSubtitle": "Add your first lead to start building your pipeline",
       "deals": "Deals"
     },
     "aiInsights": {
@@ -70,6 +71,7 @@
     "title": "Deals",
     "addDeal": "Add Deal",
     "noDeals": "No deals found.",
+    "noDealsSubtitle": "Convert a qualified lead into a deal to get started",
     "loadError": "Failed to load deals",
     "table": {
       "title": "Title",
@@ -151,6 +153,7 @@
     "adminOnly": "Admin Only",
     "search": "Search users...",
     "noUsers": "No users found",
+    "noUsersSubtitle": "Team members can be invited by an administrator",
     "you": "You",
     "cantEditSelf": "You cannot change your own role",
     "loadError": "Failed to load users",
@@ -186,6 +189,7 @@
     "timeline": {
       "title": "Activity",
       "empty": "No activity yet.",
+      "emptySubtitle": "Calls, emails and meetings will appear here",
       "types": {
         "call": "Call",
         "email": "Email",
@@ -270,6 +274,9 @@
     "searchPlaceholder": "Search leads...",
     "filterAll": "All",
     "noLeads": "No leads found",
+    "noLeadsSubtitle": "Add your first lead or import from CSV to get started",
+    "noResults": "No matches found",
+    "noResultsSubtitle": "Try adjusting your search or filters",
     "changeStatus": "Change status",
     "count": "{{count}} total",
     "status": {
@@ -371,6 +378,7 @@
     "auditLog": {
       "title": "Audit Log",
       "empty": "No GDPR events recorded yet.",
+      "emptySubtitle": "Privacy events and data requests will be logged here",
       "eventType": "Event",
       "targetType": "Target",
       "summary": "Summary",
@@ -442,10 +450,12 @@
     "viewThreads": "Threads",
     "compose": "Compose",
     "search": "Search emails...",
-    "noEmails": "No emails yet. Click Sync to load your inbox.",
+    "noEmails": "Inbox empty",
+    "noEmailsSubtitle": "Click Sync to load your messages from Gmail",
     "threads": {
       "messages": "{{count}} messages",
-      "noThreads": "No threads yet. Click Sync to load your inbox.",
+      "noThreads": "No threads yet",
+      "noThreadsSubtitle": "Click Sync to load your email threads from Gmail",
       "reply": "Reply in thread"
     },
     "oauthHint": "A new tab has been opened. Complete authorization in Google, then click below.",

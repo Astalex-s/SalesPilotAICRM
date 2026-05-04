@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '../components/common/EmptyState';
 import { listUsers, updateUserRole } from '../api/users';
 import { useAuthStore } from '../store/useAuthStore';
 import type { User, UserRole } from '../types/auth';
@@ -311,12 +312,12 @@ export default function UsersPage() {
               <SkeletonRows />
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={4}
-                  align="center"
-                  sx={{ py: 6, border: 'none', fontFamily: 'Inter', fontSize: 13, color: '#94A3B8' }}
-                >
-                  {t('users.noUsers')}
+                <TableCell colSpan={4} sx={{ border: 'none' }}>
+                  <EmptyState
+                    icon="users"
+                    title={t('users.noUsers')}
+                    subtitle={t('users.noUsersSubtitle')}
+                  />
                 </TableCell>
               </TableRow>
             ) : (

@@ -1,3 +1,4 @@
+import EmptyState from '../common/EmptyState';
 import CallIcon from '@mui/icons-material/Call';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EmailIcon from '@mui/icons-material/Email';
@@ -185,18 +186,12 @@ export default function ActivityTimeline({ activities, loading, error }: Activit
         )}
 
         {!loading && !error && activities.length === 0 && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              py: 6,
-            }}
-          >
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#94A3B8' }}>
-              {t('leadDetail.timeline.empty')}
-            </Typography>
-          </Box>
+          <EmptyState
+            icon="activity"
+            title={t('leadDetail.timeline.empty')}
+            subtitle={t('leadDetail.timeline.emptySubtitle')}
+            compact
+          />
         )}
 
         {!loading && activities.length > 0 && (

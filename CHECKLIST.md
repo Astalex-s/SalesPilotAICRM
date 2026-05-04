@@ -194,10 +194,10 @@
 ## ПРОДУКТ / POLISH
 
 ### Качество UI
-- [ ] Пустые состояния (empty state) на всех страницах с иллюстрацией
-- [ ] Анимации переходов между страницами
+- [x] Пустые состояния (empty state) на всех страницах с иллюстрацией
+- [x] Анимации переходов между страницами
 - [x] Мобильная адаптация (responsive) — мобильный Drawer, hamburger, responsive padding, overflowX таблиц
-- [ ] Skeleton loading на всех загружаемых секциях (некоторые есть)
+- [x] Skeleton loading на всех загружаемых секциях (некоторые есть)
 
 ### Бизнес-функции
 - [ ] Комментарии к сделке / лиду
@@ -244,14 +244,14 @@
 **Остаток (незакрытые пункты):**
 - CI/CD: автодеплой при merge в main, Docker Hub / GHCR
 - Мониторинг: Sentry, Structured logging, Prometheus+Grafana
-- UI polish: empty states, анимации переходов, skeleton на всех секциях
+- UI polish: ✓ skeleton на всех секциях — готово
 - Бизнес: комментарии к сделкам, теги лидов, задачи, календарь
 - Документация: ARCHITECTURE.md, dev setup guide
 
 **Следующий логичный шаг (для портфолио):**
 1. ARCHITECTURE.md — описание Clean Architecture для рекрутёров
 2. Structured logging (JSON) в бэкенде
-3. Empty states на ключевых страницах
+3. Skeleton loading на оставшихся секциях
 
 ---
 

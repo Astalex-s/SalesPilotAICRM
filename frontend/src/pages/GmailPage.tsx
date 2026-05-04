@@ -32,6 +32,7 @@ import {
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '../components/common/EmptyState';
 import { gmailApi } from '../api/gmail';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLeadStore } from '../store/useLeadStore';
@@ -603,11 +604,12 @@ function ThreadsView({
   );
 
   if (filtered.length === 0) return (
-    <Box sx={{ ...CARD, py: 8, textAlign: 'center' }}>
-      <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: '#CBD5E8', mb: 1.5 }} />
-      <Typography sx={{ fontFamily: 'Inter', fontSize: 14, color: '#94A3B8' }}>
-        {t('gmail.threads.noThreads')}
-      </Typography>
+    <Box sx={CARD}>
+      <EmptyState
+        icon="mail"
+        title={t('gmail.threads.noThreads')}
+        subtitle={t('gmail.threads.noThreadsSubtitle')}
+      />
     </Box>
   );
 
@@ -1108,18 +1110,12 @@ export default function GmailPage() {
               <SkeletonRows />
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  align="center"
-                  sx={{
-                    py: 8,
-                    border: 'none',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 14,
-                    color: '#94A3B8',
-                  }}
-                >
-                  {t('gmail.noEmails')}
+                <TableCell colSpan={5} sx={{ border: 'none' }}>
+                  <EmptyState
+                    icon="mail"
+                    title={t('gmail.noEmails')}
+                    subtitle={t('gmail.noEmailsSubtitle')}
+                  />
                 </TableCell>
               </TableRow>
             ) : (

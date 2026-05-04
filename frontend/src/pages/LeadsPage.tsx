@@ -25,6 +25,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import EmptyState from '../components/common/EmptyState';
 import CsvImportDialog from '../components/leads/CsvImportDialog';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLeadStore } from '../store/useLeadStore';
@@ -669,18 +670,21 @@ export default function LeadsPage() {
               <SkeletonRows />
             ) : paginated.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  align="center"
-                  sx={{
-                    py: 8,
-                    border: 'none',
-                    color: '#94A3B8',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 14,
-                  }}
-                >
-                  {t('leads.noLeads')}
+                <TableCell colSpan={6} sx={{ border: 'none' }}>
+                  {leads.length === 0 ? (
+                    <EmptyState
+                      icon="leads"
+                      title={t('leads.noLeads')}
+                      subtitle={t('leads.noLeadsSubtitle')}
+                      action={{ label: t('leads.addLead'), onClick: () => setDialogOpen(true) }}
+                    />
+                  ) : (
+                    <EmptyState
+                      icon="search"
+                      title={t('leads.noResults')}
+                      subtitle={t('leads.noResultsSubtitle')}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ) : (

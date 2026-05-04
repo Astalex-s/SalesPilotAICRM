@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import EmptyState from '../components/common/EmptyState';
 import { gdprApi } from '../api/gdpr';
 import { listUsers } from '../api/users';
 import { useLeadStore } from '../store/useLeadStore';
@@ -495,12 +496,13 @@ function AuditLogCard({ entries, loading, error }: { entries: GdprAuditEntry[]; 
             ))
           ) : entries.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={4}
-                align="center"
-                sx={{ py: 6, border: 'none', fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#94A3B8' }}
-              >
-                {t('gdpr.auditLog.empty')}
+              <TableCell colSpan={4} sx={{ border: 'none' }}>
+                <EmptyState
+                  icon="shield"
+                  title={t('gdpr.auditLog.empty')}
+                  subtitle={t('gdpr.auditLog.emptySubtitle')}
+                  compact
+                />
               </TableCell>
             </TableRow>
           ) : (

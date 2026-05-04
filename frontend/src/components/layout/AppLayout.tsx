@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
+import { keyframes } from '@emotion/react';
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useSSE } from '../../hooks/useSSE';
 import { useUIStore } from '../../store/useUIStore';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+
+const pageIn = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+`;
 
 export default function AppLayout() {
   useSSE();
@@ -41,7 +47,16 @@ export default function AppLayout() {
       {/* Right: TopBar + scrollable content */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
         <TopBar />
-        <Box component="main" sx={{ flex: 1, overflowY: 'auto', p: { xs: 2, sm: 2.5, md: 3 } }}>
+        <Box
+          key={pathname}
+          component="main"
+          sx={{
+            flex: 1,
+            overflowY: 'auto',
+            p: { xs: 2, sm: 2.5, md: 3 },
+            animation: `${pageIn} 0.22s ease`,
+          }}
+        >
           <Outlet />
         </Box>
       </Box>
