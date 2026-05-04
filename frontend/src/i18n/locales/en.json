@@ -237,7 +237,9 @@
     "manage": "Manage Pipelines",
     "leadsPool": "Unassigned",
     "addLead": "Add Lead",
-    "addDeal": "Add Deal"
+    "addDeal": "Add Deal",
+    "renamePlaceholder": "Pipeline name...",
+    "renameTitle": "Click to rename"
   },
   "pipelineManager": {
     "title": "Pipeline Manager",
@@ -254,6 +256,9 @@
     "addStage": "Add Stage",
     "editStage": "Edit stage",
     "deleteStage": "Delete stage",
+    "renamePipeline": "Rename pipeline",
+    "deletePipeline": "Delete pipeline",
+    "renamePipelineTitle": "Rename Pipeline",
     "noStages": "No stages yet. Add one below.",
     "save": "Save",
     "cancel": "Cancel"
@@ -721,6 +726,16 @@
       "activeSessions": "Active sessions",
       "activeSessionsDesc": "Logged in on this device"
     }
+  },
+  "search": {
+    "placeholder": "Search leads, deals... ⌘K",
+    "hint": "Start typing to search across leads and deals",
+    "noResults": "No results for \"{{query}}\"",
+    "leads": "Leads",
+    "deals": "Deals",
+    "keyNavigate": "navigate",
+    "keySelect": "select",
+    "keyClose": "close"
   },
   "time": {
     "justNow": "just now",

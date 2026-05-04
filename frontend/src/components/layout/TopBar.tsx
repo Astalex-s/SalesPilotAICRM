@@ -7,6 +7,7 @@ import {
   useNotificationStore,
   SEED_NOTIFICATIONS,
 } from '../../store/useNotificationStore';
+import GlobalSearchModal from '../search/GlobalSearchModal';
 import NotificationPanel from '../notifications/NotificationPanel';
 import UserProfileDialog from '../profile/UserProfileDialog';
 
@@ -114,6 +115,21 @@ export default function TopBar() {
   // Profile dialog state
   const [profileOpen, setProfileOpen] = useState(false);
 
+  // Global search state
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Ctrl+K / ⌘K shortcut
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   return (
     <>
       <Box component="header" sx={{
@@ -140,24 +156,36 @@ export default function TopBar() {
           {title}
         </Typography>
 
-        {/* Center: search */}
-        <Box sx={{
-          flex: 1, maxWidth: 400, mx: 3,
-          display: { xs: 'none', md: 'flex' },
-          alignItems: 'center', gap: 1,
-          height: 32, px: 1.5,
-          border: '1px solid #E8EFF7',
-          borderRadius: '999px',
-          bgcolor: '#fff',
-          color: '#8FA3B8',
-          cursor: 'text',
-          boxShadow: '0 1px 3px rgba(13,33,68,0.04)',
-          '&:hover': { borderColor: '#BDC8D1' },
-        }}>
+        {/* Center: search pill — opens GlobalSearchModal */}
+        <Box
+          onClick={() => setSearchOpen(true)}
+          sx={{
+            flex: 1, maxWidth: 400, mx: 3,
+            display: { xs: 'none', md: 'flex' },
+            alignItems: 'center', gap: 1,
+            height: 32, px: 1.5,
+            border: '1px solid #E8EFF7',
+            borderRadius: '999px',
+            bgcolor: '#fff',
+            color: '#8FA3B8',
+            cursor: 'pointer',
+            boxShadow: '0 1px 3px rgba(13,33,68,0.04)',
+            '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: 'rgba(0,168,232,0.02)' },
+            transition: 'all 0.15s',
+            userSelect: 'none',
+          }}
+        >
           <SearchIcon />
-          <Typography sx={{ fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#8FA3B8', userSelect: 'none' }}>
+          <Typography sx={{ fontSize: 13, fontFamily: 'Inter, sans-serif', color: 'inherit', flex: 1 }}>
             {t('nav.search')}
           </Typography>
+          <Box sx={{
+            fontSize: 10, fontFamily: 'Inter, sans-serif', color: '#BDC8D1',
+            border: '1px solid #E8EFF7', borderRadius: '4px',
+            px: '4px', py: '1px', fontWeight: 600,
+          }}>
+            ⌘K
+          </Box>
         </Box>
 
         {/* Right cluster */}
@@ -247,6 +275,12 @@ export default function TopBar() {
       <UserProfileDialog
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
+      />
+
+      {/* Global search modal */}
+      <GlobalSearchModal
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
       />
     </>
   );

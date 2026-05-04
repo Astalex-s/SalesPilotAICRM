@@ -1,7 +1,8 @@
-import { Alert, Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { pipelinesApi } from '../api/pipelines';
 import AddDealDialog from '../components/deals/AddDealDialog';
 import KanbanBoard from '../components/kanban/KanbanBoard';
 import AddLeadDialog from '../components/leads/AddLeadDialog';
@@ -9,6 +10,80 @@ import PipelineManagerDialog from '../components/pipeline/PipelineManagerDialog'
 import { useKanbanStore } from '../store/useKanbanStore';
 import type { Lead } from '../types/lead';
 import type { Pipeline } from '../types/pipeline';
+
+/* ── Inline pipeline rename ──────────────────────────────────────────────────── */
+function PipelineNameEditor({
+  pipeline, onRenamed,
+}: { pipeline: Pipeline; onRenamed: (updated: Pipeline) => void }) {
+  const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(pipeline.name);
+  const [saving, setSaving] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setValue(pipeline.name); }, [pipeline.name]);
+  useEffect(() => { if (editing) inputRef.current?.focus(); }, [editing]);
+
+  const save = async () => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === pipeline.name) { setEditing(false); setValue(pipeline.name); return; }
+    setSaving(true);
+    try {
+      const updated = await pipelinesApi.update(pipeline.id, trimmed);
+      onRenamed(updated);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (editing) {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box
+          component="input"
+          ref={inputRef}
+          value={value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === 'Enter') save();
+            if (e.key === 'Escape') { setEditing(false); setValue(pipeline.name); }
+          }}
+          onBlur={save}
+          placeholder={t('pipeline.renamePlaceholder')}
+          sx={{
+            fontSize: 22, fontWeight: 700, fontFamily: 'Inter, sans-serif',
+            color: '#0D2144', border: 'none', borderBottom: '2px solid #00A8E8',
+            outline: 'none', background: 'transparent', letterSpacing: '-0.02em',
+            minWidth: 120, maxWidth: 320,
+          }}
+        />
+        {saving && <CircularProgress size={16} sx={{ color: '#00A8E8' }} />}
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', '&:hover .rename-icon': { opacity: 1 } }}
+      onClick={() => setEditing(true)}
+      title={t('pipeline.renameTitle')}
+    >
+      <Typography sx={{
+        fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 700,
+        color: '#0D2144', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+      }}>
+        {pipeline.name}
+      </Typography>
+      <Box className="rename-icon" sx={{ opacity: 0, transition: 'opacity 0.15s', color: '#8FA3B8', display: 'flex' }}>
+        <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </Box>
+    </Box>
+  );
+}
 
 export default function PipelinePage() {
   const { t } = useTranslation();
@@ -42,6 +117,14 @@ export default function PipelinePage() {
     }
   };
 
+  const handlePipelineRenamed = (updated: Pipeline) => {
+    // Update allPipelines in store and current pipeline name
+    useKanbanStore.setState((s) => ({
+      allPipelines: s.allPipelines.map((p) => p.id === updated.id ? updated : p),
+      pipeline: s.pipeline?.id === updated.id ? { ...s.pipeline, name: updated.name } : s.pipeline,
+    }));
+  };
+
   if (!pipelineId) {
     return (
       <Box sx={{ p: 3 }}>
@@ -63,14 +146,19 @@ export default function PipelinePage() {
         mb: 3, gap: 2, flexWrap: 'wrap',
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography sx={{
-            fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 700,
-            color: '#0D2144', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
-          }}>
-            {t('pipeline.title')}
-          </Typography>
+          {/* Pipeline name — inline rename on click */}
+          {pipeline ? (
+            <PipelineNameEditor pipeline={pipeline} onRenamed={handlePipelineRenamed} />
+          ) : (
+            <Typography sx={{
+              fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 700,
+              color: '#0D2144', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+            }}>
+              {t('pipeline.title')}
+            </Typography>
+          )}
 
-          {/* Pipeline switcher */}
+          {/* Pipeline switcher (shown when >1 pipeline) */}
           {allPipelines.length > 1 && (
             <Box
               component="select"
@@ -88,12 +176,6 @@ export default function PipelinePage() {
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </Box>
-          )}
-
-          {pipeline && allPipelines.length <= 1 && (
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#4B6080' }}>
-              {pipeline.name}
-            </Typography>
           )}
         </Box>
 

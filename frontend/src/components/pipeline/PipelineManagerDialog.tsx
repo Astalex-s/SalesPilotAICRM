@@ -614,7 +614,10 @@ export default function PipelineManagerDialog({
                           px: 1.5, py: 0.875, borderRadius: '8px', mb: 0.25,
                           bgcolor: selectedId === p.id ? 'rgba(0,168,232,0.1)' : 'transparent',
                           cursor: 'pointer',
-                          '&:hover': { bgcolor: selectedId === p.id ? 'rgba(0,168,232,0.1)' : C.hover },
+                          '&:hover': {
+                            bgcolor: selectedId === p.id ? 'rgba(0,168,232,0.1)' : C.hover,
+                            '& .pipeline-item-actions': { opacity: 1 },
+                          },
                           transition: 'background 0.12s',
                           border: selectedId === p.id ? `1px solid rgba(0,168,232,0.25)` : '1px solid transparent',
                           gap: 0.75,
@@ -631,11 +634,11 @@ export default function PipelineManagerDialog({
                         }}>
                           {p.name}
                         </Typography>
-                        <Box sx={{ display: 'flex', gap: 0.25, opacity: 0, '.parent:hover &': { opacity: 1 } }}>
-                          <IconBtn onClick={(e) => { e.stopPropagation(); setRenamingId(p.id); setRenameValue(p.name); }}>
+                        <Box className="pipeline-item-actions" sx={{ display: 'flex', gap: 0.25, opacity: 0, transition: 'opacity 0.15s' }}>
+                          <IconBtn title={t('pipelineManager.renamePipeline')} onClick={(e) => { e.stopPropagation(); setRenamingId(p.id); setRenameValue(p.name); }}>
                             <PenIcon />
                           </IconBtn>
-                          <IconBtn onClick={(e) => { e.stopPropagation(); handleDeletePipeline(p.id); }} danger>
+                          <IconBtn title={t('pipelineManager.deletePipeline')} onClick={(e) => { e.stopPropagation(); handleDeletePipeline(p.id); }} danger>
                             {deletingId === p.id ? <CircularProgress size={10} sx={{ color: C.red }} /> : <TrashIcon />}
                           </IconBtn>
                         </Box>
