@@ -1,0 +1,121 @@
+name: CD — Publish & Deploy
+
+# Runs automatically after CI passes on main.
+# Required GitHub Secrets (Settings → Secrets and variables → Actions):
+#   GHCR_PAT          — GitHub PAT with read:packages scope (for docker login on server)
+#   SERVER_HOST       — SSH hostname or IP of the production server
+#   SERVER_USER       — SSH login (e.g. ubuntu)
+#   SSH_PRIVATE_KEY   — private key content (-----BEGIN ... -----)
+#   SERVER_DEPLOY_PATH — absolute path on server (e.g. /opt/salespilotai)
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  # ── Publish images to GHCR ────────────────────────────────────────────────────
+  publish:
+    name: Build & push images to GHCR
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.tag.outputs.value }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set image tag (short SHA)
+        id: tag
+        run: echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Backend image (also used by celery_worker + celery_beat) ─────────────
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: production
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/salespilotai-backend:latest
+            ghcr.io/${{ github.repository_owner }}/salespilotai-backend:${{ steps.tag.outputs.value }}
+          cache-from: type=gha,scope=backend
+          cache-to:   type=gha,scope=backend,mode=max
+
+      # ── Frontend image ────────────────────────────────────────────────────────
+      - name: Build & push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          target: production
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/salespilotai-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/salespilotai-frontend:${{ steps.tag.outputs.value }}
+          cache-from: type=gha,scope=frontend
+          cache-to:   type=gha,scope=frontend,mode=max
+
+  # ── SSH deploy ────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to production
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: production      # enables "required reviewers" protection in GitHub UI
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          GHCR_USER: ${{ github.repository_owner }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PAT }}
+          IMAGE_TAG: ${{ needs.publish.outputs.image_tag }}
+          DEPLOY_PATH: ${{ secrets.SERVER_DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: GHCR_USER,GHCR_TOKEN,IMAGE_TAG,DEPLOY_PATH
+          script: |
+            set -e
+
+            # Authenticate with GHCR
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            cd "$DEPLOY_PATH"
+
+            # Pull new images (backend covers celery_worker + celery_beat too)
+            BACKEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-backend:$IMAGE_TAG" \
+            FRONTEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-frontend:$IMAGE_TAG" \
+              docker compose -f docker-compose.prod.yml pull \
+                backend celery_worker celery_beat frontend
+
+            # Restart updated services with zero-downtime rolling restart
+            BACKEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-backend:$IMAGE_TAG" \
+            FRONTEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-frontend:$IMAGE_TAG" \
+              docker compose -f docker-compose.prod.yml up -d \
+                --no-build \
+                --remove-orphans
+
+            # Clean up dangling images
+            docker image prune -f
+
+            echo "Deploy complete — tag: $IMAGE_TAG"

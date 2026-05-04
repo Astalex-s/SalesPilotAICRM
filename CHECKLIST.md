@@ -181,8 +181,8 @@
 
 ### CI/CD
 - [x] GitHub Actions: lint + тесты при push
-- [ ] Автодеплой на сервер при merge в main
-- [ ] Docker Hub или GHCR для образов
+- [x] Автодеплой на сервер при merge в main
+- [x] Docker Hub или GHCR для образов
 
 ### Мониторинг
 - [ ] Sentry (frontend + backend)
@@ -242,7 +242,7 @@
 - GitHub Actions CI/CD
 
 **Остаток (незакрытые пункты):**
-- CI/CD: автодеплой при merge в main, Docker Hub / GHCR
+- CI/CD: ✓ GHCR + SSH autodeploy — готово (.github/workflows/cd.yml)
 - Мониторинг: Sentry, Structured logging, Prometheus+Grafana
 - UI polish: ✓ skeleton на всех секциях — готово
 - Бизнес: комментарии к сделкам, теги лидов, задачи, календарь

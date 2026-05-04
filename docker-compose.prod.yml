@@ -47,6 +47,9 @@ services:
 
   # ── Backend (FastAPI + Gunicorn + UvicornWorker) ──────────────────────────────
   backend:
+    # image: set BACKEND_IMAGE env var to use a pre-built GHCR image.
+    # Falls back to local build name when not set (used during local `--build`).
+    image: ${BACKEND_IMAGE:-salespilotaicrm-backend:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -73,6 +76,7 @@ services:
 
   # ── Celery Worker ─────────────────────────────────────────────────────────────
   celery_worker:
+    image: ${BACKEND_IMAGE:-salespilotaicrm-backend:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -100,6 +104,7 @@ services:
 
   # ── Celery Beat (periodic task scheduler) ────────────────────────────────────
   celery_beat:
+    image: ${BACKEND_IMAGE:-salespilotaicrm-backend:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -128,6 +133,7 @@ services:
 
   # ── Frontend (built static served by nginx) ───────────────────────────────────
   frontend:
+    image: ${FRONTEND_IMAGE:-salespilotaicrm-frontend:latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile
