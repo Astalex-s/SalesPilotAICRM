@@ -33,3 +33,13 @@ class ILeadRepository(BaseRepository[Lead]):
     async def find_all(self) -> list[Lead]:
         """Возвращает все лиды в системе (используется администратором)."""
         ...
+
+    @abstractmethod
+    async def find_by_tag(self, tag: str) -> list[Lead]:
+        """Возвращает все лиды, содержащие указанный тег."""
+        ...
+
+    @abstractmethod
+    async def get_all_tags(self) -> list[str]:
+        """Возвращает список всех уникальных тегов (для автодополнения)."""
+        ...

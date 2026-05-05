@@ -1,8 +1,12 @@
 import BusinessIcon from '@mui/icons-material/Business';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
+import LabelIcon from '@mui/icons-material/Label';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SourceIcon from '@mui/icons-material/Source';
-import { Box, Card, CircularProgress, Divider, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
+import { Autocomplete, Box, Card, Chip, CircularProgress, Divider, IconButton, Menu, MenuItem, TextField, Tooltip, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Lead, type LeadStatus } from '../../types/lead';
@@ -83,15 +87,40 @@ const VALID_TRANSITIONS: Record<LeadStatus, LeadStatus[]> = {
 interface LeadInfoCardProps {
   lead: Lead;
   onStatusChange?: (newStatus: LeadStatus) => Promise<void>;
+  onTagsChange?: (tags: string[], category: string | null) => Promise<void>;
+  availableTags?: string[];
 }
 
-export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps) {
+export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, availableTags = [] }: LeadInfoCardProps) {
   const { t } = useTranslation();
   const s = STATUS_STYLE[lead.status];
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusError, setStatusError] = useState<string | null>(null);
+
+  /* Tags/category edit state */
+  const [editingTags, setEditingTags] = useState(false);
+  const [draftTags, setDraftTags] = useState<string[]>(lead.tags ?? []);
+  const [draftCategory, setDraftCategory] = useState<string>(lead.category ?? '');
+  const [tagsLoading, setTagsLoading] = useState(false);
+
+  const handleSaveTags = async () => {
+    if (!onTagsChange) return;
+    setTagsLoading(true);
+    try {
+      await onTagsChange(draftTags, draftCategory.trim() || null);
+      setEditingTags(false);
+    } finally {
+      setTagsLoading(false);
+    }
+  };
+
+  const handleCancelTags = () => {
+    setDraftTags(lead.tags ?? []);
+    setDraftCategory(lead.category ?? '');
+    setEditingTags(false);
+  };
 
   const validNext = VALID_TRANSITIONS[lead.status];
   const canChange = validNext.length > 0 && !!onStatusChange;
@@ -282,6 +311,107 @@ export default function LeadInfoCard({ lead, onStatusChange }: LeadInfoCardProps
             </Typography>
           </>
         )}
+
+        <Divider sx={{ borderColor: '#F0F5FF', my: 2 }} />
+
+        {/* Tags & Category */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <LabelIcon sx={{ fontSize: 13, color: '#94A3B8' }} />
+              <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8' }}>
+                {t('leadDetail.info.tags')}
+              </Typography>
+            </Box>
+            {onTagsChange && !editingTags && (
+              <Tooltip title={t('leadDetail.info.editTags')}>
+                <IconButton size="small" onClick={() => setEditingTags(true)} sx={{ color: '#94A3B8', p: 0.25, '&:hover': { color: '#00A8E8' } }}>
+                  <EditIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+            {editingTags && (
+              <Box sx={{ display: 'flex', gap: 0.25 }}>
+                <IconButton size="small" onClick={handleSaveTags} disabled={tagsLoading} sx={{ color: '#10B981', p: 0.25 }}>
+                  {tagsLoading ? <CircularProgress size={12} /> : <CheckIcon sx={{ fontSize: 14 }} />}
+                </IconButton>
+                <IconButton size="small" onClick={handleCancelTags} sx={{ color: '#94A3B8', p: 0.25 }}>
+                  <CloseIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
+
+          {editingTags ? (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Autocomplete
+                multiple
+                freeSolo
+                size="small"
+                options={availableTags}
+                value={draftTags}
+                onChange={(_, v) => setDraftTags(v as string[])}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => {
+                    const { key, ...tagProps } = getTagProps({ index });
+                    return (
+                      <Chip
+                        key={key}
+                        label={option}
+                        size="small"
+                        {...tagProps}
+                        sx={{ fontSize: 11, height: 20 }}
+                      />
+                    );
+                  })
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder={t('leadDetail.info.tagsPlaceholder')}
+                    sx={{ '& .MuiInputBase-root': { fontSize: 12, fontFamily: 'Inter, sans-serif' } }}
+                  />
+                )}
+              />
+              <TextField
+                size="small"
+                label={t('leadDetail.info.category')}
+                value={draftCategory}
+                onChange={(e) => setDraftCategory(e.target.value)}
+                sx={{ '& .MuiInputBase-input': { fontSize: 12, fontFamily: 'Inter, sans-serif' } }}
+              />
+            </Box>
+          ) : (
+            <>
+              {(lead.tags ?? []).length > 0 ? (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {(lead.tags ?? []).map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      size="small"
+                      sx={{ fontSize: 11, height: 20, bgcolor: 'rgba(0,168,232,0.10)', color: '#0090CC', fontFamily: 'Inter, sans-serif' }}
+                    />
+                  ))}
+                </Box>
+              ) : (
+                <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#CBD5E1' }}>
+                  {t('leadDetail.info.noTags')}
+                </Typography>
+              )}
+              {lead.category && (
+                <Box sx={{ mt: 0.75, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#94A3B8' }}>
+                    {t('leadDetail.info.category')}:
+                  </Typography>
+                  <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#4B6080', fontWeight: 600 }}>
+                    {lead.category}
+                  </Typography>
+                </Box>
+              )}
+            </>
+          )}
+        </Box>
 
         <Divider sx={{ borderColor: '#F0F5FF', my: 2 }} />
 

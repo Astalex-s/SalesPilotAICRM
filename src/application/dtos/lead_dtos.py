@@ -27,6 +27,7 @@ class ListLeadsInput(BaseModel):
 
     owner_id: UUID | None = None
     status: LeadStatus | None = None
+    tag: str | None = None
 
 
 class CreateLeadInput(BaseModel):
@@ -39,6 +40,8 @@ class CreateLeadInput(BaseModel):
     source: LeadSource = LeadSource.OTHER
     phone: str | None = None
     company: str | None = None
+    tags: list[str] = []
+    category: str | None = None
 
     @field_validator("first_name", "last_name")
     @classmethod
@@ -54,6 +57,8 @@ class UpdateLeadInput(BaseModel):
     lead_id: UUID
     status: LeadStatus | None = None
     notes: str | None = None
+    tags: list[str] | None = None
+    category: str | None = None
 
 
 class BulkImportLeadRow(BaseModel):
@@ -110,6 +115,8 @@ class LeadOutput(BaseModel):
     company: str | None
     notes: str | None
     converted_deal_id: UUID | None
+    tags: list[str]
+    category: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -129,6 +136,8 @@ class LeadOutput(BaseModel):
             company=lead.company,
             notes=lead.notes,
             converted_deal_id=lead.converted_deal_id,
+            tags=lead.tags,
+            category=lead.category,
             created_at=lead.created_at,
             updated_at=lead.updated_at,
         )

@@ -42,6 +42,7 @@ from src.application.use_cases.update_stage import UpdateStageUseCase
 from src.application.use_cases.delete_stage import DeleteStageUseCase
 from src.application.use_cases.link_email_to_lead import LinkEmailToLeadUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
+from src.application.use_cases.list_lead_tags import ListLeadTagsUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.anonymize_lead import AnonymizeLeadUseCase
@@ -123,6 +124,13 @@ def get_list_leads_use_case(
 ) -> ListLeadsUseCase:
     """Фабрика ListLeadsUseCase с инжектированными репозиториями."""
     return ListLeadsUseCase(lead_repo=SqlLeadRepository(session))
+
+
+def get_list_lead_tags_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListLeadTagsUseCase:
+    """Фабрика ListLeadTagsUseCase."""
+    return ListLeadTagsUseCase(lead_repo=SqlLeadRepository(session))
 
 
 def get_update_lead_use_case(

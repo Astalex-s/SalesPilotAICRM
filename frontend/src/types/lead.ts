@@ -19,6 +19,8 @@ export interface Lead {
   notes: string | null;
   owner_id: string;
   converted_deal_id: string | null;
+  tags: string[];
+  category: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -26,6 +28,8 @@ export interface Lead {
 export interface UpdateLeadPayload {
   status?: LeadStatus;
   notes?: string;
+  tags?: string[];
+  category?: string | null;
 }
 
 export interface CreateLeadPayload {
@@ -36,6 +40,8 @@ export interface CreateLeadPayload {
   company?: string;
   source?: LeadSource;
   owner_id: string;
+  tags?: string[];
+  category?: string | null;
 }
 
 export interface BulkImportResult {

@@ -14,3 +14,5 @@ class UpdateLeadRequest(BaseModel):
 
     status: LeadStatus | None = None
     notes: str | None = None
+    tags: list[str] | None = None
+    category: str | None = None

@@ -24,7 +24,9 @@ class ListLeadsUseCase:
         2. status   — если задан (без owner_id), фильтрует по статусу.
         3. Без фильтров — возвращает все лиды (административный режим).
         """
-        if data.owner_id is not None:
+        if data.tag is not None:
+            leads = await self._lead_repo.find_by_tag(data.tag)
+        elif data.owner_id is not None:
             leads = await self._lead_repo.find_by_owner(data.owner_id)
         elif data.status is not None:
             leads = await self._lead_repo.find_by_status(data.status)

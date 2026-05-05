@@ -57,6 +57,7 @@ const qualifiedLead: Lead = {
   email: 'alice@example.com', phone: null, company: 'ACME',
   status: 'qualified', source: 'website', notes: null,
   owner_id: 'owner-1', converted_deal_id: null,
+  tags: [], category: null,
   created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z',
 };
 

@@ -5,6 +5,7 @@ import axiosInstance from './axiosInstance';
 interface ListLeadsParams {
   owner_id?: string;
   lead_status?: LeadStatus;
+  tag?: string;
 }
 
 export const leadsApi = {
@@ -37,6 +38,11 @@ export const leadsApi = {
 
   addComment: async (leadId: string, body: string): Promise<Activity> => {
     const { data } = await axiosInstance.post<Activity>(`/leads/${leadId}/comments`, { body });
+    return data;
+  },
+
+  getTags: async (): Promise<string[]> => {
+    const { data } = await axiosInstance.get<string[]>('/leads/tags');
     return data;
   },
 

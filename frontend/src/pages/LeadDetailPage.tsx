@@ -1,8 +1,9 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Alert, Box, Grid, IconButton, Skeleton, Tooltip, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { leadsApi } from '../api/leads';
 import AIBlock from '../components/lead/AIBlock';
 import ActivityTimeline from '../components/lead/ActivityTimeline';
 import LeadInfoCard from '../components/lead/LeadInfoCard';
@@ -19,10 +20,13 @@ export default function LeadDetailPage() {
     updateLead, addComment, reset,
   } = useLeadDetailStore();
 
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+
   useEffect(() => {
     if (!leadId) return;
     fetchLead(leadId);
     fetchActivities(leadId);
+    leadsApi.getTags().then(setAvailableTags).catch(() => {});
     return () => { reset(); };
   }, [leadId, fetchLead, fetchActivities, reset]);
 
@@ -78,9 +82,11 @@ export default function LeadDetailPage() {
             <Skeleton variant="rounded" height={420} sx={{ borderRadius: '16px' }} />
           ) : lead.data ? (
             <LeadInfoCard
-            lead={lead.data}
-            onStatusChange={(newStatus) => updateLead(lead.data!.id, { status: newStatus })}
-          />
+              lead={lead.data}
+              onStatusChange={(newStatus) => updateLead(lead.data!.id, { status: newStatus })}
+              onTagsChange={(tags, category) => updateLead(lead.data!.id, { tags, category })}
+              availableTags={availableTags}
+            />
           ) : null}
         </Grid>
 

@@ -189,7 +189,12 @@
     "info": {
       "notes": "Заметки",
       "created": "Создан",
-      "updated": "Обновлён"
+      "updated": "Обновлён",
+      "tags": "Теги",
+      "editTags": "Редактировать теги и категорию",
+      "tagsPlaceholder": "Добавить теги…",
+      "noTags": "Нет тегов",
+      "category": "Категория"
     },
     "timeline": {
       "title": "Активность",
@@ -279,6 +284,7 @@
     "addLeadTooltip": "Скоро будет доступно",
     "searchPlaceholder": "Поиск лидов...",
     "filterAll": "Все",
+    "filterByTag": "Фильтр по тегу",
     "noLeads": "Лиды не найдены",
     "noLeadsSubtitle": "Добавьте первого лида или импортируйте из CSV, чтобы начать",
     "noResults": "Ничего не найдено",

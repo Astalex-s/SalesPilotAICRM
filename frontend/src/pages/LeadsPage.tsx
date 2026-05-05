@@ -3,8 +3,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -25,6 +27,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { leadsApi } from '../api/leads';
 import EmptyState from '../components/common/EmptyState';
 import CsvImportDialog from '../components/leads/CsvImportDialog';
 import { useAuthStore } from '../store/useAuthStore';
@@ -393,17 +396,21 @@ export default function LeadsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all');
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  useEffect(() => { leadsApi.getTags().then(setAvailableTags).catch(() => {}); }, []);
 
   // Reset page when filters change
-  useEffect(() => { setPage(0); }, [statusFilter, search]);
+  useEffect(() => { setPage(0); }, [statusFilter, tagFilter, search]);
 
   const filtered = useMemo(() => {
     return leads.filter((lead) => {
       if (statusFilter !== 'all' && lead.status !== statusFilter) return false;
+      if (tagFilter && !(lead.tags ?? []).includes(tagFilter)) return false;
       if (search.trim()) {
         const q = search.toLowerCase();
         return (
@@ -415,7 +422,7 @@ export default function LeadsPage() {
       }
       return true;
     });
-  }, [leads, statusFilter, search]);
+  }, [leads, statusFilter, tagFilter, search]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -571,6 +578,44 @@ export default function LeadsPage() {
             );
           })}
         </Box>
+
+        {/* Tag filter */}
+        {availableTags.length > 0 && (
+          <Autocomplete
+            size="small"
+            options={availableTags}
+            value={tagFilter}
+            onChange={(_, v) => setTagFilter(v)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={t('leads.filterByTag')}
+                sx={{
+                  width: 180,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                    bgcolor: '#FFFFFF',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: 13,
+                    '& fieldset': { borderColor: '#E2EAF4' },
+                    '&:hover fieldset': { borderColor: '#CBD5E8' },
+                    '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
+                  },
+                }}
+              />
+            )}
+            renderTags={(value, getTagProps) =>
+              value && typeof value === 'string' ? (
+                <Chip
+                  label={value}
+                  size="small"
+                  {...getTagProps({ index: 0 })}
+                  sx={{ fontSize: 11, height: 20 }}
+                />
+              ) : null
+            }
+          />
+        )}
       </Box>
 
       <AddLeadDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
@@ -733,7 +778,7 @@ export default function LeadsPage() {
                       </Box>
                     </TableCell>
 
-                    {/* Name + email */}
+                    {/* Name + email + tags */}
                     <TableCell sx={{ py: 1 }}>
                       <Typography
                         sx={{
@@ -756,6 +801,24 @@ export default function LeadsPage() {
                       >
                         {lead.email}
                       </Typography>
+                      {(lead.tags ?? []).length > 0 && (
+                        <Box sx={{ display: 'flex', gap: 0.4, mt: 0.4, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                          {(lead.tags ?? []).slice(0, 2).map((tag) => (
+                            <Chip
+                              key={tag}
+                              label={tag}
+                              size="small"
+                              onClick={(e) => { e.stopPropagation(); setTagFilter(tag); }}
+                              sx={{ fontSize: 10, height: 16, bgcolor: 'rgba(0,168,232,0.10)', color: '#0090CC', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+                            />
+                          ))}
+                          {(lead.tags ?? []).length > 2 && (
+                            <Typography sx={{ fontSize: 10, color: '#94A3B8', alignSelf: 'center' }}>
+                              +{(lead.tags ?? []).length - 2}
+                            </Typography>
+                          )}
+                        </Box>
+                      )}
                     </TableCell>
 
                     {/* Company */}

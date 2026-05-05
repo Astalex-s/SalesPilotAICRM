@@ -36,5 +36,11 @@ class UpdateLeadUseCase:
         if data.notes is not None:
             lead.add_note(data.notes)
 
+        if data.tags is not None:
+            lead.update_tags(data.tags)
+
+        if data.category is not None:
+            lead.update_category(data.category)
+
         saved = await self._lead_repo.save(lead)
         return LeadOutput.from_entity(saved)

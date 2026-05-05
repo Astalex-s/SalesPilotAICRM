@@ -55,6 +55,10 @@ class CreateLeadUseCase:
             phone=phone,
             company=data.company,
         )
+        if data.tags:
+            lead.update_tags(data.tags)
+        if data.category is not None:
+            lead.update_category(data.category)
 
         # Шаг 4: сохранение (репозиторий возвращает актуальное состояние сущности)
         lead = await self._lead_repo.save(lead)

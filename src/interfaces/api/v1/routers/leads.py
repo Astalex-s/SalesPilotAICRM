@@ -34,6 +34,7 @@ from src.application.use_cases.add_comment import AddCommentUseCase
 from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
+from src.application.use_cases.list_lead_tags import ListLeadTagsUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.domain.value_objects.enums import LeadSource, LeadStatus
 from src.infrastructure.notifications.notification_bus import bus
@@ -44,6 +45,7 @@ from src.interfaces.api.dependencies import (
     get_create_lead_use_case,
     get_lead_use_case,
     get_list_lead_activities_use_case,
+    get_list_lead_tags_use_case,
     get_list_leads_use_case,
     get_notify_new_lead_use_case,
     get_update_lead_use_case,
@@ -92,23 +94,38 @@ async def create_lead(
 
 
 @router.get(
+    "/tags",
+    response_model=list[str],
+    status_code=http_status.HTTP_200_OK,
+    summary="Все уникальные теги лидов",
+    description="Возвращает список всех уникальных тегов для автодополнения.",
+)
+async def list_lead_tags(
+    use_case: ListLeadTagsUseCase = Depends(get_list_lead_tags_use_case),
+) -> list[str]:
+    """GET /api/v1/leads/tags — все уникальные теги."""
+    return await use_case.execute()
+
+
+@router.get(
     "",
     response_model=list[LeadOutput],
     status_code=http_status.HTTP_200_OK,
     summary="Список лидов",
     description=(
         "Возвращает список лидов. "
-        "Опциональная фильтрация: owner_id — по владельцу, status — по статусу. "
+        "Опциональная фильтрация: owner_id — по владельцу, status — по статусу, tag — по тегу. "
         "Без фильтров — все лиды (административный режим)."
     ),
 )
 async def list_leads(
     owner_id: UUID | None = None,
     lead_status: LeadStatus | None = None,
+    tag: str | None = None,
     use_case: ListLeadsUseCase = Depends(get_list_leads_use_case),
 ) -> list[LeadOutput]:
     """GET /api/v1/leads — список лидов с опциональной фильтрацией."""
-    data = ListLeadsInput(owner_id=owner_id, status=lead_status)
+    data = ListLeadsInput(owner_id=owner_id, status=lead_status, tag=tag)
     return await use_case.execute(data)
 
 
@@ -131,7 +148,13 @@ async def update_lead(
     use_case: UpdateLeadUseCase = Depends(get_update_lead_use_case),
 ) -> LeadOutput:
     """PATCH /api/v1/leads/{lead_id} — обновление статуса/заметок лида."""
-    data = UpdateLeadInput(lead_id=lead_id, status=body.status, notes=body.notes)
+    data = UpdateLeadInput(
+        lead_id=lead_id,
+        status=body.status,
+        notes=body.notes,
+        tags=body.tags,
+        category=body.category,
+    )
     return await use_case.execute(data)
 
 

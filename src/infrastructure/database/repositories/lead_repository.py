@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.entities.lead import Lead
@@ -65,3 +65,15 @@ class SqlLeadRepository(ILeadRepository):
         stmt = select(LeadModel)
         rows = await self._session.scalars(stmt)
         return [r.to_entity() for r in rows.all()]
+
+    async def find_by_tag(self, tag: str) -> list[Lead]:
+        """Возвращает лиды, содержащие указанный тег (PostgreSQL ARRAY contains)."""
+        stmt = select(LeadModel).where(LeadModel.tags.contains([tag]))
+        rows = await self._session.scalars(stmt)
+        return [r.to_entity() for r in rows.all()]
+
+    async def get_all_tags(self) -> list[str]:
+        """Возвращает все уникальные теги из таблицы leads."""
+        stmt = select(func.unnest(LeadModel.tags)).distinct()
+        result = await self._session.scalars(stmt)
+        return sorted(t for t in result.all() if t)

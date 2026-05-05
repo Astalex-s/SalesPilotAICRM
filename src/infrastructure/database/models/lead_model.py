@@ -8,7 +8,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, Enum as SAEnum, String
+from sqlalchemy import ARRAY, DateTime, Enum as SAEnum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.domain.entities.lead import Lead
@@ -40,6 +40,10 @@ class LeadModel(Base):
     company: Mapped[str | None] = mapped_column(String(255), nullable=True)
     notes: Mapped[str | None] = mapped_column(String(2000), nullable=True)
     converted_deal_id: Mapped[UUID | None] = mapped_column(nullable=True)
+    tags: Mapped[list[str]] = mapped_column(
+        ARRAY(String(100)), nullable=False, server_default="{}"
+    )
+    category: Mapped[str | None] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
     )
@@ -63,6 +67,8 @@ class LeadModel(Base):
             company=self.company,
             notes=self.notes,
             converted_deal_id=self.converted_deal_id,
+            tags=list(self.tags) if self.tags else [],
+            category=self.category,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -82,6 +88,8 @@ class LeadModel(Base):
             company=lead.company,
             notes=lead.notes,
             converted_deal_id=lead.converted_deal_id,
+            tags=lead.tags,
+            category=lead.category,
             created_at=lead.created_at,
             updated_at=lead.updated_at,
         )

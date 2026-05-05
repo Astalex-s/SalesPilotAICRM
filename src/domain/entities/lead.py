@@ -64,6 +64,8 @@ class Lead:
     company: str | None = None
     notes: str | None = None
     converted_deal_id: UUID | None = None
+    tags: list[str] = field(default_factory=list)
+    category: str | None = None
     created_at: datetime = field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
@@ -100,6 +102,8 @@ class Lead:
             source=source,
             phone=phone,
             company=company,
+            tags=[],
+            category=None,
         )
 
     # ── Свойства ───────────────────────────────────────────────────────────────
@@ -154,6 +158,16 @@ class Lead:
             )
         self.status = LeadStatus.CONVERTED
         self.converted_deal_id = deal_id
+        self._touch()
+
+    def update_tags(self, tags: list[str]) -> None:
+        """Обновляет список тегов лида."""
+        self.tags = [t.strip().lower() for t in tags if t.strip()]
+        self._touch()
+
+    def update_category(self, category: str | None) -> None:
+        """Обновляет категорию лида."""
+        self.category = category.strip() if category and category.strip() else None
         self._touch()
 
     def add_note(self, note: str) -> None:

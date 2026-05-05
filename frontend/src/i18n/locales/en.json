@@ -189,7 +189,12 @@
     "info": {
       "notes": "Notes",
       "created": "Created",
-      "updated": "Updated"
+      "updated": "Updated",
+      "tags": "Tags",
+      "editTags": "Edit tags & category",
+      "tagsPlaceholder": "Add tags…",
+      "noTags": "No tags",
+      "category": "Category"
     },
     "timeline": {
       "title": "Activity",
@@ -279,6 +284,7 @@
     "addLeadTooltip": "Coming soon",
     "searchPlaceholder": "Search leads...",
     "filterAll": "All",
+    "filterByTag": "Filter by tag",
     "noLeads": "No leads found",
     "noLeadsSubtitle": "Add your first lead or import from CSV to get started",
     "noResults": "No matches found",
