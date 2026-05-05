@@ -185,7 +185,7 @@
 - [x] Docker Hub или GHCR для образов
 
 ### Мониторинг
-- [ ] Sentry (frontend + backend)
+- [x] Sentry (frontend + backend)
 - [ ] Structured logging (JSON) в бэкенде
 - [ ] Prometheus + Grafana (опционально)
 

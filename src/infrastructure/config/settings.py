@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     CELERY_RETENTION_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки retention policy
     CELERY_OVERDUE_DEALS_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки overdue deals
 
+    # Sentry
+    SENTRY_DSN: str = ""
+    SENTRY_ENVIRONMENT: str = "production"
+    SENTRY_TRACES_SAMPLE_RATE: float = 0.1
+
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_database_url(cls, v: str) -> str:
