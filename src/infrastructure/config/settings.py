@@ -69,6 +69,9 @@ class Settings(BaseSettings):
     CELERY_RETENTION_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки retention policy
     CELERY_OVERDUE_DEALS_CHECK_INTERVAL: int = 86400  # 24 часа — частота проверки overdue deals
 
+    # Logging
+    LOG_LEVEL: str = "INFO"
+
     # Sentry
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "production"

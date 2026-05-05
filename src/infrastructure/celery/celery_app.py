@@ -6,8 +6,17 @@
 Не содержит бизнес-логики.
 """
 from celery import Celery
+from celery.signals import after_setup_logger, after_setup_task_logger
 
 from src.infrastructure.config.settings import settings
+from src.infrastructure.logging.setup import configure_logging
+
+
+@after_setup_logger.connect
+@after_setup_task_logger.connect
+def _setup_celery_json_logging(logger, **kwargs):  # noqa: ARG001
+    """Replace Celery's default formatter with our JSON formatter."""
+    configure_logging(settings.LOG_LEVEL)
 
 # ── Создание экземпляра ────────────────────────────────────────────────────────
 

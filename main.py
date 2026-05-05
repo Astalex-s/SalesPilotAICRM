@@ -8,6 +8,7 @@ from collections.abc import AsyncGenerator
 
 import sentry_sdk
 from alembic import command as alembic_command
+from src.infrastructure.logging.setup import configure_logging
 from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI
 from sentry_sdk.integrations.celery import CeleryIntegration
@@ -19,6 +20,7 @@ from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
 from src.infrastructure.database.session import engine
 from src.interfaces.api.exception_handlers import register_exception_handlers
+from src.interfaces.api.middleware.request_id import RequestIdMiddleware
 from src.interfaces.api.v1.routers import (
     ai_router,
     analytics_router,
@@ -36,6 +38,8 @@ from src.interfaces.api.v1.routers import (
     users_router,
 )
 
+
+configure_logging(settings.LOG_LEVEL)
 
 if settings.SENTRY_DSN:
     sentry_sdk.init(
@@ -91,6 +95,9 @@ def create_app() -> FastAPI:
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
     )
+
+    # Middleware (порядок важен: внешний → внутренний)
+    application.add_middleware(RequestIdMiddleware)
 
     # Регистрация обработчиков исключений (до роутеров)
     register_exception_handlers(application)
