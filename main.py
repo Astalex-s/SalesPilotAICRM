@@ -8,13 +8,14 @@ from collections.abc import AsyncGenerator
 
 import sentry_sdk
 from alembic import command as alembic_command
-from src.infrastructure.logging.setup import configure_logging
 from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from src.infrastructure.logging.setup import configure_logging
 
 from src.infrastructure.cache.redis_client import close_redis, init_redis
 from src.infrastructure.config.settings import settings
@@ -101,6 +102,13 @@ def create_app() -> FastAPI:
 
     # Регистрация обработчиков исключений (до роутеров)
     register_exception_handlers(application)
+
+    # Prometheus — expose /metrics (internal only, not routed through nginx)
+    Instrumentator(excluded_handlers=["/metrics"]).instrument(application).expose(
+        application,
+        include_in_schema=False,
+        tags=["monitoring"],
+    )
 
     # Регистрация роутеров v1
     _api_prefix = "/api/v1"

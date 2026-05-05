@@ -187,7 +187,7 @@
 ### Мониторинг
 - [x] Sentry (frontend + backend)
 - [x] Structured logging (JSON) в бэкенде
-- [ ] Prometheus + Grafana (опционально)
+- [x] Prometheus + Grafana (опционально)
 
 ---
 
