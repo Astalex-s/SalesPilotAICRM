@@ -16,7 +16,7 @@ export default function LeadDetailPage() {
   const {
     lead, activities, score, nextAction, generatedEmail,
     fetchLead, fetchActivities, fetchScore, fetchNextAction, generateEmail,
-    updateLead, reset,
+    updateLead, addComment, reset,
   } = useLeadDetailStore();
 
   useEffect(() => {
@@ -90,6 +90,7 @@ export default function LeadDetailPage() {
             activities={activities.data ?? []}
             loading={activities.loading}
             error={activities.error}
+            onAddComment={leadId ? (body) => addComment(leadId, body) : undefined}
           />
         </Grid>
 

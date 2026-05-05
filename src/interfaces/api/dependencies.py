@@ -6,7 +6,9 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.use_cases.add_comment import AddCommentUseCase
 from src.application.use_cases.analyze_lost_deals import AnalyzeLostDealsUseCase
+from src.application.use_cases.list_deal_activities import ListDealActivitiesUseCase
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
 from src.application.use_cases.get_email_thread import GetEmailThreadUseCase
 from src.application.use_cases.list_email_threads import ListEmailThreadsUseCase
@@ -185,6 +187,20 @@ def get_list_lead_activities_use_case(
 ) -> ListLeadActivitiesUseCase:
     """Фабрика ListLeadActivitiesUseCase."""
     return ListLeadActivitiesUseCase(activity_repo=SqlActivityRepository(session))
+
+
+def get_list_deal_activities_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListDealActivitiesUseCase:
+    """Фабрика ListDealActivitiesUseCase."""
+    return ListDealActivitiesUseCase(activity_repo=SqlActivityRepository(session))
+
+
+def get_add_comment_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> AddCommentUseCase:
+    """Фабрика AddCommentUseCase."""
+    return AddCommentUseCase(activity_repo=SqlActivityRepository(session))
 
 
 def get_list_deals_use_case(

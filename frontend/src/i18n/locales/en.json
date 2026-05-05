@@ -98,6 +98,11 @@
       "markLost": "Mark as Lost",
       "closeError": "Failed to close deal"
     },
+    "comments": {
+      "title": "Comments & Activity",
+      "placeholder": "Add a comment… (Ctrl+Enter to submit)",
+      "empty": "No activity yet. Add the first comment."
+    },
     "dialog": {
       "title": "New Deal",
       "leadLabel": "Lead",
@@ -190,6 +195,7 @@
       "title": "Activity",
       "empty": "No activity yet.",
       "emptySubtitle": "Calls, emails and meetings will appear here",
+      "commentPlaceholder": "Add a comment… (Ctrl+Enter to submit)",
       "types": {
         "call": "Call",
         "email": "Email",

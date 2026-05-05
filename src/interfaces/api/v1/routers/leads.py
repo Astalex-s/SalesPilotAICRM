@@ -13,7 +13,7 @@ from uuid import UUID
 from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from fastapi import status as http_status
 
-from src.application.dtos.activity_dtos import ActivityOutput
+from src.application.dtos.activity_dtos import ActivityOutput, AddCommentInput
 from src.application.dtos.lead_dtos import (
     BulkImportInput,
     BulkImportLeadRow,
@@ -30,6 +30,7 @@ from src.application.exceptions import TelegramNotConfiguredError
 from src.application.use_cases.bulk_import_leads import BulkImportLeadsUseCase
 from src.application.use_cases.create_lead import CreateLeadUseCase
 from src.application.use_cases.get_lead import GetLeadUseCase
+from src.application.use_cases.add_comment import AddCommentUseCase
 from src.application.use_cases.list_lead_activities import ListLeadActivitiesUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.notify_new_lead import NotifyNewLeadUseCase
@@ -38,6 +39,7 @@ from src.domain.value_objects.enums import LeadSource, LeadStatus
 from src.infrastructure.notifications.notification_bus import bus
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.dependencies import (
+    get_add_comment_use_case,
     get_bulk_import_leads_use_case,
     get_create_lead_use_case,
     get_lead_use_case,
@@ -161,6 +163,28 @@ async def list_lead_activities(
 ) -> list[ActivityOutput]:
     """GET /api/v1/leads/{lead_id}/activities — журнал активностей."""
     return await use_case.execute(lead_id)
+
+
+@router.post(
+    "/{lead_id}/comments",
+    response_model=ActivityOutput,
+    status_code=http_status.HTTP_201_CREATED,
+    summary="Добавить комментарий к лиду",
+    description="Создаёт заметку (NOTE) в журнале активностей лида.",
+)
+async def add_lead_comment(
+    lead_id: UUID,
+    body: AddCommentInput,
+    current_user: UserOutput = Depends(get_current_user),
+    use_case: AddCommentUseCase = Depends(get_add_comment_use_case),
+) -> ActivityOutput:
+    """POST /api/v1/leads/{lead_id}/comments — добавление комментария."""
+    return await use_case.execute(
+        entity_type="lead",
+        entity_id=lead_id,
+        performed_by_id=current_user.id,
+        body=body.body,
+    )
 
 
 @router.post(

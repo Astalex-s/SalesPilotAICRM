@@ -35,6 +35,11 @@ export const leadsApi = {
     return data;
   },
 
+  addComment: async (leadId: string, body: string): Promise<Activity> => {
+    const { data } = await axiosInstance.post<Activity>(`/leads/${leadId}/comments`, { body });
+    return data;
+  },
+
   bulkImport: async (file: File): Promise<BulkImportResult> => {
     const formData = new FormData();
     formData.append('file', file);

@@ -11,12 +11,15 @@ from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
+from src.application.dtos.activity_dtos import ActivityOutput, AddCommentInput
 from src.application.dtos.deal_dtos import CloseDealInput, ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
 from src.application.dtos.telegram_dtos import NotifyDealStageChangeInput, NotifyNewDealInput
 from src.application.exceptions import DealNotFoundError, TelegramNotConfiguredError
 from src.domain.exceptions import DealAlreadyClosedError
+from src.application.use_cases.add_comment import AddCommentUseCase
 from src.application.use_cases.close_deal import CloseDealUseCase
 from src.application.use_cases.convert_lead_to_deal import ConvertLeadToDealUseCase
+from src.application.use_cases.list_deal_activities import ListDealActivitiesUseCase
 from src.application.use_cases.list_deals import ListDealsUseCase
 from src.application.use_cases.move_deal_stage import MoveDealStageUseCase
 from src.application.use_cases.notify_deal_stage_change import NotifyDealStageChangeUseCase
@@ -26,8 +29,10 @@ from src.infrastructure.notifications.notification_bus import bus
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.application.dtos.auth_dtos import UserOutput
 from src.interfaces.api.dependencies import (
+    get_add_comment_use_case,
     get_close_deal_use_case,
     get_convert_lead_use_case,
+    get_list_deal_activities_use_case,
     get_list_deals_use_case,
     get_move_deal_stage_use_case,
     get_notify_deal_stage_change_use_case,
@@ -200,6 +205,43 @@ async def close_deal(
         )
     )
     return result
+
+
+@router.get(
+    "/{deal_id}/activities",
+    response_model=list[ActivityOutput],
+    status_code=status.HTTP_200_OK,
+    summary="Журнал активностей сделки",
+    description="Возвращает все активности сделки, упорядоченные от новых к старым.",
+)
+async def list_deal_activities(
+    deal_id: UUID,
+    use_case: ListDealActivitiesUseCase = Depends(get_list_deal_activities_use_case),
+) -> list[ActivityOutput]:
+    """GET /api/v1/deals/{deal_id}/activities."""
+    return await use_case.execute(deal_id)
+
+
+@router.post(
+    "/{deal_id}/comments",
+    response_model=ActivityOutput,
+    status_code=status.HTTP_201_CREATED,
+    summary="Добавить комментарий к сделке",
+    description="Создаёт заметку (NOTE) в журнале активностей сделки.",
+)
+async def add_deal_comment(
+    deal_id: UUID,
+    body: AddCommentInput,
+    current_user: UserOutput = Depends(get_current_user),
+    use_case: AddCommentUseCase = Depends(get_add_comment_use_case),
+) -> ActivityOutput:
+    """POST /api/v1/deals/{deal_id}/comments."""
+    return await use_case.execute(
+        entity_type="deal",
+        entity_id=deal_id,
+        performed_by_id=current_user.id,
+        body=body.body,
+    )
 
 
 @router.post(

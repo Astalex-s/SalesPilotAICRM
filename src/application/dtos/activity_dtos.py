@@ -7,10 +7,23 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from src.domain.entities.activity import Activity, EntityType
 from src.domain.value_objects.enums import ActivityType
+
+
+class AddCommentInput(BaseModel):
+    """Входные данные для добавления комментария к лиду или сделке."""
+
+    body: str
+
+    @field_validator("body")
+    @classmethod
+    def body_not_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Комментарий не может быть пустым.")
+        return v.strip()
 
 
 class ActivityOutput(BaseModel):

@@ -4,8 +4,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import EventIcon from '@mui/icons-material/Event';
 import NoteIcon from '@mui/icons-material/Note';
+import SendIcon from '@mui/icons-material/Send';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import { Box, Card, Skeleton, Typography } from '@mui/material';
+import { Box, Card, CircularProgress, IconButton, InputBase, Skeleton, Typography } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Activity, type ActivityType } from '../../types/activity';
 
@@ -143,14 +145,70 @@ function TimelineSkeleton() {
   );
 }
 
+/* ── Comment input ── */
+function CommentBox({ onSubmit }: { onSubmit: (body: string) => Promise<void> }) {
+  const { t } = useTranslation();
+  const [value, setValue] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    const trimmed = value.trim();
+    if (!trimmed || submitting) return;
+    setSubmitting(true);
+    try {
+      await onSubmit(trimmed);
+      setValue('');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        mt: 2,
+        display: 'flex',
+        alignItems: 'flex-end',
+        gap: 1,
+        border: '1px solid #E2EAF4',
+        borderRadius: '10px',
+        px: 1.5,
+        py: 1,
+        bgcolor: '#F7F9FC',
+      }}
+    >
+      <InputBase
+        multiline
+        maxRows={4}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={t('leadDetail.timeline.commentPlaceholder')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit();
+        }}
+        sx={{ flex: 1, fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#0D2144' }}
+      />
+      <IconButton
+        size="small"
+        onClick={handleSubmit}
+        disabled={!value.trim() || submitting}
+        sx={{ color: '#00A8E8', '&:disabled': { color: '#CBD5E1' } }}
+      >
+        {submitting ? <CircularProgress size={16} /> : <SendIcon fontSize="small" />}
+      </IconButton>
+    </Box>
+  );
+}
+
 /* ── Main component ── */
 interface ActivityTimelineProps {
   activities: Activity[];
   loading: boolean;
   error: string | null;
+  onAddComment?: (body: string) => Promise<void>;
 }
 
-export default function ActivityTimeline({ activities, loading, error }: ActivityTimelineProps) {
+export default function ActivityTimeline({ activities, loading, error, onAddComment }: ActivityTimelineProps) {
   const { t } = useTranslation();
 
   return (
@@ -205,6 +263,8 @@ export default function ActivityTimeline({ activities, loading, error }: Activit
             ))}
           </Box>
         )}
+
+        {onAddComment && <CommentBox onSubmit={onAddComment} />}
       </Box>
     </Card>
   );

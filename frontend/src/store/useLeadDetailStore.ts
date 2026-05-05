@@ -28,6 +28,7 @@ interface LeadDetailState {
   fetchNextAction: (leadId: string) => Promise<void>;
   generateEmail: (leadId: string, tone: AiTone, extraContext?: string) => Promise<void>;
   updateLead: (leadId: string, payload: UpdateLeadPayload) => Promise<void>;
+  addComment: (leadId: string, body: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -95,6 +96,16 @@ export const useLeadDetailStore = create<LeadDetailState>((set) => ({
   updateLead: async (leadId, payload) => {
     const updated = await leadsApi.update(leadId, payload);
     set({ lead: { data: updated, loading: false, error: null } });
+  },
+
+  addComment: async (leadId, body) => {
+    const newActivity = await leadsApi.addComment(leadId, body);
+    set((s) => ({
+      activities: {
+        ...s.activities,
+        data: [newActivity, ...(s.activities.data ?? [])],
+      },
+    }));
   },
 
   reset: () => set(initialState),

@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
@@ -9,6 +10,7 @@ import { dealsApi } from '../api/deals';
 import { pipelinesApi } from '../api/pipelines';
 import EmptyState from '../components/common/EmptyState';
 import AddDealDialog from '../components/deals/AddDealDialog';
+import DealActivitiesDialog from '../components/deals/DealActivitiesDialog';
 import DealAttachmentsDialog from '../components/deals/DealAttachmentsDialog';
 import { type Deal, type DealStatus } from '../types/deal';
 import { type Pipeline } from '../types/pipeline';
@@ -50,6 +52,7 @@ export default function DealsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [closingId, setClosingId] = useState<string | null>(null);
   const [attachmentsDeal, setAttachmentsDeal] = useState<Deal | null>(null);
+  const [activitiesDeal, setActivitiesDeal] = useState<Deal | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -242,6 +245,21 @@ export default function DealsPage() {
                     {/* Actions — attachments + Won / Lost buttons */}
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                        <Tooltip title={t('deals.comments.title')}>
+                          <Box
+                            component="button"
+                            onClick={() => setActivitiesDeal(deal)}
+                            sx={{
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              width: 28, height: 28, borderRadius: '6px',
+                              border: '1px solid #E8EFF7', bgcolor: '#FAFBFD',
+                              color: '#8FA3B8', cursor: 'pointer',
+                              '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8', borderColor: '#C8D9EC' },
+                            }}
+                          >
+                            <ChatBubbleOutlineIcon sx={{ fontSize: 15 }} />
+                          </Box>
+                        </Tooltip>
                         <Tooltip title={t('attachments.title')}>
                           <Box
                             component="button"
@@ -324,6 +342,13 @@ export default function DealsPage() {
           dealTitle={attachmentsDeal.title}
         />
       )}
+
+      {/* Comments / Activities Dialog */}
+      <DealActivitiesDialog
+        deal={activitiesDeal}
+        open={Boolean(activitiesDeal)}
+        onClose={() => setActivitiesDeal(null)}
+      />
     </Box>
   );
 }

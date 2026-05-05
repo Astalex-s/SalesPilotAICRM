@@ -1,3 +1,4 @@
+import { type Activity } from '../types/activity';
 import { type ConvertLeadPayload, type Deal, type MoveDealStagePayload } from '../types/deal';
 type CloseOutcome = 'won' | 'lost';
 import axiosInstance from './axiosInstance';
@@ -29,6 +30,16 @@ export const dealsApi = {
 
   close: async (dealId: string, outcome: CloseOutcome): Promise<Deal> => {
     const { data } = await axiosInstance.patch<Deal>(`/deals/${dealId}/close`, { outcome });
+    return data;
+  },
+
+  getActivities: async (dealId: string): Promise<Activity[]> => {
+    const { data } = await axiosInstance.get<Activity[]>(`/deals/${dealId}/activities`);
+    return data;
+  },
+
+  addComment: async (dealId: string, body: string): Promise<Activity> => {
+    const { data } = await axiosInstance.post<Activity>(`/deals/${dealId}/comments`, { body });
     return data;
   },
 };
