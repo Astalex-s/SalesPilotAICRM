@@ -27,6 +27,16 @@ class LeadNotFoundError(EntityNotFoundError):
         super().__init__("Lead", lead_id)
 
 
+class TaskNotFoundError(EntityNotFoundError):
+    def __init__(self, task_id: UUID) -> None:
+        super().__init__("Task", task_id)
+
+
+class MeetingNotFoundError(EntityNotFoundError):
+    def __init__(self, meeting_id: UUID) -> None:
+        super().__init__("Meeting", meeting_id)
+
+
 class DealNotFoundError(EntityNotFoundError):
     def __init__(self, deal_id: UUID) -> None:
         super().__init__("Deal", deal_id)

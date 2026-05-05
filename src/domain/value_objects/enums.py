@@ -55,6 +55,21 @@ class EmailDirection(str, Enum):
     OUTBOUND = "outbound"  # исходящее (от менеджера к контакту)
 
 
+class TaskStatus(str, Enum):
+    """Статус CRM-задачи."""
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+    CANCELLED = "cancelled"
+
+
+class MeetingStatus(str, Enum):
+    """Статус встречи в CRM."""
+    SCHEDULED = "scheduled"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+
 class GdprEventType(str, Enum):
     """Тип события в журнале аудита GDPR."""
     USER_DATA_DELETED = "user_data_deleted"          # полное удаление данных пользователя

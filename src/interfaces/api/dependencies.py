@@ -41,6 +41,14 @@ from src.application.use_cases.add_stage import AddStageUseCase
 from src.application.use_cases.update_stage import UpdateStageUseCase
 from src.application.use_cases.delete_stage import DeleteStageUseCase
 from src.application.use_cases.link_email_to_lead import LinkEmailToLeadUseCase
+from src.application.use_cases.create_crm_task import CreateCrmTaskUseCase
+from src.application.use_cases.delete_crm_task import DeleteCrmTaskUseCase
+from src.application.use_cases.list_crm_tasks import ListCrmTasksUseCase
+from src.application.use_cases.update_crm_task import UpdateCrmTaskUseCase
+from src.application.use_cases.create_meeting import CreateMeetingUseCase
+from src.application.use_cases.delete_meeting import DeleteMeetingUseCase
+from src.application.use_cases.list_meetings import ListMeetingsUseCase
+from src.application.use_cases.update_meeting import UpdateMeetingUseCase
 from src.application.use_cases.list_leads import ListLeadsUseCase
 from src.application.use_cases.list_lead_tags import ListLeadTagsUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
@@ -65,6 +73,8 @@ from src.infrastructure.database.repositories.email_message_repository import Sq
 from src.infrastructure.database.repositories.gdpr_audit_repository import SqlGdprAuditRepository
 from src.infrastructure.database.repositories.lead_repository import SqlLeadRepository
 from src.infrastructure.database.repositories.pipeline_repository import SqlPipelineRepository
+from src.infrastructure.database.repositories.meeting_repository import SqlMeetingRepository
+from src.infrastructure.database.repositories.task_repository import SqlTaskRepository
 from src.infrastructure.database.repositories.user_repository import SqlUserRepository
 from src.infrastructure.database.session import get_db
 from src.infrastructure.gmail.gmail_service import GmailService
@@ -138,6 +148,32 @@ def get_update_lead_use_case(
 ) -> UpdateLeadUseCase:
     """Фабрика UpdateLeadUseCase."""
     return UpdateLeadUseCase(lead_repo=SqlLeadRepository(session))
+
+
+# ── CRM Tasks ──────────────────────────────────────────────────────────────────
+
+def get_create_crm_task_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> CreateCrmTaskUseCase:
+    return CreateCrmTaskUseCase(task_repo=SqlTaskRepository(session))
+
+
+def get_list_crm_tasks_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListCrmTasksUseCase:
+    return ListCrmTasksUseCase(task_repo=SqlTaskRepository(session))
+
+
+def get_update_crm_task_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> UpdateCrmTaskUseCase:
+    return UpdateCrmTaskUseCase(task_repo=SqlTaskRepository(session))
+
+
+def get_delete_crm_task_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeleteCrmTaskUseCase:
+    return DeleteCrmTaskUseCase(task_repo=SqlTaskRepository(session))
 
 
 def get_analytics_overview_use_case(
@@ -605,3 +641,33 @@ def get_delete_attachment_use_case(
     return DeleteDealAttachmentUseCase(
         attachment_repo=SqlDealAttachmentRepository(session),
     )
+
+
+# ── Meeting Use Case провайдеры ───────────────────────────────────────────────
+
+def get_create_meeting_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> CreateMeetingUseCase:
+    """Фабрика CreateMeetingUseCase."""
+    return CreateMeetingUseCase(meeting_repo=SqlMeetingRepository(session))
+
+
+def get_list_meetings_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> ListMeetingsUseCase:
+    """Фабрика ListMeetingsUseCase."""
+    return ListMeetingsUseCase(meeting_repo=SqlMeetingRepository(session))
+
+
+def get_update_meeting_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> UpdateMeetingUseCase:
+    """Фабрика UpdateMeetingUseCase."""
+    return UpdateMeetingUseCase(meeting_repo=SqlMeetingRepository(session))
+
+
+def get_delete_meeting_use_case(
+    session: AsyncSession = Depends(get_session),
+) -> DeleteMeetingUseCase:
+    """Фабрика DeleteMeetingUseCase."""
+    return DeleteMeetingUseCase(meeting_repo=SqlMeetingRepository(session))

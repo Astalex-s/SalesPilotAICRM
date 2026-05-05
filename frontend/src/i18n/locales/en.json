@@ -9,6 +9,8 @@
     "dashboard": "Dashboard",
     "leads": "Leads",
     "deals": "Deals",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
     "pipeline": "Pipeline",
     "gmail": "Gmail",
     "telegram": "Telegram",
@@ -65,6 +67,42 @@
       "openDealsDesc": "Keep engaging to move deals through the pipeline.",
       "healthyTitle": "Pipeline looks healthy",
       "healthyDesc": "Keep engaging with your leads to maintain momentum."
+    }
+  },
+  "tasks": {
+    "title": "Tasks",
+    "addTask": "Add Task",
+    "noTasks": "No tasks yet",
+    "noTasksSubtitle": "Create your first task to track follow-ups and deadlines",
+    "filterAll": "All",
+    "filterOverdue": "Overdue",
+    "overdue": "Overdue",
+    "markDone": "Mark as done",
+    "delete": "Delete",
+    "linkedLead": "Lead",
+    "linkedDeal": "Deal",
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In progress",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "table": {
+      "title": "Task",
+      "status": "Status",
+      "dueDate": "Due date",
+      "created": "Created",
+      "context": "Linked to"
+    },
+    "dialog": {
+      "title": "New Task",
+      "titleField": "Title",
+      "description": "Description",
+      "dueDate": "Due date",
+      "cancel": "Cancel",
+      "submit": "Create",
+      "validationRequired": "Title is required",
+      "submitError": "Failed to create task"
     }
   },
   "deals": {
@@ -823,5 +861,42 @@
     "loadError": "Failed to load attachments",
     "uploadError": "Failed to upload file",
     "deleteError": "Failed to delete file"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "addMeeting": "Add Meeting",
+    "noMeetings": "No meetings scheduled",
+    "noMeetingsSubtitle": "Click \"Add Meeting\" to schedule your first event",
+    "showAll": "Show all",
+    "complete": "Mark as completed",
+    "delete": "Delete",
+    "status": {
+      "scheduled": "Scheduled",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "weekdays": {
+      "mon": "Mo", "tue": "Tu", "wed": "We", "thu": "Th",
+      "fri": "Fr", "sat": "Sa", "sun": "Su"
+    },
+    "months": {
+      "jan": "January", "feb": "February", "mar": "March",
+      "apr": "April", "may": "May", "jun": "June",
+      "jul": "July", "aug": "August", "sep": "September",
+      "oct": "October", "nov": "November", "dec": "December"
+    },
+    "dialog": {
+      "title": "New Meeting",
+      "titleLabel": "Title",
+      "description": "Description",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "location": "Location",
+      "cancel": "Cancel",
+      "save": "Save",
+      "titleRequired": "Title is required",
+      "startRequired": "Start time is required",
+      "saveFailed": "Failed to save meeting"
+    }
   }
 }

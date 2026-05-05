@@ -26,12 +26,14 @@ from src.interfaces.api.v1.routers import (
     ai_router,
     analytics_router,
     auth_router,
+    crm_tasks_router,
     deal_attachments_router,
     deals_router,
     emails_router,
     gdpr_router,
     gmail_auth_router,
     leads_router,
+    meetings_router,
     notifications_router,
     pipelines_router,
     tasks_router,
@@ -124,6 +126,8 @@ def create_app() -> FastAPI:
     application.include_router(emails_router, prefix=_api_prefix)
     application.include_router(telegram_router, prefix=_api_prefix)
     application.include_router(notifications_router, prefix=_api_prefix)
+    application.include_router(crm_tasks_router, prefix=_api_prefix)
+    application.include_router(meetings_router, prefix=_api_prefix)
     application.include_router(tasks_router, prefix=_api_prefix)
     application.include_router(gdpr_router, prefix=_api_prefix)
 

@@ -21,7 +21,7 @@ from src.application.dtos.task_dtos import (
 from src.application.ports.task_service import ITaskService
 from src.interfaces.api.dependencies import get_task_service
 
-router = APIRouter(prefix="/tasks", tags=["Фоновые задачи"])
+router = APIRouter(prefix="/jobs", tags=["Фоновые задачи"])
 
 
 # ── AI задачи ──────────────────────────────────────────────────────────────────

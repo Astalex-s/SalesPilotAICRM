@@ -18,6 +18,8 @@ const ICONS = {
   dashboard:   'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10',
   leads:       'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M9 11a4 4 0 100-8 4 4 0 000 8z M23 21v-2a4 4 0 00-3-3.87 M16 3.13a4 4 0 010 7.75',
   deals:       'M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z M7 7h.01',
+  tasks:       'M9 11l3 3L22 4 M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11',
+  calendar:    'M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z',
   pipeline:    'M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z',
   gmail:       'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
   telegram:    'M22 2L11 13 M22 2L15 22l-4-9-9-4 22-9z',
@@ -350,6 +352,8 @@ export default function Sidebar({
         { iconKey: 'dashboard', labelKey: 'nav.dashboard', path: '/' },
         { iconKey: 'leads',     labelKey: 'nav.leads',     path: '/leads' },
         { iconKey: 'deals',     labelKey: 'nav.deals',     path: '/deals' },
+        { iconKey: 'tasks',     labelKey: 'nav.tasks',     path: '/tasks' },
+        { iconKey: 'calendar',  labelKey: 'nav.calendar',  path: '/calendar' },
       ],
     },
     {

@@ -11,6 +11,8 @@ from src.infrastructure.database.models.gdpr_audit_model import GdprAuditModel
 from src.infrastructure.database.models.lead_model import LeadModel
 from src.infrastructure.database.models.pipeline_model import PipelineModel
 from src.infrastructure.database.models.stage_model import StageModel
+from src.infrastructure.database.models.meeting_model import MeetingModel
+from src.infrastructure.database.models.task_model import TaskModel
 from src.infrastructure.database.models.user_model import UserModel
 
 __all__ = [
@@ -20,7 +22,9 @@ __all__ = [
     "EmailMessageModel",
     "GdprAuditModel",
     "LeadModel",
+    "MeetingModel",
     "PipelineModel",
     "StageModel",
+    "TaskModel",
     "UserModel",
 ]

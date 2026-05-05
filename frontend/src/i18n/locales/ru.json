@@ -9,6 +9,8 @@
     "dashboard": "Дашборд",
     "leads": "Лиды",
     "deals": "Сделки",
+    "tasks": "Задачи",
+    "calendar": "Календарь",
     "pipeline": "Воронка",
     "gmail": "Gmail",
     "telegram": "Telegram",
@@ -65,6 +67,42 @@
       "openDealsDesc": "Продолжайте работу для продвижения сделок по воронке.",
       "healthyTitle": "Воронка в порядке",
       "healthyDesc": "Поддерживайте вовлечённость лидов для сохранения темпа."
+    }
+  },
+  "tasks": {
+    "title": "Задачи",
+    "addTask": "Добавить задачу",
+    "noTasks": "Задач пока нет",
+    "noTasksSubtitle": "Создайте первую задачу для отслеживания follow-up и дедлайнов",
+    "filterAll": "Все",
+    "filterOverdue": "Просроченные",
+    "overdue": "Просрочено",
+    "markDone": "Отметить выполненной",
+    "delete": "Удалить",
+    "linkedLead": "Лид",
+    "linkedDeal": "Сделка",
+    "status": {
+      "pending": "Ожидает",
+      "in_progress": "В работе",
+      "done": "Выполнено",
+      "cancelled": "Отменено"
+    },
+    "table": {
+      "title": "Задача",
+      "status": "Статус",
+      "dueDate": "Дедлайн",
+      "created": "Создана",
+      "context": "Привязка"
+    },
+    "dialog": {
+      "title": "Новая задача",
+      "titleField": "Название",
+      "description": "Описание",
+      "dueDate": "Срок выполнения",
+      "cancel": "Отмена",
+      "submit": "Создать",
+      "validationRequired": "Название обязательно",
+      "submitError": "Не удалось создать задачу"
     }
   },
   "deals": {
@@ -823,5 +861,42 @@
     "loadError": "Не удалось загрузить вложения",
     "uploadError": "Не удалось загрузить файл",
     "deleteError": "Не удалось удалить файл"
+  },
+  "calendar": {
+    "title": "Календарь",
+    "addMeeting": "Новая встреча",
+    "noMeetings": "Встреч нет",
+    "noMeetingsSubtitle": "Нажмите «Новая встреча», чтобы запланировать событие",
+    "showAll": "Показать все",
+    "complete": "Отметить как выполненную",
+    "delete": "Удалить",
+    "status": {
+      "scheduled": "Запланировано",
+      "completed": "Выполнено",
+      "cancelled": "Отменено"
+    },
+    "weekdays": {
+      "mon": "Пн", "tue": "Вт", "wed": "Ср", "thu": "Чт",
+      "fri": "Пт", "sat": "Сб", "sun": "Вс"
+    },
+    "months": {
+      "jan": "Январь", "feb": "Февраль", "mar": "Март",
+      "apr": "Апрель", "may": "Май", "jun": "Июнь",
+      "jul": "Июль", "aug": "Август", "sep": "Сентябрь",
+      "oct": "Октябрь", "nov": "Ноябрь", "dec": "Декабрь"
+    },
+    "dialog": {
+      "title": "Новая встреча",
+      "titleLabel": "Название",
+      "description": "Описание",
+      "startTime": "Начало",
+      "endTime": "Конец",
+      "location": "Место",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "titleRequired": "Введите название встречи",
+      "startRequired": "Укажите время начала",
+      "saveFailed": "Не удалось сохранить встречу"
+    }
   }
 }

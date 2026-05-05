@@ -18,6 +18,8 @@ import LoginPage from './pages/LoginPage';
 import PipelinePage from './pages/PipelinePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import CalendarPage from './pages/CalendarPage';
+import TasksPage from './pages/TasksPage';
 import UsersPage from './pages/UsersPage';
 import { useSettingsStore } from './store/useSettingsStore';
 
@@ -74,6 +76,8 @@ export default function App() {
               <Route path="leads" element={<LeadsPage />} />
               <Route path="leads/:leadId" element={<LeadDetailPage />} />
               <Route path="deals" element={<DealsPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
               <Route path="pipeline/:pipelineId" element={<PipelinePage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="gmail" element={<GmailPage />} />
