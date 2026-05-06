@@ -10,7 +10,7 @@ function DropPlaceholder({ isDraggingOver }: { isDraggingOver: boolean }) {
   return (
     <Box
       sx={{
-        height: 88,
+        height: 130,
         borderRadius: '12px',
         border: `2px dashed ${isDraggingOver ? 'rgba(0,168,232,0.5)' : '#D8E5F4'}`,
         bgcolor: isDraggingOver ? 'rgba(0,168,232,0.04)' : 'transparent',

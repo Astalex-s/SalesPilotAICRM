@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { type Lead, type LeadStatus } from '../../types/lead';
 
+const CARD_HEIGHT = 130;
+
 const STATUS_COLORS: Record<LeadStatus, { bg: string; text: string }> = {
   new:         { bg: 'rgba(0,168,232,0.1)',    text: '#00A8E8' },
   contacted:   { bg: 'rgba(245,158,11,0.1)',   text: '#D97706' },
@@ -24,6 +26,12 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
   const displayName = `${lead.first_name} ${lead.last_name}`;
   const initials = `${lead.first_name[0] ?? ''}${lead.last_name[0] ?? ''}`.toUpperCase();
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.detail === 2) {
+      navigate(`/leads/${lead.id}`);
+    }
+  };
+
   return (
     <Draggable draggableId={`lead-${lead.id}`} index={index}>
       {(provided, snapshot) => (
@@ -31,8 +39,10 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onClick={handleClick}
           sx={{
             mb: 1.5,
+            height: CARD_HEIGHT,
             background: '#FFFFFF',
             border: '1px solid #E2EAF4',
             borderLeft: '3px solid #00A8E8',
@@ -43,10 +53,13 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
             transition: 'box-shadow 0.15s ease',
             cursor: snapshot.isDragging ? 'grabbing' : 'grab',
             position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
             '&:hover .lead-nav-btn': { opacity: 1 },
           }}
         >
-          <Box sx={{ p: '10px 12px' }}>
+          <Box sx={{ p: '10px 12px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Top row: avatar + name + navigate */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
               <Box sx={{
@@ -89,12 +102,14 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
               {lead.company ?? lead.email}
             </Typography>
 
-            {/* Status badge */}
+            {/* Status badge — pushed to bottom */}
             <Box sx={{
               display: 'inline-flex', alignItems: 'center',
+              mt: 'auto',
               px: 0.75, py: 0.15, borderRadius: '6px',
               bgcolor: statusStyle.bg, color: statusStyle.text,
               fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 700,
+              alignSelf: 'flex-start',
             }}>
               {t(`leads.status.${lead.status}`)}
             </Box>

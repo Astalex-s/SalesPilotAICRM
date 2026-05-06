@@ -3,6 +3,7 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Box, Typography } from '@mui/material';
 import { Draggable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { type Deal } from '../../types/deal';
 
 interface DealCardProps {
@@ -11,9 +12,18 @@ interface DealCardProps {
   stageProbability: number;
 }
 
-/* ── Helpers ── */
+/* ── Constants ── */
+const CARD_HEIGHT = 130;
+
 const COMPANY_COLORS = ['#00A8E8', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#0D2144'];
 
+const STATUS_LEFT_BORDER: Record<Deal['status'], string> = {
+  open: 'transparent',
+  won: '#10B981',
+  lost: '#EF4444',
+};
+
+/* ── Helpers ── */
 function companyColor(name: string) {
   return COMPANY_COLORS[name.charCodeAt(0) % COMPANY_COLORS.length];
 }
@@ -45,14 +55,9 @@ function formatDate(dateStr: string): string {
   });
 }
 
-const STATUS_LEFT_BORDER: Record<Deal['status'], string> = {
-  open: 'transparent',
-  won: '#10B981',
-  lost: '#EF4444',
-};
-
 export default function DealCard({ deal, index, stageProbability }: DealCardProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isDraggable = deal.status === 'open';
   const overdue = isOverdue(deal.expected_close_date);
   const probPct = stageProbability <= 1
@@ -61,14 +66,22 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
 
   const companyName = deal.company ?? deal.contact_name ?? '—';
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.detail === 2 && deal.source_lead_id) {
+      navigate(`/leads/${deal.source_lead_id}`);
+    }
+  };
+
   return (
     <Draggable draggableId={deal.id} index={index} isDragDisabled={!isDraggable}>
       {(provided, snapshot) => (
         <Box
           ref={provided.innerRef}
           {...provided.draggableProps}
+          onClick={handleClick}
           sx={{
             mb: 1.5,
+            height: CARD_HEIGHT,
             background: '#FFFFFF',
             border: '1px solid #E2EAF4',
             borderRadius: '12px',
@@ -81,6 +94,8 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
             cursor: isDraggable ? (snapshot.isDragging ? 'grabbing' : 'grab') : 'not-allowed',
             position: 'relative',
             overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
             '&:hover .drag-handle': { opacity: 1 },
           }}
         >
@@ -106,9 +121,9 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
             <DragIndicatorIcon sx={{ fontSize: 14 }} />
           </Box>
 
-          <Box sx={{ p: '12px 12px 12px 20px' }}>
+          <Box sx={{ p: '12px 12px 12px 20px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Top row: company avatar + name */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
               {deal.company ? (
                 <Box
                   sx={{
@@ -151,14 +166,14 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
                 fontSize: 13,
                 fontWeight: 600,
                 color: '#0D2144',
-                mb: 1,
+                mb: 0.75,
               }}
             >
               {deal.title}
             </Typography>
 
-            {/* Value + probability */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+            {/* Value + probability — pushed to bottom */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 'auto' }}>
               <Typography
                 sx={{
                   fontFamily: 'Inter, sans-serif',
@@ -190,7 +205,7 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
 
             {/* Footer: date */}
             {deal.expected_close_date && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
                 <CalendarTodayIcon sx={{ fontSize: 11, color: overdue ? '#EF4444' : '#94A3B8' }} />
                 <Typography
                   sx={{

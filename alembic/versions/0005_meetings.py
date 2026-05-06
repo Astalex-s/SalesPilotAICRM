@@ -19,7 +19,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute("CREATE TYPE meetingstatus AS ENUM ('scheduled', 'completed', 'cancelled')")
     op.create_table(
         "meetings",
         sa.Column("id", sa.UUID(), nullable=False),
@@ -33,7 +32,7 @@ def upgrade() -> None:
         sa.Column("created_by_id", sa.UUID(), nullable=False),
         sa.Column(
             "status",
-            sa.Enum("scheduled", "completed", "cancelled", name="meetingstatus", create_type=False),
+            sa.Enum("scheduled", "completed", "cancelled", name="meetingstatus"),
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),

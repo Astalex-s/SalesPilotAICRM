@@ -19,7 +19,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute("CREATE TYPE taskstatus AS ENUM ('pending', 'in_progress', 'done', 'cancelled')")
     op.create_table(
         "tasks",
         sa.Column("id", sa.UUID(), nullable=False),
@@ -32,7 +31,7 @@ def upgrade() -> None:
         sa.Column("deal_id", sa.UUID(), nullable=True),
         sa.Column(
             "status",
-            sa.Enum("pending", "in_progress", "done", "cancelled", name="taskstatus", create_type=False),
+            sa.Enum("pending", "in_progress", "done", "cancelled", name="taskstatus"),
             nullable=False,
         ),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),

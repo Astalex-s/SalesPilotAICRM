@@ -3,12 +3,12 @@
 Бизнес-логики нет. Роутеры и обработчики регистрируются в фабрике.
 """
 import asyncio
+import logging
+import subprocess
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 
 import sentry_sdk
-from alembic import command as alembic_command
-from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 from sentry_sdk.integrations.celery import CeleryIntegration
@@ -60,15 +60,26 @@ if settings.SENTRY_DSN:
     )
 
 
-def _run_migrations() -> None:
-    """Apply pending Alembic migrations synchronously.
+logger = logging.getLogger(__name__)
 
-    Called from a thread-pool executor inside lifespan so it doesn't
-    block the event loop.  env.py uses asyncio.run() internally, which
-    requires a thread without a running event loop — the executor provides that.
+
+def _run_migrations() -> None:
+    """Apply pending Alembic migrations via subprocess.
+
+    Alembic env.py calls asyncio.run() which conflicts with uvloop
+    managed by uvicorn. Running as a subprocess avoids event-loop clashes.
     """
-    cfg = AlembicConfig("alembic.ini")
-    alembic_command.upgrade(cfg, "head")
+    result = subprocess.run(
+        ["alembic", "upgrade", "head"],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if result.stdout:
+        logger.info(result.stdout.strip())
+    if result.returncode != 0:
+        logger.error("Alembic migration failed: %s", result.stderr.strip())
+        raise RuntimeError(f"Alembic migration failed (exit {result.returncode}): {result.stderr.strip()}")
 
 
 @asynccontextmanager
