@@ -1,5 +1,7 @@
 # ── Внутренние инструкции Claude (не для репозитория) ─────────────────────────
-docs/
+docs/CLAUDE_*.md
+docs/ANTI_PATTERN.md
+docs/CLAUDE_EXECUTION_PROTOCOL.md
 
 # ── Python ─────────────────────────────────────────────────────────────────────
 __pycache__/
@@ -32,8 +34,13 @@ MANIFEST
 .pytest_cache/
 .coverage
 coverage.xml
+coverage.json
 htmlcov/
 .tox/
+
+# ── Внутренние рабочие файлы проекта ─────────────────────────────────────────
+CHECKLIST.md
+TESTING_GUIDE.md
 
 # ── Mypy / Pyright ────────────────────────────────────────────────────────────
 .mypy_cache/
