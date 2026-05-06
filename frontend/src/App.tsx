@@ -19,6 +19,7 @@ import PipelinePage from './pages/PipelinePage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import CalendarPage from './pages/CalendarPage';
+import ManagerDashboardPage from './pages/ManagerDashboardPage';
 import TasksPage from './pages/TasksPage';
 import UsersPage from './pages/UsersPage';
 import { useSettingsStore } from './store/useSettingsStore';
@@ -78,6 +79,7 @@ export default function App() {
               <Route path="deals" element={<DealsPage />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="calendar" element={<CalendarPage />} />
+              <Route path="manager-dashboard" element={<ManagerDashboardPage />} />
               <Route path="pipeline/:pipelineId" element={<PipelinePage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="gmail" element={<GmailPage />} />

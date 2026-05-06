@@ -24,6 +24,7 @@
     "search": "Search or type a command... ⌘K",
     "aiActive": "AI Active",
     "notifications": "Notifications",
+    "managerDashboard": "Team Dashboard",
     "gdpr": "GDPR"
   },
   "dashboard": {
@@ -861,6 +862,49 @@
     "loadError": "Failed to load attachments",
     "uploadError": "Failed to upload file",
     "deleteError": "Failed to delete file"
+  },
+  "managerDashboard": {
+    "title": "Team Dashboard",
+    "managers": "managers",
+    "refresh": "Refresh",
+    "loadError": "Failed to load manager report",
+    "noData": "No team data yet",
+    "noDataSubtitle": "Create users and assign leads and deals to see team performance",
+    "kpi": {
+      "totalManagers": "Team Members",
+      "activeReps": "active sales reps",
+      "wonRevenue": "Total Won Revenue",
+      "closedDeals": "from closed-won deals",
+      "avgWinRate": "Avg Win Rate",
+      "acrossTeam": "across all reps",
+      "pipeline": "Pipeline Value",
+      "overdueDeals": "overdue deals",
+      "noOverdue": "no overdue deals"
+    },
+    "chart": {
+      "title": "Revenue by Manager",
+      "subtitle": "Won revenue per sales representative",
+      "won": "Won Revenue",
+      "pipeline": "Pipeline Value"
+    },
+    "table": {
+      "title": "Individual Performance",
+      "subtitle": "Sorted by won revenue, highest first",
+      "manager": "Manager",
+      "leads": "Leads",
+      "converted": "converted",
+      "convRate": "Conv. Rate",
+      "deals": "Deals",
+      "open": "open",
+      "won": "won",
+      "lost": "lost",
+      "winRate": "Win Rate",
+      "wonRevenue": "Won Revenue",
+      "pipeline": "Pipeline",
+      "avgDeal": "Avg Deal",
+      "overdue": "Overdue",
+      "overdueDeals": "overdue deals"
+    }
   },
   "calendar": {
     "title": "Calendar",
