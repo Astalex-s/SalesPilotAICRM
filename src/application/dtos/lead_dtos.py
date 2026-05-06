@@ -42,6 +42,7 @@ class CreateLeadInput(BaseModel):
     company: str | None = None
     tags: list[str] = []
     category: str | None = None
+    target_pipeline_id: UUID | None = None
 
     @field_validator("first_name", "last_name")
     @classmethod
@@ -117,6 +118,7 @@ class LeadOutput(BaseModel):
     converted_deal_id: UUID | None
     tags: list[str]
     category: str | None
+    target_pipeline_id: UUID | None
     created_at: datetime
     updated_at: datetime
 
@@ -138,6 +140,7 @@ class LeadOutput(BaseModel):
             converted_deal_id=lead.converted_deal_id,
             tags=lead.tags,
             category=lead.category,
+            target_pipeline_id=lead.target_pipeline_id,
             created_at=lead.created_at,
             updated_at=lead.updated_at,
         )

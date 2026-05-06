@@ -44,6 +44,7 @@ class LeadModel(Base):
         ARRAY(String(100)), nullable=False, server_default="{}"
     )
     category: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    target_pipeline_id: Mapped[UUID | None] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
     )
@@ -69,6 +70,7 @@ class LeadModel(Base):
             converted_deal_id=self.converted_deal_id,
             tags=list(self.tags) if self.tags else [],
             category=self.category,
+            target_pipeline_id=self.target_pipeline_id,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -90,6 +92,7 @@ class LeadModel(Base):
             converted_deal_id=lead.converted_deal_id,
             tags=lead.tags,
             category=lead.category,
+            target_pipeline_id=lead.target_pipeline_id,
             created_at=lead.created_at,
             updated_at=lead.updated_at,
         )

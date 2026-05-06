@@ -206,7 +206,8 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
     "source": "website",
     "owner_id": "u0000000-0000-0000-0000-000000000042",
     "tags": ["горячий", "enterprise"],
-    "category": "b2b"
+    "category": "b2b",
+    "target_pipeline_id": "a1b2c3d4-0000-0000-0000-000000000001"
   }'
 ```
 
@@ -226,6 +227,7 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
   "converted_deal_id": null,
   "tags": ["горячий", "enterprise"],
   "category": "b2b",
+  "target_pipeline_id": "a1b2c3d4-0000-0000-0000-000000000001",
   "created_at": "2025-06-15T10:00:00Z",
   "updated_at": "2025-06-15T10:00:00Z"
 }
@@ -638,6 +640,9 @@ Content-Type: application/json
 | `source` | string | Нет | Источник (по умолчанию `other`) |
 | `tags` | string[] | Нет | Список тегов |
 | `category` | string | Нет | Категория лида |
+| `target_pipeline_id` | UUID | Нет | ID воронки, в которую лид будет направлен при конвертации |
+
+> **Воронка при создании лида:** если у вас несколько воронок продаж, передайте `target_pipeline_id` — это маршрутизирует лида в нужную воронку заранее. При конвертации лида в сделку (`POST /deals`) значение `target_pipeline_id` будет отображено в ответе, что удобно для автоматизации: не нужно хранить соответствие лид→воронка отдельно.
 
 ```bash
 curl -s -X POST http://localhost:8000/api/v1/leads \
@@ -650,7 +655,8 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
     "phone": "+79001234567",
     "company": "Acme Corp",
     "source": "website",
-    "owner_id": "u0000000-0000-0000-0000-000000000042"
+    "owner_id": "u0000000-0000-0000-0000-000000000042",
+    "target_pipeline_id": "a1b2c3d4-0000-0000-0000-000000000001"
   }'
 ```
 
@@ -1699,7 +1705,7 @@ res = httpx.post(f"{BASE_URL}/auth/login", json={
 token = res.json()["access_token"]
 headers = {"Authorization": f"Bearer {token}"}
 
-# 2. Создать лида
+# 2. Создать лида (сразу указываем целевую воронку)
 res = httpx.post(f"{BASE_URL}/leads", headers=headers, json={
     "first_name": "Анна",
     "last_name": "Иванова",
@@ -1707,7 +1713,8 @@ res = httpx.post(f"{BASE_URL}/leads", headers=headers, json={
     "phone": "+79001234567",
     "company": "Acme Corp",
     "source": "website",
-    "owner_id": OWNER_ID
+    "owner_id": OWNER_ID,
+    "target_pipeline_id": PIPELINE_ID  # опционально — маршрутизация в воронку
 })
 lead_id = res.json()["id"]
 

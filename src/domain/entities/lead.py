@@ -66,6 +66,7 @@ class Lead:
     converted_deal_id: UUID | None = None
     tags: list[str] = field(default_factory=list)
     category: str | None = None
+    target_pipeline_id: UUID | None = None
     created_at: datetime = field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
@@ -91,6 +92,7 @@ class Lead:
         source: LeadSource = LeadSource.OTHER,
         phone: Phone | None = None,
         company: str | None = None,
+        target_pipeline_id: UUID | None = None,
     ) -> Lead:
         """Создаёт нового лида с генерируемым ID и статусом NEW."""
         return cls(
@@ -104,6 +106,7 @@ class Lead:
             company=company,
             tags=[],
             category=None,
+            target_pipeline_id=target_pipeline_id,
         )
 
     # ── Свойства ───────────────────────────────────────────────────────────────

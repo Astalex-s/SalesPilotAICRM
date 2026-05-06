@@ -54,6 +54,7 @@ class CreateLeadUseCase:
             source=data.source,
             phone=phone,
             company=data.company,
+            target_pipeline_id=data.target_pipeline_id,
         )
         if data.tags:
             lead.update_tags(data.tags)
