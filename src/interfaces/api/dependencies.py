@@ -119,7 +119,10 @@ def get_create_lead_use_case(
     session: AsyncSession = Depends(get_session),
 ) -> CreateLeadUseCase:
     """Фабрика CreateLeadUseCase с инжектированными репозиториями."""
-    return CreateLeadUseCase(lead_repo=SqlLeadRepository(session))
+    return CreateLeadUseCase(
+        lead_repo=SqlLeadRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
+    )
 
 
 def get_bulk_import_leads_use_case(

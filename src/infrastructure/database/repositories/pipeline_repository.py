@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.entities.pipeline import Pipeline
@@ -72,3 +72,11 @@ class SqlPipelineRepository(IPipelineRepository):
         stmt = select(PipelineModel).where(PipelineModel.owner_id == owner_id)
         rows = await self._session.scalars(stmt)
         return [r.to_entity() for r in rows.all()]
+
+    async def find_by_name(self, name: str) -> Pipeline | None:
+        """Возвращает воронку по точному названию (регистронезависимо) или None."""
+        stmt = select(PipelineModel).where(
+            func.lower(PipelineModel.name) == name.strip().lower()
+        )
+        row = await self._session.scalar(stmt)
+        return row.to_entity() if row is not None else None

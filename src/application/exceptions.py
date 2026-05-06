@@ -47,6 +47,14 @@ class PipelineNotFoundError(EntityNotFoundError):
         super().__init__("Pipeline", pipeline_id)
 
 
+class PipelineNotFoundByNameError(ApplicationError):
+    """Воронка с указанным названием не найдена."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Воронка с названием '{name}' не найдена.")
+        self.name = name
+
+
 # ── Ошибки бизнес-ограничений уровня use case ──────────────────────────────────
 
 class LeadEmailAlreadyExistsError(ApplicationError):

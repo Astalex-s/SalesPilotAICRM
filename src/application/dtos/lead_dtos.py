@@ -42,7 +42,7 @@ class CreateLeadInput(BaseModel):
     company: str | None = None
     tags: list[str] = []
     category: str | None = None
-    target_pipeline_id: UUID | None = None
+    target_pipeline_name: str | None = None
 
     @field_validator("first_name", "last_name")
     @classmethod

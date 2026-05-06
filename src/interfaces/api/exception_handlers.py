@@ -12,6 +12,7 @@ from src.application.exceptions import (
     GmailNotAuthorizedError,
     InvalidCredentialsError,
     LeadEmailAlreadyExistsError,
+    PipelineNotFoundByNameError,
     StageNotInPipelineError,
     UserAlreadyExistsError,
 )
@@ -26,6 +27,11 @@ async def handle_entity_not_found(request: Request, exc: EntityNotFoundError) ->
 async def handle_email_conflict(request: Request, exc: LeadEmailAlreadyExistsError) -> JSONResponse:
     """409 — лид с таким e-mail уже существует."""
     return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+async def handle_pipeline_not_found_by_name(request: Request, exc: PipelineNotFoundByNameError) -> JSONResponse:
+    """422 — воронка с указанным названием не найдена."""
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
 
 
 async def handle_stage_not_in_pipeline(request: Request, exc: StageNotInPipelineError) -> JSONResponse:
@@ -67,6 +73,7 @@ def register_exception_handlers(app: object) -> None:
     app.add_exception_handler(LeadEmailAlreadyExistsError, handle_email_conflict)
     app.add_exception_handler(UserAlreadyExistsError, handle_user_conflict)
     app.add_exception_handler(InvalidCredentialsError, handle_invalid_credentials)
+    app.add_exception_handler(PipelineNotFoundByNameError, handle_pipeline_not_found_by_name)
     app.add_exception_handler(StageNotInPipelineError, handle_stage_not_in_pipeline)
     app.add_exception_handler(GmailNotAuthorizedError, handle_gmail_not_authorized)
     app.add_exception_handler(DomainError, handle_domain_error)

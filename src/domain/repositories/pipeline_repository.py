@@ -22,3 +22,8 @@ class IPipelineRepository(BaseRepository[Pipeline]):
     async def find_by_owner(self, owner_id: UUID) -> list[Pipeline]:
         """Возвращает все воронки, принадлежащие указанному пользователю."""
         ...
+
+    @abstractmethod
+    async def find_by_name(self, name: str) -> Pipeline | None:
+        """Возвращает воронку по точному названию или None."""
+        ...

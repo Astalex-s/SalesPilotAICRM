@@ -207,7 +207,7 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
     "owner_id": "u0000000-0000-0000-0000-000000000042",
     "tags": ["горячий", "enterprise"],
     "category": "b2b",
-    "target_pipeline_id": "a1b2c3d4-0000-0000-0000-000000000001"
+    "target_pipeline_name": "Основная воронка"
   }'
 ```
 
@@ -640,9 +640,9 @@ Content-Type: application/json
 | `source` | string | Нет | Источник (по умолчанию `other`) |
 | `tags` | string[] | Нет | Список тегов |
 | `category` | string | Нет | Категория лида |
-| `target_pipeline_id` | UUID | Нет | ID воронки, в которую лид будет направлен при конвертации |
+| `target_pipeline_name` | string | Нет | Название воронки, в которую лид будет направлен при конвертации |
 
-> **Воронка при создании лида:** если у вас несколько воронок продаж, передайте `target_pipeline_id` — это маршрутизирует лида в нужную воронку заранее. При конвертации лида в сделку (`POST /deals`) значение `target_pipeline_id` будет отображено в ответе, что удобно для автоматизации: не нужно хранить соответствие лид→воронка отдельно.
+> **Воронка при создании лида:** если у вас несколько воронок продаж, передайте `target_pipeline_name` с точным названием воронки. Система найдёт воронку по имени (регистронезависимо) и сохранит её ID внутри лида. В ответе вернётся поле `target_pipeline_id` с UUID воронки. Если воронка не найдена — ошибка `422`.
 
 ```bash
 curl -s -X POST http://localhost:8000/api/v1/leads \
@@ -656,7 +656,7 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
     "company": "Acme Corp",
     "source": "website",
     "owner_id": "u0000000-0000-0000-0000-000000000042",
-    "target_pipeline_id": "a1b2c3d4-0000-0000-0000-000000000001"
+    "target_pipeline_name": "Новые клиенты"
   }'
 ```
 
@@ -665,6 +665,7 @@ curl -s -X POST http://localhost:8000/api/v1/leads \
 **Ошибки:**
 - `409` — лид с таким email уже существует
 - `422` — некорректный формат email или пустое имя
+- `422` — воронка с указанным `target_pipeline_name` не найдена
 
 ---
 
@@ -1705,7 +1706,7 @@ res = httpx.post(f"{BASE_URL}/auth/login", json={
 token = res.json()["access_token"]
 headers = {"Authorization": f"Bearer {token}"}
 
-# 2. Создать лида (сразу указываем целевую воронку)
+# 2. Создать лида (сразу указываем целевую воронку по названию)
 res = httpx.post(f"{BASE_URL}/leads", headers=headers, json={
     "first_name": "Анна",
     "last_name": "Иванова",
@@ -1714,7 +1715,7 @@ res = httpx.post(f"{BASE_URL}/leads", headers=headers, json={
     "company": "Acme Corp",
     "source": "website",
     "owner_id": OWNER_ID,
-    "target_pipeline_id": PIPELINE_ID  # опционально — маршрутизация в воронку
+    "target_pipeline_name": "Основная воронка"  # опционально — маршрутизация по названию
 })
 lead_id = res.json()["id"]
 
