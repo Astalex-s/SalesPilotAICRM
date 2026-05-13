@@ -25,6 +25,8 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -310,6 +312,8 @@ function PipelineStatsTable({
   loading: boolean;
 }) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const headers = [
     t('analytics.pipelineStats.pipeline'),
@@ -322,6 +326,40 @@ function PipelineStatsTable({
     t('analytics.pipelineStats.winRate'),
     t('analytics.pipelineStats.avgDeal'),
   ];
+
+  /* Mobile card for a single pipeline stat */
+  if (isMobile) {
+    return (
+      <Box sx={CARD}>
+        <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5 }}>
+          <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+            {t('analytics.pipelineStats.title')}
+          </Typography>
+        </Box>
+        <Box sx={{ px: 2.5, pb: 2.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} variant="rounded" height={100} sx={{ borderRadius: '10px' }} />)
+          ) : !overview || overview.pipeline_stats.length === 0 ? (
+            <Typography sx={{ py: 4, textAlign: 'center', fontSize: 13, color: '#94A3B8' }}>{t('analytics.pipelineStats.noData')}</Typography>
+          ) : (
+            overview.pipeline_stats.map((p) => (
+              <Box key={p.pipeline_id} sx={{ p: 2, borderRadius: '10px', bgcolor: '#F7F9FC', border: '1px solid #E2EAF4' }}>
+                <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144', mb: 1 }}>{p.pipeline_name}</Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1 }}>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.open')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#00A8E8' }}>{p.open_deals}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.won')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#10B981' }}>{p.won_deals}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.lost')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#EF4444' }}>{p.lost_deals}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.value')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 600, color: '#0D2144' }}>{fmt(p.pipeline_value)}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.revenue')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 600, color: '#10B981' }}>{fmt(p.won_revenue)}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.winRate')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 700, color: p.win_rate >= 50 ? '#059669' : '#D97706' }}>{p.win_rate.toFixed(1)}%</Typography></Box>
+                </Box>
+              </Box>
+            ))
+          )}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={CARD}>
@@ -492,20 +530,60 @@ const TD_SX = { border: 'none', borderTop: '1px solid #F0F5FF', py: 1.25 };
 
 function ManagersTable({ report, loading }: { report: ManagersReport | null; loading: boolean }) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const headerBlock = (
+    <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+      <PeopleIcon sx={{ fontSize: 18, color: '#00A8E8' }} />
+      <Box>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+          {t('analytics.managers.title')}
+        </Typography>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
+          {t('analytics.managers.subtitle')}
+        </Typography>
+      </Box>
+    </Box>
+  );
+
+  if (isMobile) {
+    return (
+      <Box sx={{ ...CARD, mt: 2.5 }}>
+        {headerBlock}
+        <Box sx={{ px: 2.5, pb: 2.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} variant="rounded" height={90} sx={{ borderRadius: '10px' }} />)
+          ) : !report || report.managers.length === 0 ? (
+            <Typography sx={{ py: 4, textAlign: 'center', fontSize: 14, color: '#94A3B8' }}>{t('analytics.managers.noData')}</Typography>
+          ) : (
+            report.managers.map((m: ManagerReportEntry) => (
+              <Box key={m.manager_id} sx={{ p: 2, borderRadius: '10px', bgcolor: '#F7F9FC', border: '1px solid #E2EAF4' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>{m.manager_name}</Typography>
+                    <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>{m.manager_email}</Typography>
+                  </Box>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: '#0D2144', flexShrink: 0, ml: 1 }}>{fmt(m.won_revenue)}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                  <Chip label={`${m.total_leads} ${t('analytics.managers.leads')}`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(13,33,68,0.06)', color: '#4B6080' }} />
+                  <Chip label={`${m.open_deals} open`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(0,168,232,0.1)', color: '#0090CC' }} />
+                  <Chip label={`${m.won_deals} won`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(16,185,129,0.1)', color: '#059669' }} />
+                  <Chip label={`WR ${m.win_rate.toFixed(0)}%`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: m.win_rate >= 50 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: m.win_rate >= 50 ? '#059669' : '#D97706' }} />
+                  {m.overdue_deals > 0 && <Chip label={`${m.overdue_deals} overdue`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(255,107,53,0.12)', color: '#FF6B35' }} />}
+                </Box>
+              </Box>
+            ))
+          )}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ ...CARD, mt: 2.5 }}>
-      <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-        <PeopleIcon sx={{ fontSize: 18, color: '#00A8E8' }} />
-        <Box>
-          <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
-            {t('analytics.managers.title')}
-          </Typography>
-          <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
-            {t('analytics.managers.subtitle')}
-          </Typography>
-        </Box>
-      </Box>
+      {headerBlock}
 
       <Table sx={{ tableLayout: 'fixed' }}>
         <TableHead>
@@ -677,13 +755,15 @@ export default function AnalyticsPage() {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           mb: 3,
+          flexWrap: 'wrap',
+          gap: 1.5,
         }}
       >
         <Box>
           <Typography
             sx={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
               fontWeight: 700,
               color: '#0D2144',
               lineHeight: 1.2,

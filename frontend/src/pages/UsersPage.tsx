@@ -20,6 +20,8 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -169,8 +171,63 @@ function SkeletonRows() {
 }
 
 /* ── Main page ── */
+/* ── Mobile card for a single user ── */
+function UserMobileCard({ user, isCurrentUser, updating, onRoleChange }: {
+  user: User; isCurrentUser: boolean; updating: boolean;
+  onRoleChange: (userId: string, role: UserRole) => void;
+}) {
+  const { t } = useTranslation();
+  const color = avatarColor(user.first_name);
+
+  return (
+    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)', borderLeft: isCurrentUser ? '3px solid #00A8E8' : '3px solid transparent' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+        <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+          {`${user.first_name[0]}${user.last_name[0]}`.toUpperCase()}
+        </Box>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+              {user.first_name} {user.last_name}
+            </Typography>
+            {isCurrentUser && (
+              <Box sx={{ px: 0.75, py: 0.1, borderRadius: '20px', bgcolor: 'rgba(0,168,232,0.12)', color: '#0090CC', fontSize: 11, fontWeight: 600, flexShrink: 0 }}>{t('users.you')}</Box>
+            )}
+          </Box>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>{user.email}</Typography>
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <RoleBadge role={user.role} />
+          <Box sx={{ display: 'inline-flex', px: 1.25, py: 0.4, borderRadius: '20px', bgcolor: user.is_active ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)', color: user.is_active ? '#059669' : '#DC2626', fontFamily: 'Inter', fontSize: 12, fontWeight: 600 }}>
+            {t(user.is_active ? 'users.status.active' : 'users.status.inactive')}
+          </Box>
+        </Box>
+        {updating ? (
+          <CircularProgress size={20} sx={{ color: '#00A8E8' }} />
+        ) : (
+          <Select<UserRole>
+            value={user.role}
+            disabled={isCurrentUser}
+            onChange={(e) => onRoleChange(user.id, e.target.value as UserRole)}
+            size="small"
+            sx={{ borderRadius: '10px', fontFamily: 'Inter', fontSize: 12, minWidth: 110, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' }, '&.Mui-disabled': { opacity: 0.5 } }}
+          >
+            {(['admin', 'manager', 'sales_rep'] as UserRole[]).map((r) => (
+              <MenuItem key={r} value={r} sx={{ fontFamily: 'Inter', fontSize: 13 }}>{t(`users.roles.${r}`)}</MenuItem>
+            ))}
+          </Select>
+        )}
+      </Box>
+    </Box>
+  );
+}
+
 export default function UsersPage() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const currentUser = useAuthStore((s) => s.user);
 
   const [users, setUsers] = useState<User[]>([]);
@@ -212,9 +269,9 @@ export default function UsersPage() {
   return (
     <Box>
       {/* ── Header ── */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
         <Typography
-          sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}
+          sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}
         >
           {t('users.title')}
         </Typography>
@@ -262,7 +319,7 @@ export default function UsersPage() {
             ),
           }}
           sx={{
-            width: 280,
+            width: { xs: '100%', md: 280 },
             '& .MuiOutlinedInput-root': {
               borderRadius: '10px',
               bgcolor: '#FFFFFF',
@@ -276,7 +333,20 @@ export default function UsersPage() {
         />
       </Box>
 
-      {/* ── Table ── */}
+      {/* ── Users list ── */}
+      {isMobile ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} variant="rounded" height={90} sx={{ borderRadius: '12px' }} />)
+          ) : filtered.length === 0 ? (
+            <EmptyState icon="users" title={t('users.noUsers')} subtitle={t('users.noUsersSubtitle')} />
+          ) : (
+            filtered.map((user) => (
+              <UserMobileCard key={user.id} user={user} isCurrentUser={user.id === currentUser?.id} updating={updating === user.id} onRoleChange={handleRoleChange} />
+            ))
+          )}
+        </Box>
+      ) : (
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
@@ -468,6 +538,7 @@ export default function UsersPage() {
           </TableBody>
         </Table>
       </Box>
+      )}
     </Box>
   );
 }
