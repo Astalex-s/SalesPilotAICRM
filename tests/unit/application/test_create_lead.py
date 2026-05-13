@@ -26,8 +26,14 @@ def lead_repo() -> AsyncMock:
 
 
 @pytest.fixture
-def use_case(lead_repo: AsyncMock) -> CreateLeadUseCase:
-    return CreateLeadUseCase(lead_repo=lead_repo)
+def pipeline_repo() -> AsyncMock:
+    """Мок репозитория воронок."""
+    return AsyncMock()
+
+
+@pytest.fixture
+def use_case(lead_repo: AsyncMock, pipeline_repo: AsyncMock) -> CreateLeadUseCase:
+    return CreateLeadUseCase(lead_repo=lead_repo, pipeline_repo=pipeline_repo)
 
 
 @pytest.fixture

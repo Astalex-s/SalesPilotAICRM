@@ -40,6 +40,9 @@ def make_lead_output(
         company="Corp Ltd",
         notes=None,
         converted_deal_id=None,
+        tags=[],
+        category=None,
+        target_pipeline_id=None,
         created_at=now,
         updated_at=now,
     )

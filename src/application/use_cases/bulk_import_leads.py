@@ -20,9 +20,9 @@ from src.domain.repositories.lead_repository import ILeadRepository
 class BulkImportLeadsUseCase:
     """Массовый импорт лидов с обработкой дублей и ошибок валидации."""
 
-    def __init__(self, lead_repo: ILeadRepository) -> None:
+    def __init__(self, lead_repo: ILeadRepository, pipeline_repo=None) -> None:
         self._lead_repo = lead_repo
-        self._create_uc = CreateLeadUseCase(lead_repo)
+        self._create_uc = CreateLeadUseCase(lead_repo, pipeline_repo=pipeline_repo)
 
     async def execute(self, data: BulkImportInput) -> BulkImportResult:
         """Создаёт лидов построчно; собирает статистику created/skipped/errors."""

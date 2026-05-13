@@ -129,7 +129,10 @@ def get_bulk_import_leads_use_case(
     session: AsyncSession = Depends(get_session),
 ) -> BulkImportLeadsUseCase:
     """Фабрика BulkImportLeadsUseCase."""
-    return BulkImportLeadsUseCase(lead_repo=SqlLeadRepository(session))
+    return BulkImportLeadsUseCase(
+        lead_repo=SqlLeadRepository(session),
+        pipeline_repo=SqlPipelineRepository(session),
+    )
 
 
 def get_list_leads_use_case(

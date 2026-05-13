@@ -52,7 +52,7 @@ def client(task_service) -> TestClient:
 
 class TestEnqueueScoreLead:
     def test_returns_202_with_task_id(self, client):
-        resp = client.post(f"/api/v1/tasks/ai/leads/{uuid4()}/score")
+        resp = client.post(f"/api/v1/jobs/ai/leads/{uuid4()}/score")
         assert resp.status_code == 202
         assert resp.json()["task_id"] == "test-task-id-123"
         assert resp.json()["status"] == "ENQUEUED"
@@ -60,19 +60,19 @@ class TestEnqueueScoreLead:
 
 class TestEnqueueForecastDeal:
     def test_returns_202(self, client):
-        resp = client.post(f"/api/v1/tasks/ai/deals/{uuid4()}/forecast")
+        resp = client.post(f"/api/v1/jobs/ai/deals/{uuid4()}/forecast")
         assert resp.status_code == 202
         assert "task_id" in resp.json()
 
 
 class TestEnqueueGenerateEmail:
     def test_returns_202(self, client):
-        resp = client.post(f"/api/v1/tasks/ai/leads/{uuid4()}/generate-email")
+        resp = client.post(f"/api/v1/jobs/ai/leads/{uuid4()}/generate-email")
         assert resp.status_code == 202
 
     def test_accepts_tone_param(self, client, task_service):
         lead_id = uuid4()
-        client.post(f"/api/v1/tasks/ai/leads/{lead_id}/generate-email?tone=formal")
+        client.post(f"/api/v1/jobs/ai/leads/{lead_id}/generate-email?tone=formal")
         task_service.enqueue_generate_email.assert_called_once_with(
             lead_id=lead_id, tone="formal", extra_context=None
         )
@@ -80,17 +80,17 @@ class TestEnqueueGenerateEmail:
 
 class TestEnqueueNextBestAction:
     def test_returns_202_for_lead(self, client):
-        resp = client.post(f"/api/v1/tasks/ai/lead/{uuid4()}/next-action")
+        resp = client.post(f"/api/v1/jobs/ai/lead/{uuid4()}/next-action")
         assert resp.status_code == 202
 
     def test_returns_202_for_deal(self, client):
-        resp = client.post(f"/api/v1/tasks/ai/deal/{uuid4()}/next-action")
+        resp = client.post(f"/api/v1/jobs/ai/deal/{uuid4()}/next-action")
         assert resp.status_code == 202
 
 
 class TestEnqueueSendEmail:
     def test_returns_202(self, client):
-        resp = client.post("/api/v1/tasks/email/send", json={
+        resp = client.post("/api/v1/jobs/email/send", json={
             "to": "recipient@test.com",
             "subject": "Hello",
             "body": "World",
@@ -101,13 +101,13 @@ class TestEnqueueSendEmail:
 
 class TestEnqueueFetchEmails:
     def test_returns_202(self, client):
-        resp = client.post("/api/v1/tasks/email/fetch", json={})
+        resp = client.post("/api/v1/jobs/email/fetch", json={})
         assert resp.status_code == 202
 
 
 class TestGetTaskStatus:
     def test_returns_task_status(self, client):
-        resp = client.get("/api/v1/tasks/test-task-id-123/status")
+        resp = client.get("/api/v1/jobs/test-task-id-123/status")
         assert resp.status_code == 200
         body = resp.json()
         assert body["task_id"] == "test-task-id-123"

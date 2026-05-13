@@ -45,7 +45,8 @@ describe('LeadInfoCard', () => {
 
   it('renders status chip', () => {
     render(<LeadInfoCard lead={baseLead as Lead & { full_name: string }} />);
-    expect(screen.getByText('qualified')).toBeInTheDocument();
+    // i18n not configured — renders the key "leads.status.qualified"
+    expect(screen.getByText('leads.status.qualified')).toBeInTheDocument();
   });
 
   it('renders notes when provided', () => {
@@ -67,6 +68,7 @@ describe('LeadInfoCard', () => {
 
   it('renders created_at date', () => {
     render(<LeadInfoCard lead={baseLead as Lead & { full_name: string }} />);
-    expect(screen.getByText('Created')).toBeInTheDocument();
+    // i18n not configured — renders the key "leadDetail.info.created"
+    expect(screen.getByText('leadDetail.info.created')).toBeInTheDocument();
   });
 });
