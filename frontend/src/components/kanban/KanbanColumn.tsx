@@ -185,7 +185,7 @@ export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: Kan
           borderBottom: `3px solid ${stage.color ?? '#E8EFF7'}`,
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 0, flex: 1 }}>
           {stage.color && (
             <Box sx={{
               width: 10, height: 10, borderRadius: '50%',
@@ -198,6 +198,9 @@ export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: Kan
               fontWeight: 700,
               fontSize: 14,
               color: '#0D2144',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {translateStageName(stage.name, t)}
