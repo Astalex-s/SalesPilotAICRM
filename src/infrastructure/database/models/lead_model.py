@@ -31,10 +31,12 @@ class LeadModel(Base):
     )
     owner_id: Mapped[UUID] = mapped_column(nullable=False, index=True)
     status: Mapped[LeadStatus] = mapped_column(
-        SAEnum(LeadStatus, name="leadstatus"), nullable=False
+        SAEnum(LeadStatus, name="leadstatus", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     source: Mapped[LeadSource] = mapped_column(
-        SAEnum(LeadSource, name="leadsource"), nullable=False
+        SAEnum(LeadSource, name="leadsource", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     phone: Mapped[str | None] = mapped_column(String(50), nullable=True)
     company: Mapped[str | None] = mapped_column(String(255), nullable=True)

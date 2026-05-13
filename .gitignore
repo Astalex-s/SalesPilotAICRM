@@ -97,3 +97,9 @@ stitch-designs/
 "Референсы CRM"/
 Референсы*/
 DESIGN_PROMPT*.md
+
+# ── Demo / Portfolio (локальные скрипты, не для репозитория) ──────────────────
+seed_demo.py
+docs/DEMO_SCRIPT.md
+docs/screenshots/
+docs/screencasts/

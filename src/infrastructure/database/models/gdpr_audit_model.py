@@ -22,7 +22,8 @@ class GdprAuditModel(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True)
     event_type: Mapped[GdprEventType] = mapped_column(
-        SAEnum(GdprEventType, name="gdpreventtype"), nullable=False, index=True
+        SAEnum(GdprEventType, name="gdpreventtype", values_callable=lambda e: [x.value for x in e]),
+        nullable=False, index=True
     )
     target_type: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     target_id: Mapped[UUID] = mapped_column(nullable=False, index=True)

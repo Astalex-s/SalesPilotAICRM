@@ -37,7 +37,8 @@ class EmailMessageModel(Base):
     subject: Mapped[str] = mapped_column(Text, nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
     direction: Mapped[EmailDirection] = mapped_column(
-        SAEnum(EmailDirection, name="emaildirection"), nullable=False
+        SAEnum(EmailDirection, name="emaildirection", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     received_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False

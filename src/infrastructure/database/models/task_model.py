@@ -26,7 +26,8 @@ class TaskModel(Base):
     lead_id: Mapped[UUID | None] = mapped_column(nullable=True, index=True)
     deal_id: Mapped[UUID | None] = mapped_column(nullable=True, index=True)
     status: Mapped[TaskStatus] = mapped_column(
-        SAEnum(TaskStatus, name="taskstatus"), nullable=False
+        SAEnum(TaskStatus, name="taskstatus", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

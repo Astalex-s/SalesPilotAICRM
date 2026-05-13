@@ -6,11 +6,13 @@ Create Date: 2026-05-04
 
 Tables created:
   users, pipelines, stages, leads, deals,
-  activities, email_messages, gdpr_audit_log, deal_attachments
+  activities, email_messages, gdpr_audit_log, deal_attachments,
+  tasks, meetings
 
 Enums created:
   userrole, leadstatus, leadsource, dealstatus,
-  activitytype, emaildirection, gdpreventtype
+  activitytype, emaildirection, gdpreventtype,
+  taskstatus, meetingstatus
 """
 from __future__ import annotations
 
@@ -27,36 +29,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 # ── Enum helpers ─────────────────────────────────────────────────────────────
 
-def _create_enums() -> None:
-    op.execute(
-        "CREATE TYPE userrole AS ENUM ('admin', 'manager', 'sales_rep')"
-    )
-    op.execute(
-        "CREATE TYPE leadstatus AS ENUM "
-        "('new', 'contacted', 'qualified', 'unqualified', 'converted')"
-    )
-    op.execute(
-        "CREATE TYPE leadsource AS ENUM "
-        "('website', 'referral', 'cold_call', 'social_media', 'email_campaign', 'other')"
-    )
-    op.execute(
-        "CREATE TYPE dealstatus AS ENUM ('open', 'won', 'lost')"
-    )
-    op.execute(
-        "CREATE TYPE activitytype AS ENUM "
-        "('call', 'email', 'meeting', 'note', 'status_change', 'stage_change', 'lead_converted')"
-    )
-    op.execute(
-        "CREATE TYPE emaildirection AS ENUM ('inbound', 'outbound')"
-    )
-    op.execute(
-        "CREATE TYPE gdpreventtype AS ENUM "
-        "('user_data_deleted', 'lead_anonymized', 'user_data_exported', 'retention_policy_applied')"
-    )
-
-
 def _drop_enums() -> None:
     for name in (
+        "meetingstatus",
+        "taskstatus",
         "gdpreventtype",
         "emaildirection",
         "activitytype",
@@ -71,7 +47,6 @@ def _drop_enums() -> None:
 # ── upgrade ──────────────────────────────────────────────────────────────────
 
 def upgrade() -> None:
-    _create_enums()
 
     # ── users ────────────────────────────────────────────────────────────────
     op.create_table(
@@ -86,7 +61,6 @@ def upgrade() -> None:
             sa.Enum(
                 "admin", "manager", "sales_rep",
                 name="userrole",
-                create_type=False,
             ),
             nullable=False,
         ),
@@ -137,7 +111,6 @@ def upgrade() -> None:
             sa.Enum(
                 "new", "contacted", "qualified", "unqualified", "converted",
                 name="leadstatus",
-                create_type=False,
             ),
             nullable=False,
         ),
@@ -146,7 +119,6 @@ def upgrade() -> None:
             sa.Enum(
                 "website", "referral", "cold_call", "social_media", "email_campaign", "other",
                 name="leadsource",
-                create_type=False,
             ),
             nullable=False,
         ),
@@ -154,6 +126,9 @@ def upgrade() -> None:
         sa.Column("company", sa.String(255), nullable=True),
         sa.Column("notes", sa.String(2000), nullable=True),
         sa.Column("converted_deal_id", sa.UUID(), nullable=True),
+        sa.Column("tags", sa.ARRAY(sa.String(100)), nullable=False, server_default="{}"),
+        sa.Column("category", sa.String(100), nullable=True),
+        sa.Column("target_pipeline_id", sa.UUID(), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
@@ -174,7 +149,7 @@ def upgrade() -> None:
         sa.Column("value_currency", sa.String(3), nullable=False),
         sa.Column(
             "status",
-            sa.Enum("open", "won", "lost", name="dealstatus", create_type=False),
+            sa.Enum("open", "won", "lost", name="dealstatus"),
             nullable=False,
         ),
         sa.Column("contact_name", sa.String(255), nullable=True),
@@ -204,7 +179,6 @@ def upgrade() -> None:
                 "call", "email", "meeting", "note",
                 "status_change", "stage_change", "lead_converted",
                 name="activitytype",
-                create_type=False,
             ),
             nullable=False,
         ),
@@ -230,7 +204,7 @@ def upgrade() -> None:
         sa.Column("body", sa.Text(), nullable=False),
         sa.Column(
             "direction",
-            sa.Enum("inbound", "outbound", name="emaildirection", create_type=False),
+            sa.Enum("inbound", "outbound", name="emaildirection"),
             nullable=False,
         ),
         sa.Column("received_at", sa.DateTime(timezone=True), nullable=False),
@@ -259,7 +233,6 @@ def upgrade() -> None:
                 "user_data_deleted", "lead_anonymized",
                 "user_data_exported", "retention_policy_applied",
                 name="gdpreventtype",
-                create_type=False,
             ),
             nullable=False,
         ),
@@ -291,10 +264,62 @@ def upgrade() -> None:
     )
     op.create_index("ix_deal_attachments_deal_id", "deal_attachments", ["deal_id"])
 
+    # ── tasks ────────────────────────────────────────────────────────────────
+    op.create_table(
+        "tasks",
+        sa.Column("id", sa.UUID(), nullable=False),
+        sa.Column("title", sa.String(255), nullable=False),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("due_date", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("assignee_id", sa.UUID(), nullable=False),
+        sa.Column("created_by_id", sa.UUID(), nullable=False),
+        sa.Column("lead_id", sa.UUID(), nullable=True),
+        sa.Column("deal_id", sa.UUID(), nullable=True),
+        sa.Column(
+            "status",
+            sa.Enum("pending", "in_progress", "done", "cancelled", name="taskstatus"),
+            nullable=False,
+        ),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index("ix_tasks_assignee_id", "tasks", ["assignee_id"])
+    op.create_index("ix_tasks_lead_id", "tasks", ["lead_id"])
+    op.create_index("ix_tasks_deal_id", "tasks", ["deal_id"])
+
+    # ── meetings ─────────────────────────────────────────────────────────────
+    op.create_table(
+        "meetings",
+        sa.Column("id", sa.UUID(), nullable=False),
+        sa.Column("title", sa.String(255), nullable=False),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("start_time", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("end_time", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("location", sa.String(255), nullable=True),
+        sa.Column("lead_id", sa.UUID(), nullable=True),
+        sa.Column("deal_id", sa.UUID(), nullable=True),
+        sa.Column("created_by_id", sa.UUID(), nullable=False),
+        sa.Column(
+            "status",
+            sa.Enum("scheduled", "completed", "cancelled", name="meetingstatus"),
+            nullable=False,
+        ),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index("ix_meetings_start_time", "meetings", ["start_time"])
+    op.create_index("ix_meetings_created_by_id", "meetings", ["created_by_id"])
+    op.create_index("ix_meetings_lead_id", "meetings", ["lead_id"])
+    op.create_index("ix_meetings_deal_id", "meetings", ["deal_id"])
+
 
 # ── downgrade ─────────────────────────────────────────────────────────────────
 
 def downgrade() -> None:
+    op.drop_table("meetings")
+    op.drop_table("tasks")
     op.drop_table("deal_attachments")
     op.drop_table("gdpr_audit_log")
     op.drop_table("email_messages")

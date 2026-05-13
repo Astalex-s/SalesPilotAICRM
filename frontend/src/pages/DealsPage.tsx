@@ -15,7 +15,6 @@ import DealAttachmentsDialog from '../components/deals/DealAttachmentsDialog';
 import { type Deal, type DealStatus } from '../types/deal';
 import { type Pipeline } from '../types/pipeline';
 
-const DEMO_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 /* Stage name → i18n key (same mapping as KanbanColumn) */
 const STAGE_I18N_KEYS: Record<string, string> = {
@@ -46,7 +45,7 @@ export default function DealsPage() {
   const { t } = useTranslation();
 
   const [deals, setDeals] = useState<Deal[]>([]);
-  const [pipeline, setPipeline] = useState<Pipeline | null>(null);
+  const [pipelines, setPipelines] = useState<Pipeline[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -59,9 +58,9 @@ export default function DealsPage() {
     setError(null);
     Promise.all([
       dealsApi.list(),
-      pipelinesApi.get(DEMO_PIPELINE_ID),
+      pipelinesApi.list(),
     ])
-      .then(([d, p]) => { setDeals(d); setPipeline(p); })
+      .then(([d, p]) => { setDeals(d); setPipelines(p); })
       .catch(() => setError(t('deals.loadError')))
       .finally(() => setLoading(false));
   }, [t]);
@@ -85,8 +84,11 @@ export default function DealsPage() {
 
   /* Resolve stage name for a deal using loaded pipeline stages */
   const getStageName = (stageId: string): string => {
-    const stage = pipeline?.stages.find((s) => s.id === stageId);
-    return stage ? translateStageName(stage.name, t) : '—';
+    for (const p of pipelines) {
+      const stage = p.stages.find((s) => s.id === stageId);
+      if (stage) return translateStageName(stage.name, t);
+    }
+    return '—';
   };
 
   return (
@@ -329,7 +331,7 @@ export default function DealsPage() {
       <AddDealDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        pipeline={pipeline}
+        pipeline={pipelines[0] ?? null}
         onDealCreated={handleDealCreated}
       />
 

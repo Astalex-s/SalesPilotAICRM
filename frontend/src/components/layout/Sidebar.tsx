@@ -162,7 +162,8 @@ function PipelineNavItem({ expanded }: { expanded: boolean }) {
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (allPipelines.length <= 1) {
-      const id = allPipelines[0]?.id ?? '00000000-0000-0000-0000-000000000001';
+      const id = allPipelines[0]?.id;
+      if (!id) return;
       navigate(`/pipeline/${id}`);
     } else {
       setAnchorEl(e.currentTarget);

@@ -36,7 +36,8 @@ class DealModel(Base):
     value_amount: Mapped[Decimal] = mapped_column(Numeric(18, 4), nullable=False)
     value_currency: Mapped[str] = mapped_column(String(3), nullable=False)
     status: Mapped[DealStatus] = mapped_column(
-        SAEnum(DealStatus, name="dealstatus"), nullable=False
+        SAEnum(DealStatus, name="dealstatus", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     contact_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     company: Mapped[str | None] = mapped_column(String(255), nullable=True)

@@ -27,7 +27,8 @@ class ActivityModel(Base):
     )
     entity_id: Mapped[UUID] = mapped_column(nullable=False, index=True)
     activity_type: Mapped[ActivityType] = mapped_column(
-        SAEnum(ActivityType, name="activitytype"), nullable=False
+        SAEnum(ActivityType, name="activitytype", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     performed_by_id: Mapped[UUID] = mapped_column(nullable=False, index=True)
     body: Mapped[str] = mapped_column(Text, nullable=False)

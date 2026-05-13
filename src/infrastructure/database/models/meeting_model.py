@@ -27,7 +27,8 @@ class MeetingModel(Base):
     deal_id: Mapped[UUID | None] = mapped_column(nullable=True, index=True)
     created_by_id: Mapped[UUID] = mapped_column(nullable=False, index=True)
     status: Mapped[MeetingStatus] = mapped_column(
-        SAEnum(MeetingStatus, name="meetingstatus"), nullable=False
+        SAEnum(MeetingStatus, name="meetingstatus", values_callable=lambda e: [x.value for x in e]),
+        nullable=False
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

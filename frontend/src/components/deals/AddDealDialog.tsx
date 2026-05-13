@@ -26,7 +26,6 @@ import type { Deal } from '../../types/deal';
 import type { Lead } from '../../types/lead';
 import type { Pipeline, Stage } from '../../types/pipeline';
 
-const DEMO_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
 const cardSx = {
@@ -451,7 +450,7 @@ function FormStep({ leads, pipeline, defaultStageId, onCancel, onCreated, onLead
       const deal = await dealsApi.create({
         lead_id: leadId,
         stage_id: stageId,
-        pipeline_id: pipeline?.id ?? DEMO_PIPELINE_ID,
+        pipeline_id: pipeline!.id,
         deal_title: title || undefined,
         deal_value_amount: amount,
         deal_value_currency: currency,
@@ -739,7 +738,7 @@ export default function AddDealDialog({ open, onClose, pipeline, onDealCreated, 
           <SuccessStep
             deal={createdDeal!}
             lead={createdLead!}
-            pipelineId={pipeline?.id ?? DEMO_PIPELINE_ID}
+            pipelineId={pipeline!.id}
             onDone={handleClose}
           />
         )}
