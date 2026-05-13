@@ -16,6 +16,8 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -140,8 +142,59 @@ function TaskRow({ task, onDone, onDelete }: { task: CrmTask; onDone: (id: strin
   );
 }
 
+/* ── Mobile card for a single task ── */
+function TaskMobileCard({ task, onDone, onDelete }: { task: CrmTask; onDone: (id: string) => void; onDelete: (id: string) => void }) {
+  const { t } = useTranslation();
+  const st = STATUS_STYLE[task.status];
+
+  return (
+    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 0.75 }}>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {task.is_overdue && <WarningAmberIcon sx={{ fontSize: 15, color: '#F59E0B', flexShrink: 0 }} />}
+            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+              {task.title}
+            </Typography>
+          </Box>
+          {task.description && (
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8', mt: 0.25 }}>
+              {task.description.length > 80 ? task.description.slice(0, 80) + '…' : task.description}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ display: 'inline-flex', px: 1.25, py: 0.4, borderRadius: '20px', bgcolor: st.bg, color: st.color, fontFamily: 'Inter', fontSize: 12, fontWeight: 600, flexShrink: 0 }}>
+          {t(`tasks.status.${task.status}`)}
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: task.is_overdue ? '#EF4444' : '#94A3B8', fontWeight: task.is_overdue ? 600 : 400 }}>
+            {task.due_date ? new Date(task.due_date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' }) : '—'}
+          </Typography>
+          {task.lead_id && <Chip label={t('tasks.linkedLead')} size="small" sx={{ fontSize: 10, height: 18, bgcolor: 'rgba(139,92,246,0.10)', color: '#7C3AED' }} />}
+          {task.deal_id && <Chip label={t('tasks.linkedDeal')} size="small" sx={{ fontSize: 10, height: 18, bgcolor: 'rgba(16,185,129,0.10)', color: '#059669' }} />}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          {task.status !== 'done' && task.status !== 'cancelled' && (
+            <Box component="button" onClick={() => onDone(task.id)} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #D1FAE5', bgcolor: '#F0FDF4', color: '#10B981', cursor: 'pointer' }}>
+              <CheckCircleOutlineIcon sx={{ fontSize: 15 }} />
+            </Box>
+          )}
+          <Box component="button" onClick={() => onDelete(task.id)} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #FEE2E2', bgcolor: '#FFF5F5', color: '#EF4444', cursor: 'pointer' }}>
+            <DeleteOutlineIcon sx={{ fontSize: 15 }} />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 export default function TasksPage() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { tasks, loading, error, fetchTasks, updateTask, deleteTask } = useTaskStore();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -168,9 +221,9 @@ export default function TasksPage() {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}>
             {t('tasks.title')}
           </Typography>
           {!loading && (
@@ -207,7 +260,23 @@ export default function TasksPage() {
         })}
       </Box>
 
-      {/* Table */}
+      {/* Mobile card list */}
+      {isMobile ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} variant="rounded" height={80} sx={{ borderRadius: '12px' }} />
+            ))
+          ) : filtered.length === 0 ? (
+            <EmptyState icon="tasks" title={t('tasks.noTasks')} subtitle={t('tasks.noTasksSubtitle')} action={{ label: t('tasks.addTask'), onClick: () => setDialogOpen(true) }} />
+          ) : (
+            filtered.map((task) => (
+              <TaskMobileCard key={task.id} task={task} onDone={handleDone} onDelete={handleDelete} />
+            ))
+          )}
+        </Box>
+      ) : (
+      /* Desktop table */
       <Box sx={{ background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '16px', boxShadow: '0 4px 24px rgba(13,33,68,0.07)', overflowX: 'auto' }}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
@@ -257,6 +326,7 @@ export default function TasksPage() {
           </TableBody>
         </Table>
       </Box>
+      )}
 
       <AddTaskDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     </Box>

@@ -23,6 +23,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -387,11 +389,72 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
   );
 }
 
+/* ── Mobile card for a single lead ── */
+function LeadMobileCard({ lead, onClick, onTagClick }: { lead: Lead; onClick: () => void; onTagClick: (tag: string) => void }) {
+  const color = avatarColor(lead.first_name);
+  const createdDate = new Date(lead.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        p: 2,
+        background: '#FFFFFF',
+        border: '1px solid #E2EAF4',
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(13,33,68,0.06)',
+        cursor: 'pointer',
+        '&:active': { bgcolor: '#F0F5FF' },
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+        <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+          {initials(lead)}
+        </Box>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+            {lead.first_name} {lead.last_name}
+          </Typography>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
+            {lead.email}
+          </Typography>
+        </Box>
+        <StatusBadge status={lead.status} />
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+        <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080', flex: 1 }}>
+          {lead.company || '—'}
+        </Typography>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8', flexShrink: 0 }}>
+          {createdDate}
+        </Typography>
+      </Box>
+
+      {(lead.tags ?? []).length > 0 && (
+        <Box sx={{ display: 'flex', gap: 0.4, mt: 1, flexWrap: 'wrap' }}>
+          {(lead.tags ?? []).slice(0, 3).map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="small"
+              onClick={(e) => { e.stopPropagation(); onTagClick(tag); }}
+              sx={{ fontSize: 10, height: 18, bgcolor: 'rgba(0,168,232,0.10)', color: '#0090CC', fontFamily: 'Inter' }}
+            />
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
 /* ── Main page ── */
 export default function LeadsPage() {
   const { t } = useTranslation();
   const { leads, loading, error, fetchLeads } = useLeadStore();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [csvImportOpen, setCsvImportOpen] = useState(false);
@@ -433,12 +496,12 @@ export default function LeadsPage() {
   return (
     <Box>
       {/* ── Page header ── */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Typography
             sx={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: 24,
+              fontSize: { xs: 20, md: 24 },
               fontWeight: 700,
               color: '#0D2144',
             }}
@@ -463,18 +526,18 @@ export default function LeadsPage() {
           )}
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             variant="outlined"
             onClick={() => setCsvImportOpen(true)}
             sx={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600,
-              fontSize: 14,
+              fontSize: { xs: 12, md: 14 },
               color: '#0D2144',
               borderColor: '#E2EAF4',
               borderRadius: '10px',
-              px: 2.5,
+              px: { xs: 1.5, md: 2.5 },
               textTransform: 'none',
               '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: 'rgba(0,168,232,0.04)' },
             }}
@@ -482,25 +545,25 @@ export default function LeadsPage() {
             {t('leads.csvImport.button')}
           </Button>
 
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setDialogOpen(true)}
-          sx={{
-            bgcolor: '#00A8E8',
-            color: '#fff',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 600,
-            fontSize: 14,
-            borderRadius: '10px',
-            px: 2.5,
-            textTransform: 'none',
-            boxShadow: 'none',
-            '&:hover': { bgcolor: '#0090CC', boxShadow: 'none' },
-          }}
-        >
-          {t('leads.addLead')}
-        </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setDialogOpen(true)}
+            sx={{
+              bgcolor: '#00A8E8',
+              color: '#fff',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+              fontSize: { xs: 12, md: 14 },
+              borderRadius: '10px',
+              px: { xs: 1.5, md: 2.5 },
+              textTransform: 'none',
+              boxShadow: 'none',
+              '&:hover': { bgcolor: '#0090CC', boxShadow: 'none' },
+            }}
+          >
+            {t('leads.addLead')}
+          </Button>
         </Box>
       </Box>
 
@@ -534,7 +597,7 @@ export default function LeadsPage() {
             ),
           }}
           sx={{
-            width: 280,
+            width: { xs: '100%', md: 280 },
             '& .MuiOutlinedInput-root': {
               borderRadius: '10px',
               bgcolor: '#FFFFFF',
@@ -626,7 +689,27 @@ export default function LeadsPage() {
         onImported={fetchLeads}
       />
 
-      {/* ── Table card ── */}
+      {/* ── Mobile card list ── */}
+      {isMobile ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} variant="rounded" height={90} sx={{ borderRadius: '12px' }} />
+            ))
+          ) : paginated.length === 0 ? (
+            leads.length === 0 ? (
+              <EmptyState icon="leads" title={t('leads.noLeads')} subtitle={t('leads.noLeadsSubtitle')} action={{ label: t('leads.addLead'), onClick: () => setDialogOpen(true) }} />
+            ) : (
+              <EmptyState icon="search" title={t('leads.noResults')} subtitle={t('leads.noResultsSubtitle')} />
+            )
+          ) : (
+            paginated.map((lead) => (
+              <LeadMobileCard key={lead.id} lead={lead} onClick={() => navigate(`/leads/${lead.id}`)} onTagClick={setTagFilter} />
+            ))
+          )}
+        </Box>
+      ) : (
+      /* ── Desktop table ── */
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
@@ -867,96 +950,54 @@ export default function LeadsPage() {
             )}
           </TableBody>
         </Table>
+      </Box>
+      )}
 
-        {/* ── Pagination footer ── */}
-        {!loading && filtered.length > 0 && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              px: 3,
-              py: 2,
-              borderTop: '1px solid #F0F5FF',
-            }}
-          >
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#94A3B8' }}>
-              {t('leads.pagination.showing', { from, to, total: filtered.length })}
-            </Typography>
+      {/* ── Pagination (shown for both mobile and desktop) ── */}
+      {!loading && filtered.length > PAGE_SIZE && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mt: 2,
+            px: { xs: 1, md: 0 },
+          }}
+        >
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#94A3B8' }}>
+            {t('leads.pagination.showing', { from, to, total: filtered.length })}
+          </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                sx={{
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: '8px',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: page === 0 ? 'not-allowed' : 'pointer',
-                  color: page === 0 ? '#CBD5E8' : '#4B6080',
-                  border: '1px solid #E2EAF4',
-                  bgcolor: '#FFFFFF',
-                  userSelect: 'none',
-                  '&:hover': page === 0 ? {} : { bgcolor: '#F0F5FF' },
-                }}
-              >
-                ←
-              </Box>
-
-              {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-                const p = i;
-                return (
-                  <Box
-                    key={p}
-                    onClick={() => setPage(p)}
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: 13,
-                      fontWeight: page === p ? 700 : 500,
-                      cursor: 'pointer',
-                      bgcolor: page === p ? '#00A8E8' : '#FFFFFF',
-                      color: page === p ? '#FFFFFF' : '#4B6080',
-                      border: `1px solid ${page === p ? '#00A8E8' : '#E2EAF4'}`,
-                      userSelect: 'none',
-                      '&:hover': { bgcolor: page === p ? '#0090CC' : '#F0F5FF' },
-                    }}
-                  >
-                    {p + 1}
-                  </Box>
-                );
-              })}
-
-              <Box
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                sx={{
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: '8px',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer',
-                  color: page >= totalPages - 1 ? '#CBD5E8' : '#4B6080',
-                  border: '1px solid #E2EAF4',
-                  bgcolor: '#FFFFFF',
-                  userSelect: 'none',
-                  '&:hover': page >= totalPages - 1 ? {} : { bgcolor: '#F0F5FF' },
-                }}
-              >
-                →
-              </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Box
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              sx={{
+                px: 1.5, py: 0.5, borderRadius: '8px',
+                fontFamily: 'Inter', fontSize: 13, fontWeight: 500,
+                cursor: page === 0 ? 'not-allowed' : 'pointer',
+                color: page === 0 ? '#CBD5E8' : '#4B6080',
+                border: '1px solid #E2EAF4', bgcolor: '#FFFFFF', userSelect: 'none',
+                '&:hover': page === 0 ? {} : { bgcolor: '#F0F5FF' },
+              }}
+            >
+              ←
+            </Box>
+            <Box
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              sx={{
+                px: 1.5, py: 0.5, borderRadius: '8px',
+                fontFamily: 'Inter', fontSize: 13, fontWeight: 500,
+                cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer',
+                color: page >= totalPages - 1 ? '#CBD5E8' : '#4B6080',
+                border: '1px solid #E2EAF4', bgcolor: '#FFFFFF', userSelect: 'none',
+                '&:hover': page >= totalPages - 1 ? {} : { bgcolor: '#F0F5FF' },
+              }}
+            >
+              →
             </Box>
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 }

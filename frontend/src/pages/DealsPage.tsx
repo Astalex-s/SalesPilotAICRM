@@ -3,7 +3,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { dealsApi } from '../api/deals';
@@ -41,8 +41,76 @@ const STATUS_STYLE: Record<DealStatus, { bg: string; color: string }> = {
   lost: { bg: 'rgba(239,68,68,0.10)',   color: '#DC2626' },
 };
 
+/* ── Mobile card for a single deal ── */
+function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose }: {
+  deal: Deal;
+  stageName: string;
+  onAttachments: () => void;
+  onActivities: () => void;
+  onClose: (outcome: 'won' | 'lost') => void;
+}) {
+  const { t } = useTranslation();
+  const st = STATUS_STYLE[deal.status] ?? STATUS_STYLE.open;
+  const amountNum = parseFloat(deal.value_amount);
+
+  return (
+    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1 }}>
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+            {deal.title}
+          </Typography>
+          {deal.company && (
+            <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
+              {deal.company}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ display: 'inline-flex', px: 1.25, py: 0.4, borderRadius: '20px', bgcolor: st.bg, color: st.color, fontFamily: 'Inter', fontSize: 12, fontWeight: 600, flexShrink: 0 }}>
+          {t(`deals.status.${deal.status}`)}
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: '#00A8E8' }}>
+          {isNaN(amountNum) ? deal.value_amount : amountNum.toLocaleString()} {deal.value_currency}
+        </Typography>
+        <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 12, color: '#475569' }}>
+          {stageName}
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1.5 }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
+          {deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString() : '—'}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <Box component="button" onClick={onActivities} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #E8EFF7', bgcolor: '#FAFBFD', color: '#8FA3B8', cursor: 'pointer' }}>
+            <ChatBubbleOutlineIcon sx={{ fontSize: 15 }} />
+          </Box>
+          <Box component="button" onClick={onAttachments} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #E8EFF7', bgcolor: '#FAFBFD', color: '#8FA3B8', cursor: 'pointer' }}>
+            <AttachFileIcon sx={{ fontSize: 15 }} />
+          </Box>
+          {deal.status === 'open' && (
+            <>
+              <Box component="button" onClick={() => onClose('won')} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #D1FAE5', bgcolor: '#F0FDF4', color: '#10B981', cursor: 'pointer' }}>
+                <CheckIcon sx={{ fontSize: 15 }} />
+              </Box>
+              <Box component="button" onClick={() => onClose('lost')} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #FEE2E2', bgcolor: '#FFF5F5', color: '#EF4444', cursor: 'pointer' }}>
+                <CloseIcon sx={{ fontSize: 15 }} />
+              </Box>
+            </>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 export default function DealsPage() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [deals, setDeals] = useState<Deal[]>([]);
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
@@ -94,8 +162,8 @@ export default function DealsPage() {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1.5 }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}>
           {t('deals.title')}
         </Typography>
         <Button
@@ -121,7 +189,30 @@ export default function DealsPage() {
 
       {error && <Alert severity="error" sx={{ mb: 3, borderRadius: '12px' }}>{error}</Alert>}
 
-      {/* Table card */}
+      {/* Mobile card list */}
+      {isMobile ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} variant="rounded" height={100} sx={{ borderRadius: '12px' }} />
+            ))
+          ) : deals.length === 0 ? (
+            <EmptyState icon="deals" title={t('deals.noDeals')} subtitle={t('deals.noDealsSubtitle')} action={{ label: t('deals.addDeal'), onClick: () => setDialogOpen(true) }} />
+          ) : (
+            deals.map((deal) => (
+              <DealMobileCard
+                key={deal.id}
+                deal={deal}
+                stageName={getStageName(deal.stage_id)}
+                onAttachments={() => setAttachmentsDeal(deal)}
+                onActivities={() => setActivitiesDeal(deal)}
+                onClose={(outcome) => handleCloseDeal(deal.id, outcome)}
+              />
+            ))
+          )}
+        </Box>
+      ) : (
+      /* Desktop table */
       <Box
         sx={{
           background: '#FFFFFF',
@@ -326,6 +417,7 @@ export default function DealsPage() {
           </TableBody>
         </Table>
       </Box>
+      )}
 
       {/* Add Deal Dialog */}
       <AddDealDialog
