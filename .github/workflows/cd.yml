@@ -103,17 +103,21 @@ jobs:
 
             cd "$DEPLOY_PATH"
 
+            # Pull latest config (nginx.conf, docker-compose, monitoring, etc.)
+            git fetch origin main && git reset --hard origin/main
+
             # Pull new images (backend covers celery_worker + celery_beat too)
             BACKEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-backend:$IMAGE_TAG" \
             FRONTEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-frontend:$IMAGE_TAG" \
               docker compose -f docker-compose.prod.yml pull \
                 backend celery_worker celery_beat frontend
 
-            # Restart updated services with zero-downtime rolling restart
+            # Recreate all services (picks up new nginx.conf, monitoring configs, etc.)
             BACKEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-backend:$IMAGE_TAG" \
             FRONTEND_IMAGE="ghcr.io/$GHCR_USER/salespilotai-frontend:$IMAGE_TAG" \
               docker compose -f docker-compose.prod.yml up -d \
                 --no-build \
+                --force-recreate \
                 --remove-orphans
 
             # Clean up dangling images
