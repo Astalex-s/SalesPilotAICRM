@@ -1,5 +1,4 @@
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { Box, Typography } from '@mui/material';
 import { Draggable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
@@ -83,6 +82,7 @@ export default function DealCard({ deal, index, stageProbability, onDoubleClick 
         <Box
           ref={provided.innerRef}
           {...provided.draggableProps}
+          {...provided.dragHandleProps}
           onClick={handleClick}
           sx={{
             mb: 1.5,
@@ -101,32 +101,9 @@ export default function DealCard({ deal, index, stageProbability, onDoubleClick 
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            '&:hover .drag-handle': { opacity: 1 },
           }}
         >
-          {/* Drag handle strip */}
-          <Box
-            {...provided.dragHandleProps}
-            className="drag-handle"
-            sx={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 20,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: 0,
-              transition: 'opacity 0.15s',
-              color: '#CBD5E8',
-              cursor: 'grab',
-            }}
-          >
-            <DragIndicatorIcon sx={{ fontSize: 14 }} />
-          </Box>
-
-          <Box sx={{ p: '12px 12px 12px 20px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <Box sx={{ p: '12px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Top row: company avatar + name */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
               {deal.company ? (
