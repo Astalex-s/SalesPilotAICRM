@@ -59,7 +59,7 @@ function formatDate(dateStr: string): string {
 export default function DealCard({ deal, index, stageProbability, onDoubleClick }: DealCardProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const isDraggable = deal.status === 'open';
+  const isDraggable = true;
   const overdue = isOverdue(deal.expected_close_date);
   const probPct = stageProbability <= 1
     ? Math.round(stageProbability * 100)
