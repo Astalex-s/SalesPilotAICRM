@@ -10,6 +10,7 @@ interface KanbanBoardProps {
   pipelineId: string;
   onAddDeal?: (stageId: string) => void;
   onAddLead?: () => void;
+  onDealDoubleClick?: (deal: Deal) => void;
 }
 
 /* ── Skeleton for loading state ── */
@@ -116,7 +117,7 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
 }
 
 /* ── Main board ── */
-export default function KanbanBoard({ pipelineId, onAddDeal, onAddLead }: KanbanBoardProps) {
+export default function KanbanBoard({ pipelineId, onAddDeal, onAddLead, onDealDoubleClick }: KanbanBoardProps) {
   const { pipeline, columns, leadsPool, loading, error, moveDeal, promoteLeadToDeal, reorderLeadsPool } = useKanbanStore();
   const userId = useAuthStore((s) => s.user?.id ?? '');
 
@@ -194,6 +195,7 @@ export default function KanbanBoard({ pipelineId, onAddDeal, onAddLead }: Kanban
               deals={columns[stage.id] ?? []}
               onAddDeal={onAddDeal ? () => onAddDeal(stage.id) : undefined}
               onAddLead={onAddLead}
+              onDealDoubleClick={onDealDoubleClick}
             />
           ))}
         </Box>

@@ -32,6 +32,7 @@ interface KanbanColumnProps {
   deals: Deal[];
   onAddDeal?: () => void;
   onAddLead?: () => void;
+  onDealDoubleClick?: (deal: Deal) => void;
 }
 
 function formatColumnValue(deals: Deal[]): string {
@@ -159,7 +160,7 @@ function AddCardButton({
   );
 }
 
-export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: KanbanColumnProps) {
+export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead, onDealDoubleClick }: KanbanColumnProps) {
   const { t } = useTranslation();
   const valueLabel = formatColumnValue(deals);
 
@@ -242,6 +243,7 @@ export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: Kan
                 deal={deal}
                 index={index}
                 stageProbability={stage.probability}
+                onDoubleClick={onDealDoubleClick}
               />
             ))}
             {provided.placeholder}

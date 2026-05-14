@@ -10,6 +10,7 @@ interface DealCardProps {
   deal: Deal;
   index: number;
   stageProbability: number;
+  onDoubleClick?: (deal: Deal) => void;
 }
 
 /* ── Constants ── */
@@ -55,7 +56,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function DealCard({ deal, index, stageProbability }: DealCardProps) {
+export default function DealCard({ deal, index, stageProbability, onDoubleClick }: DealCardProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isDraggable = deal.status === 'open';
@@ -67,8 +68,12 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
   const companyName = deal.company ?? deal.contact_name ?? '—';
 
   const handleClick = (e: React.MouseEvent) => {
-    if (e.detail === 2 && deal.source_lead_id) {
-      navigate(`/leads/${deal.source_lead_id}`);
+    if (e.detail === 2) {
+      if (onDoubleClick) {
+        onDoubleClick(deal);
+      } else if (deal.source_lead_id) {
+        navigate(`/leads/${deal.source_lead_id}`);
+      }
     }
   };
 
