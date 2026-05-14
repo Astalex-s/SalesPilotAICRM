@@ -10,6 +10,7 @@ import logging
 from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.activity_dtos import ActivityOutput, AddCommentInput
 from src.application.dtos.deal_dtos import CloseDealInput, ConvertLeadToDealInput, DealOutput, ListDealsInput, MoveDealStageInput
@@ -28,6 +29,7 @@ from src.application.use_cases.notify_overdue_deals import NotifyOverdueDealsUse
 from src.infrastructure.notifications.notification_bus import bus
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.application.dtos.auth_dtos import UserOutput
+from src.infrastructure.database.session import get_db
 from src.interfaces.api.dependencies import (
     get_add_comment_use_case,
     get_close_deal_use_case,
@@ -105,6 +107,41 @@ async def convert_lead_to_deal(
         },
     )
     return result
+
+
+@router.get(
+    "/{deal_id}",
+    response_model=DealOutput,
+    status_code=status.HTTP_200_OK,
+    summary="Получить сделку по ID",
+)
+async def get_deal(
+    deal_id: UUID,
+    session: AsyncSession = Depends(get_db),
+) -> DealOutput:
+    """GET /api/v1/deals/{deal_id} — получение одной сделки."""
+    from src.infrastructure.database.repositories.deal_repository import SqlDealRepository
+    repo = SqlDealRepository(session)
+    deal = await repo.get_by_id(deal_id)
+    if deal is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deal not found")
+    return DealOutput.from_entity(deal)
+
+
+@router.delete(
+    "/{deal_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Удалить сделку",
+    response_model=None,
+)
+async def delete_deal(
+    deal_id: UUID,
+    session: AsyncSession = Depends(get_db),
+) -> None:
+    """DELETE /api/v1/deals/{deal_id} — удаление сделки."""
+    from src.infrastructure.database.repositories.deal_repository import SqlDealRepository
+    repo = SqlDealRepository(session)
+    await repo.delete(deal_id)
 
 
 @router.patch(

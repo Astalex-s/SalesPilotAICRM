@@ -10,6 +10,7 @@ import GdprPage from './pages/GdprPage';
 import GmailPage from './pages/GmailPage';
 import TelegramPage from './pages/TelegramPage';
 import DashboardPage from './pages/DashboardPage';
+import DealDetailPage from './pages/DealDetailPage';
 import DealsPage from './pages/DealsPage';
 import LeadDetailPage from './pages/LeadDetailPage';
 import LeadsPage from './pages/LeadsPage';
@@ -77,6 +78,7 @@ export default function App() {
               <Route path="leads" element={<LeadsPage />} />
               <Route path="leads/:leadId" element={<LeadDetailPage />} />
               <Route path="deals" element={<DealsPage />} />
+              <Route path="deals/:dealId" element={<DealDetailPage />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="manager-dashboard" element={<ManagerDashboardPage />} />

@@ -12,6 +12,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from fastapi import status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.activity_dtos import ActivityOutput, AddCommentInput
 from src.application.dtos.lead_dtos import (
@@ -38,6 +39,7 @@ from src.application.use_cases.list_lead_tags import ListLeadTagsUseCase
 from src.application.use_cases.update_lead import UpdateLeadUseCase
 from src.domain.value_objects.enums import LeadSource, LeadStatus
 from src.infrastructure.notifications.notification_bus import bus
+from src.infrastructure.database.session import get_db
 from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.dependencies import (
     get_add_comment_use_case,
@@ -171,6 +173,23 @@ async def get_lead(
 ) -> LeadOutput:
     """GET /api/v1/leads/{lead_id} — получение одного лида."""
     return await use_case.execute(GetLeadInput(lead_id=lead_id))
+
+
+@router.delete(
+    "/{lead_id}",
+    status_code=http_status.HTTP_204_NO_CONTENT,
+    summary="Удалить лида",
+    description="Удаляет лида по UUID. Возвращает 204 No Content.",
+    response_model=None,
+)
+async def delete_lead(
+    lead_id: UUID,
+    session: AsyncSession = Depends(get_db),
+) -> None:
+    """DELETE /api/v1/leads/{lead_id} — удаление лида."""
+    from src.infrastructure.database.repositories.lead_repository import SqlLeadRepository
+    repo = SqlLeadRepository(session)
+    await repo.delete(lead_id)
 
 
 @router.get(

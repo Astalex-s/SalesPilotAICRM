@@ -85,6 +85,11 @@ export default function LeadDetailPage() {
               lead={lead.data}
               onStatusChange={(newStatus) => updateLead(lead.data!.id, { status: newStatus })}
               onTagsChange={(tags, category) => updateLead(lead.data!.id, { tags, category })}
+              onDelete={async () => {
+                if (!window.confirm(t('leadDetail.deleteConfirm'))) return;
+                await leadsApi.delete(lead.data!.id);
+                navigate('/leads');
+              }}
               availableTags={availableTags}
             />
           ) : null}

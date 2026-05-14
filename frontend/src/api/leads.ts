@@ -46,6 +46,10 @@ export const leadsApi = {
     return data;
   },
 
+  delete: async (leadId: string): Promise<void> => {
+    await axiosInstance.delete(`/leads/${leadId}`);
+  },
+
   bulkImport: async (file: File): Promise<BulkImportResult> => {
     const formData = new FormData();
     formData.append('file', file);

@@ -33,6 +33,15 @@ export const dealsApi = {
     return data;
   },
 
+  getById: async (dealId: string): Promise<Deal> => {
+    const { data } = await axiosInstance.get<Deal>(`/deals/${dealId}`);
+    return data;
+  },
+
+  delete: async (dealId: string): Promise<void> => {
+    await axiosInstance.delete(`/deals/${dealId}`);
+  },
+
   getActivities: async (dealId: string): Promise<Activity[]> => {
     const { data } = await axiosInstance.get<Activity[]>(`/deals/${dealId}/activities`);
     return data;

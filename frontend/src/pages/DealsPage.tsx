@@ -6,6 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Box, Button, CircularProgress, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { dealsApi } from '../api/deals';
 import { pipelinesApi } from '../api/pipelines';
 import EmptyState from '../components/common/EmptyState';
@@ -42,19 +43,20 @@ const STATUS_STYLE: Record<DealStatus, { bg: string; color: string }> = {
 };
 
 /* ── Mobile card for a single deal ── */
-function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose }: {
+function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose, onClick }: {
   deal: Deal;
   stageName: string;
   onAttachments: () => void;
   onActivities: () => void;
   onClose: (outcome: 'won' | 'lost') => void;
+  onClick: () => void;
 }) {
   const { t } = useTranslation();
   const st = STATUS_STYLE[deal.status] ?? STATUS_STYLE.open;
   const amountNum = parseFloat(deal.value_amount);
 
   return (
-    <Box sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
+    <Box onClick={onClick} sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)', cursor: 'pointer' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1 }}>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>
@@ -109,6 +111,7 @@ function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose 
 
 export default function DealsPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -207,6 +210,7 @@ export default function DealsPage() {
                 onAttachments={() => setAttachmentsDeal(deal)}
                 onActivities={() => setActivitiesDeal(deal)}
                 onClose={(outcome) => handleCloseDeal(deal.id, outcome)}
+                onClick={() => navigate(`/deals/${deal.id}`)}
               />
             ))
           )}
@@ -282,8 +286,10 @@ export default function DealsPage() {
                 return (
                   <TableRow
                     key={deal.id}
+                    onClick={() => navigate(`/deals/${deal.id}`)}
                     sx={{
                       height: 56,
+                      cursor: 'pointer',
                       '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
                       '&:hover': { bgcolor: 'action.hover' },
                     }}

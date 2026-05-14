@@ -1,6 +1,7 @@
 import BusinessIcon from '@mui/icons-material/Business';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import LabelIcon from '@mui/icons-material/Label';
@@ -88,10 +89,11 @@ interface LeadInfoCardProps {
   lead: Lead;
   onStatusChange?: (newStatus: LeadStatus) => Promise<void>;
   onTagsChange?: (tags: string[], category: string | null) => Promise<void>;
+  onDelete?: () => Promise<void>;
   availableTags?: string[];
 }
 
-export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, availableTags = [] }: LeadInfoCardProps) {
+export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, onDelete, availableTags = [] }: LeadInfoCardProps) {
   const { t } = useTranslation();
   const s = STATUS_STYLE[lead.status];
 
@@ -413,7 +415,26 @@ export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, avail
           )}
         </Box>
 
-        <Divider sx={{ borderColor: '#F0F5FF', my: 2 }} />
+        {onDelete && (
+          <>
+            <Divider sx={{ borderColor: 'divider', my: 2 }} />
+            <Box
+              onClick={onDelete}
+              sx={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75,
+                py: 1, borderRadius: '8px', cursor: 'pointer',
+                color: '#EF4444', fontSize: 13, fontFamily: 'Inter, sans-serif', fontWeight: 500,
+                '&:hover': { bgcolor: 'rgba(239,68,68,0.08)' },
+                transition: 'background 0.15s',
+              }}
+            >
+              <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+              {t('leadDetail.delete')}
+            </Box>
+          </>
+        )}
+
+        <Divider sx={{ borderColor: 'divider', my: 2 }} />
 
         {/* Meta */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
