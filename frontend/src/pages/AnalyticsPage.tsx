@@ -5,6 +5,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WorkIcon from '@mui/icons-material/Work';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import PrintIcon from '@mui/icons-material/Print';
 import Chip from '@mui/material/Chip';
 import {
@@ -777,6 +778,25 @@ export default function AnalyticsPage() {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<MonitorHeartIcon fontSize="small" />}
+            onClick={() => window.open('/grafana/', '_blank', 'noopener')}
+            sx={{
+              borderColor: '#E2EAF4',
+              color: '#4B6080',
+              borderRadius: '10px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 500,
+              fontSize: 13,
+              textTransform: 'none',
+              '&:hover': { bgcolor: '#F0F5FF', borderColor: '#C8D8F0' },
+            }}
+          >
+            Grafana
+          </Button>
+
           <Tooltip title={t('analytics.refresh')}>
             <IconButton
               onClick={load}
