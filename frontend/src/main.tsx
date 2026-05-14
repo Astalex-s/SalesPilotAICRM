@@ -19,11 +19,9 @@ Sentry.init({
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Sentry.ErrorBoundary fallback={<SentryFallback />}>
-      <App />
-    </Sentry.ErrorBoundary>
-  </React.StrictMode>,
+  <Sentry.ErrorBoundary fallback={<SentryFallback />}>
+    <App />
+  </Sentry.ErrorBoundary>,
 );
 
 function SentryFallback() {
