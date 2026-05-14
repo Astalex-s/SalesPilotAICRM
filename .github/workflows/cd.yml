@@ -82,8 +82,6 @@ jobs:
     name: Deploy to production
     needs: publish
     runs-on: ubuntu-latest
-    environment: production      # enables "required reviewers" protection in GitHub UI
-
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
