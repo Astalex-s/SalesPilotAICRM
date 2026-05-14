@@ -132,6 +132,7 @@ class OpenAIService(IAIService):
         lead_context: dict[str, Any],
         tone: str,
         extra_context: str | None,
+        sender_context: dict[str, str] | None = None,
     ) -> EmailDraft:
         """Генерирует персонализированное email-письмо."""
         logger.debug(
@@ -142,7 +143,7 @@ class OpenAIService(IAIService):
 
         raw = await self._chat_json(
             system=GENERATE_EMAIL_SYSTEM,
-            user=generate_email_user(lead_context, tone, extra_context),
+            user=generate_email_user(lead_context, tone, extra_context, sender_context),
         )
 
         logger.debug("generate_email: тема='%s'", raw.get("subject"))

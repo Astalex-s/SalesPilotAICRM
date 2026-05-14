@@ -48,11 +48,18 @@ class GenerateEmailUseCase:
             "notes": lead.notes or "Нет заметок",
         }
 
+        # Шаг 2b: контекст отправителя
+        sender_context = {
+            "name": data.sender_name,
+            "email": data.sender_email,
+        } if data.sender_name else None
+
         # Шаг 3: вызов AI через абстракцию
         draft = await self._ai_service.generate_email(
             lead_context=lead_context,
             tone=data.tone,
             extra_context=data.extra_context,
+            sender_context=sender_context,
         )
 
         # Шаг 4: формирование DTO

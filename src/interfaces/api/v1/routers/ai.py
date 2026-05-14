@@ -29,6 +29,8 @@ from src.application.use_cases.generate_email import GenerateEmailUseCase
 from src.application.use_cases.generate_pipeline_digest import GeneratePipelineDigestUseCase
 from src.application.use_cases.get_next_best_action import GetNextBestActionUseCase
 from src.application.use_cases.score_lead import ScoreLeadUseCase
+from src.application.dtos.auth_dtos import UserOutput
+from src.interfaces.api.auth_dependencies import get_current_user
 from src.interfaces.api.dependencies import (
     get_analyze_lost_deals_use_case,
     get_forecast_deal_use_case,
@@ -112,12 +114,15 @@ async def generate_email(
     tone: Literal["formal", "friendly", "assertive"] = "friendly",
     extra_context: str | None = None,
     use_case: GenerateEmailUseCase = Depends(get_generate_email_use_case),
+    current_user: UserOutput = Depends(get_current_user),
 ) -> GenerateEmailOutput:
     """POST /api/v1/ai/leads/{lead_id}/generate-email — генерация email."""
     data = GenerateEmailInput(
         lead_id=lead_id,
         tone=tone,
         extra_context=extra_context,
+        sender_name=f"{current_user.first_name} {current_user.last_name}",
+        sender_email=current_user.email,
     )
     return await use_case.execute(data)
 

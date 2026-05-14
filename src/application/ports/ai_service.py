@@ -127,6 +127,7 @@ class IAIService(ABC):
         lead_context: dict[str, Any],
         tone: str,
         extra_context: str | None,
+        sender_context: dict[str, str] | None = None,
     ) -> EmailDraft:
         """Генерирует персонализированное email-сообщение для лида.
 

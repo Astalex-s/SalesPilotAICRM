@@ -75,6 +75,8 @@ class GenerateEmailInput(BaseModel):
         default=None,
         description="Дополнительный контекст от менеджера (особые условия, детали встречи и т.д.)",
     )
+    sender_name: str = ""
+    sender_email: str = ""
 
 
 class GenerateEmailOutput(BaseModel):

@@ -23,10 +23,18 @@ def generate_email_user(
     lead_context: dict[str, Any],
     tone: str,
     extra_context: str | None,
+    sender_context: dict[str, str] | None = None,
 ) -> str:
     """Формирует промпт для генерации email-письма."""
     tone_desc = _TONE_DESCRIPTIONS.get(tone, tone)
     extra = f"\nДополнительный контекст от менеджера: {extra_context}" if extra_context else ""
+
+    sender_block = ""
+    if sender_context and sender_context.get("name"):
+        sender_block = f"""
+Данные отправителя (менеджера):
+- Имя: {sender_context['name']}
+- Email: {sender_context.get('email', '')}"""
 
     return f"""\
 Напиши персонализированное email-письмо для следующего лида.
@@ -37,16 +45,17 @@ def generate_email_user(
 - Компания: {lead_context['company']}
 - Источник: {lead_context['source']}
 - Статус: {lead_context['status']}
-- Заметки: {lead_context['notes']}{extra}
+- Заметки: {lead_context['notes']}{extra}{sender_block}
 
 Требования к письму:
 - Тон: {tone_desc}
 - Язык: русский
 - Длина тела: 3-5 абзацев
 - Должно содержать чёткий призыв к действию (CTA)
+- Письмо должно заканчиваться подписью отправителя (имя, должность «Менеджер по продажам», email)
 
 Верни JSON строго в следующем формате:
 {{
   "subject": "<тема письма>",
-  "body": "<полный текст письма>"
+  "body": "<полный текст письма с подписью>"
 }}"""
