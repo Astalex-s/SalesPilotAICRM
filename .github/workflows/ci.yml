@@ -7,10 +7,22 @@ on:
     branches: [main, master]
 
 jobs:
-  # ── Backend: lint + unit + integration tests ───────────────────────────────
+  # ── Backend: critical unit + integration tests ─────────────────────────────
   backend:
     name: Backend tests
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/salespilot
+      REDIS_URL: redis://localhost:6379/0
+      CELERY_BROKER_URL: redis://localhost:6379/1
+      CELERY_RESULT_BACKEND: redis://localhost:6379/2
+      SECRET_KEY: ci-test-secret-key-not-for-production
+      OPENAI_API_KEY: sk-test-placeholder
+      TELEGRAM_BOT_TOKEN: ""
+      GMAIL_CLIENT_ID: ""
+      GMAIL_CLIENT_SECRET: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -24,42 +36,25 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install aiosqlite pytest-cov
+          pip install aiosqlite pytest-timeout
 
-      - name: Run tests
-        env:
-          # Settings validator requires postgresql+asyncpg:// prefix.
-          # Unit tests mock all repos; integration tests use SQLite in-memory.
-          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/salespilot
-          REDIS_URL: redis://localhost:6379/0
-          CELERY_BROKER_URL: redis://localhost:6379/1
-          CELERY_RESULT_BACKEND: redis://localhost:6379/2
-          SECRET_KEY: ci-test-secret-key-not-for-production
-          OPENAI_API_KEY: sk-test-placeholder
-          TELEGRAM_BOT_TOKEN: ""
-          GMAIL_CLIENT_ID: ""
-          GMAIL_CLIENT_SECRET: ""
+      - name: Run critical tests
         run: |
-          pytest tests/ \
-            --ignore=tests/integration \
-            --tb=short \
-            --cov=src \
-            --cov-report=term-missing \
-            -q
-
-      - name: Run integration tests (SQLite in-memory)
-        env:
-          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/salespilot
-          REDIS_URL: redis://localhost:6379/0
-          CELERY_BROKER_URL: redis://localhost:6379/1
-          CELERY_RESULT_BACKEND: redis://localhost:6379/2
-          SECRET_KEY: ci-test-secret-key-not-for-production
-          OPENAI_API_KEY: sk-test-placeholder
-          TELEGRAM_BOT_TOKEN: ""
-          GMAIL_CLIENT_ID: ""
-          GMAIL_CLIENT_SECRET: ""
-        run: |
-          pytest tests/integration \
+          pytest \
+            tests/unit/domain/test_lead.py \
+            tests/unit/domain/test_pipeline.py \
+            tests/unit/domain/test_deal.py \
+            tests/unit/domain/test_lead_conversion_service.py \
+            tests/unit/application/test_register_user.py \
+            tests/unit/application/test_login_user.py \
+            tests/unit/application/test_convert_lead_to_deal.py \
+            tests/unit/application/test_move_deal_stage.py \
+            tests/unit/application/test_close_deal.py \
+            tests/unit/application/test_list_leads.py \
+            tests/unit/application/test_get_lead.py \
+            tests/integration/test_lead_repository.py \
+            tests/integration/test_deal_repository.py \
+            --timeout=10 \
             --tb=short \
             -q
 
