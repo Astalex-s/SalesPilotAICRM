@@ -764,7 +764,7 @@
     "appearance": {
       "sidebarDefault": "Боковая панель открыта по умолчанию",
       "sidebarDefaultDesc": "Показывать раскрытую боковую панель при загрузке",
-      "themeDark": "Мягкая тема"
+      "themeDark": "Тёмная тема"
     },
     "language": {
       "appLanguage": "Язык приложения",

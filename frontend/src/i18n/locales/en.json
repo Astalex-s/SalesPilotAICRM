@@ -764,7 +764,7 @@
     "appearance": {
       "sidebarDefault": "Sidebar expanded by default",
       "sidebarDefaultDesc": "Keep the sidebar open when the app loads",
-      "themeDark": "Soft theme"
+      "themeDark": "Dark theme"
     },
     "language": {
       "appLanguage": "Application Language",

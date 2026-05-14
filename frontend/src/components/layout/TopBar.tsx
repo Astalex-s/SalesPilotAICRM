@@ -80,6 +80,8 @@ function SearchIcon() {
 
 /* ── Avatar initials ─────────────────────────────────────────────────────────── */
 function Avatar({ firstName, lastName }: { firstName: string; lastName: string }) {
+  const theme = useTheme();
+  const dark = theme.palette.mode === 'dark';
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
   const savedColor = localStorage.getItem('crm-avatar-color') ?? '#0D2144';
   return (
@@ -88,7 +90,7 @@ function Avatar({ firstName, lastName }: { firstName: string; lastName: string }
       bgcolor: savedColor, color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: 12, fontWeight: 700, fontFamily: 'Inter, sans-serif',
-      border: '1.5px solid #E8EFF7', flexShrink: 0,
+      border: dark ? '1.5px solid rgba(255,255,255,0.2)' : '1.5px solid #E8EFF7', flexShrink: 0,
     }}>
       {initials}
     </Box>
@@ -197,13 +199,14 @@ export default function TopBar() {
             display: { xs: 'none', md: 'flex' },
             alignItems: 'center', gap: 1,
             height: 32, px: 1.5,
-            border: '1px solid #E8EFF7',
+            border: '1px solid',
+            borderColor: dark ? 'rgba(255,255,255,0.12)' : '#E8EFF7',
             borderRadius: '999px',
-            bgcolor: '#fff',
-            color: '#8FA3B8',
+            bgcolor: dark ? 'rgba(255,255,255,0.06)' : '#fff',
+            color: dark ? '#94A3B8' : '#8FA3B8',
             cursor: 'pointer',
-            boxShadow: '0 1px 3px rgba(13,33,68,0.04)',
-            '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: 'rgba(0,168,232,0.02)' },
+            boxShadow: dark ? 'none' : '0 1px 3px rgba(13,33,68,0.04)',
+            '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: dark ? 'rgba(0,168,232,0.08)' : 'rgba(0,168,232,0.02)' },
             transition: 'all 0.15s',
             userSelect: 'none',
           }}
@@ -213,8 +216,8 @@ export default function TopBar() {
             {t('nav.search')}
           </Typography>
           <Box sx={{
-            fontSize: 10, fontFamily: 'Inter, sans-serif', color: '#BDC8D1',
-            border: '1px solid #E8EFF7', borderRadius: '4px',
+            fontSize: 10, fontFamily: 'Inter, sans-serif', color: dark ? '#6B7A8D' : '#BDC8D1',
+            border: '1px solid', borderColor: dark ? 'rgba(255,255,255,0.12)' : '#E8EFF7', borderRadius: '4px',
             px: '4px', py: '1px', fontWeight: 600,
           }}>
             ⌘K
@@ -253,9 +256,9 @@ export default function TopBar() {
             sx={{
               position: 'relative', cursor: 'pointer',
               display: 'flex', p: '4px', borderRadius: '8px',
-              bgcolor: bellAnchor ? '#F0F8FF' : 'transparent',
-              color: bellAnchor ? '#00A8E8' : '#3E4850',
-              '&:hover': { color: '#00A8E8', bgcolor: '#F0F8FF' },
+              bgcolor: bellAnchor ? (dark ? 'rgba(0,168,232,0.12)' : '#F0F8FF') : 'transparent',
+              color: bellAnchor ? '#00A8E8' : (dark ? '#C8D6E5' : '#3E4850'),
+              '&:hover': { color: '#00A8E8', bgcolor: dark ? 'rgba(0,168,232,0.12)' : '#F0F8FF' },
               transition: 'all 0.15s',
             }}
           >
@@ -280,16 +283,16 @@ export default function TopBar() {
               onClick={() => setProfileOpen(true)}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer',
                 p: '3px', borderRadius: '8px',
-                '&:hover': { bgcolor: '#F5F8FC' },
+                '&:hover': { bgcolor: dark ? 'rgba(255,255,255,0.06)' : '#F5F8FC' },
                 transition: 'background 0.15s',
               }}
             >
               <Avatar firstName={user.first_name} lastName={user.last_name} />
               <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#191C1E', fontFamily: 'Inter, sans-serif', lineHeight: 1.2 }}>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary', fontFamily: 'Inter, sans-serif', lineHeight: 1.2 }}>
                   {user.first_name}
                 </Typography>
-                <Typography sx={{ fontSize: 11, color: '#8FA3B8', fontFamily: 'Inter, sans-serif', lineHeight: 1.2, textTransform: 'capitalize' }}>
+                <Typography sx={{ fontSize: 11, color: 'text.secondary', fontFamily: 'Inter, sans-serif', lineHeight: 1.2, textTransform: 'capitalize' }}>
                   {user.role.replace('_', ' ')}
                 </Typography>
               </Box>

@@ -31,9 +31,9 @@ function buildTheme(dark: boolean) {
       primary:   { main: '#00A8E8' },
       secondary: { main: '#FF6B35' },
       ...(dark ? {
-        background: { default: '#E8EDF2', paper: '#F0F4F8' },
-        text:       { primary: '#1A2332', secondary: '#4B6080' },
-        divider:    '#CBD5E1',
+        background: { default: '#141C2B', paper: '#1B2538' },
+        text:       { primary: '#E8EFF5', secondary: '#94A3B8' },
+        divider:    '#2A3A4E',
       } : {
         background: { default: '#F7F9FC', paper: '#FFFFFF' },
         text:       { primary: '#191C1E', secondary: '#5E6E82' },
