@@ -42,8 +42,8 @@ function PipelineHealthCard({
     <Box
       sx={{
         height: '100%',
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '16px',
         boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
         p: 2.5,
@@ -54,7 +54,7 @@ function PipelineHealthCard({
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 15,
-          color: '#0D2144',
+          color: 'text.primary',
           mb: 2,
         }}
       >
@@ -96,7 +96,7 @@ function PipelineHealthCard({
                         fontFamily: 'Inter, sans-serif',
                         fontSize: 13,
                         fontWeight: 500,
-                        color: '#4B6080',
+                        color: 'text.secondary',
                       }}
                     >
                       {row.label}
@@ -108,7 +108,7 @@ function PipelineHealthCard({
                         fontFamily: 'Inter, sans-serif',
                         fontSize: 13,
                         fontWeight: 700,
-                        color: '#0D2144',
+                        color: 'text.primary',
                       }}
                     >
                       {row.value}
@@ -120,7 +120,7 @@ function PipelineHealthCard({
                   sx={{
                     height: 6,
                     borderRadius: 3,
-                    bgcolor: '#F0F5FF',
+                    bgcolor: 'action.hover',
                     overflow: 'hidden',
                   }}
                 >
@@ -170,13 +170,13 @@ export default function DashboardPage() {
               fontFamily: 'Inter, sans-serif',
               fontSize: 24,
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
               lineHeight: 1.2,
             }}
           >
             {t('dashboard.title')}
           </Typography>
-          <Typography sx={{ fontSize: 14, color: '#4B6080', mt: 0.5 }}>
+          <Typography sx={{ fontSize: 14, color: 'text.secondary', mt: 0.5 }}>
             {user?.first_name ? `${user.first_name} · ` : ''}
             {t('dashboard.greeting')}
           </Typography>
@@ -187,10 +187,10 @@ export default function DashboardPage() {
             disabled={loading}
             size="small"
             sx={{
-              border: '1px solid #E2EAF4',
+              border: '1px solid', borderColor: 'divider',
               borderRadius: '10px',
-              color: '#4B6080',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              color: 'text.secondary',
+              '&:hover': { bgcolor: 'action.hover' },
             }}
           >
             <RefreshIcon fontSize="small" />

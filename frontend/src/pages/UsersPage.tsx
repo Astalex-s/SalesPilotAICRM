@@ -32,8 +32,8 @@ import type { User, UserRole } from '../types/auth';
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
 };
@@ -42,7 +42,7 @@ const CARD = {
 const ROLE_STYLE: Record<UserRole, { bg: string; color: string; icon: React.ReactNode }> = {
   admin:     { bg: '#0D2144',  color: '#FFFFFF', icon: <ShieldIcon sx={{ fontSize: 16 }} /> },
   manager:   { bg: '#00A8E8',  color: '#FFFFFF', icon: <ManageAccountsIcon sx={{ fontSize: 16 }} /> },
-  sales_rep: { bg: '#E8F4FF',  color: '#0D2144', icon: <BadgeIcon sx={{ fontSize: 16 }} /> },
+  sales_rep: { bg: '#E8F4FF',  color: 'text.primary', icon: <BadgeIcon sx={{ fontSize: 16 }} /> },
 };
 
 /* ── Avatar ── */
@@ -180,14 +180,14 @@ function UserMobileCard({ user, isCurrentUser, updating, onRoleChange }: {
   const color = avatarColor(user.first_name);
 
   return (
-    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)', borderLeft: isCurrentUser ? '3px solid #00A8E8' : '3px solid transparent' }}>
+    <Box sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)', borderLeft: isCurrentUser ? '3px solid #00A8E8' : '3px solid transparent' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
         <Box sx={{ width: 36, height: 36, borderRadius: '50%', bgcolor: color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
           {`${user.first_name[0]}${user.last_name[0]}`.toUpperCase()}
         </Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>
               {user.first_name} {user.last_name}
             </Typography>
             {isCurrentUser && (
@@ -212,7 +212,7 @@ function UserMobileCard({ user, isCurrentUser, updating, onRoleChange }: {
             disabled={isCurrentUser}
             onChange={(e) => onRoleChange(user.id, e.target.value as UserRole)}
             size="small"
-            sx={{ borderRadius: '10px', fontFamily: 'Inter', fontSize: 12, minWidth: 110, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' }, '&.Mui-disabled': { opacity: 0.5 } }}
+            sx={{ borderRadius: '10px', fontFamily: 'Inter', fontSize: 12, minWidth: 110, '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' }, '&.Mui-disabled': { opacity: 0.5 } }}
           >
             {(['admin', 'manager', 'sales_rep'] as UserRole[]).map((r) => (
               <MenuItem key={r} value={r} sx={{ fontFamily: 'Inter', fontSize: 13 }}>{t(`users.roles.${r}`)}</MenuItem>
@@ -271,7 +271,7 @@ export default function UsersPage() {
       {/* ── Header ── */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
         <Typography
-          sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}
+          sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: 'text.primary' }}
         >
           {t('users.title')}
         </Typography>
@@ -322,10 +322,10 @@ export default function UsersPage() {
             width: { xs: '100%', md: 280 },
             '& .MuiOutlinedInput-root': {
               borderRadius: '10px',
-              bgcolor: '#FFFFFF',
+              bgcolor: 'background.paper',
               fontFamily: 'Inter, sans-serif',
               fontSize: 14,
-              '& fieldset': { borderColor: '#E2EAF4' },
+              '& fieldset': { borderColor: 'divider' },
               '&:hover fieldset': { borderColor: '#CBD5E8' },
               '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
             },
@@ -350,7 +350,7 @@ export default function UsersPage() {
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {[
                 t('users.table.member'),
                 t('users.table.role'),
@@ -433,7 +433,7 @@ export default function UsersPage() {
                                 fontFamily: 'Inter, sans-serif',
                                 fontWeight: 600,
                                 fontSize: 14,
-                                color: '#0D2144',
+                                color: 'text.primary',
                               }}
                             >
                               {user.first_name} {user.last_name}
@@ -508,7 +508,7 @@ export default function UsersPage() {
                                 fontFamily: 'Inter, sans-serif',
                                 fontSize: 13,
                                 minWidth: 130,
-                                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+                                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
                                 '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                   borderColor: '#00A8E8',

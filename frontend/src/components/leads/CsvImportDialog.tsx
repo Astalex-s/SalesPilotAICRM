@@ -67,7 +67,7 @@ function ResultScreen({ result, onDone }: { result: BulkImportResult; onDone: ()
         </svg>
       </Box>
 
-      <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 18, color: '#0D2144', mb: 2 }}>
+      <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 18, color: 'text.primary', mb: 2 }}>
         {t('leads.csvImport.resultTitle')}
       </Typography>
 
@@ -216,10 +216,10 @@ export default function CsvImportDialog({ open, onClose, onImported }: CsvImport
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         px: 3, py: 2, borderBottom: '1px solid #E8EFF7',
       }}>
-        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: 'text.primary' }}>
           {t('leads.csvImport.title')}
         </Typography>
-        <Box onClick={handleClose} sx={{ cursor: 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: '#0D2144' } }}>
+        <Box onClick={handleClose} sx={{ cursor: 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: 'text.primary' } }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6L6 18 M6 6l12 12" />
           </svg>
@@ -267,7 +267,7 @@ export default function CsvImportDialog({ open, onClose, onImported }: CsvImport
                 </Typography>
               ) : (
                 <>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: '#0D2144', mb: 0.5 }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
                     {t('leads.csvImport.dropzone')}
                   </Typography>
                   <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
@@ -287,15 +287,15 @@ export default function CsvImportDialog({ open, onClose, onImported }: CsvImport
             {/* Preview table */}
             {previewRows.length > 0 && hasRequiredCols && (
               <Box>
-                <Typography sx={{ fontFamily: 'Inter', fontSize: 12, fontWeight: 600, color: '#4B6080', mb: 1 }}>
+                <Typography sx={{ fontFamily: 'Inter', fontSize: 12, fontWeight: 600, color: 'text.secondary', mb: 1 }}>
                   {t('leads.csvImport.preview', { count: previewRows.length })}
                 </Typography>
-                <Box sx={{ overflowX: 'auto', border: '1px solid #E8EFF7', borderRadius: '8px' }}>
+                <Box sx={{ overflowX: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: '8px' }}>
                   <Table size="small">
                     <TableHead>
-                      <TableRow sx={{ bgcolor: '#F7F9FC' }}>
+                      <TableRow sx={{ bgcolor: 'background.default' }}>
                         {previewHeaders.map((h) => (
-                          <TableCell key={h} sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 700, color: '#4B6080', py: 1 }}>
+                          <TableCell key={h} sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 700, color: 'text.secondary', py: 1 }}>
                             {h}
                           </TableCell>
                         ))}
@@ -305,7 +305,7 @@ export default function CsvImportDialog({ open, onClose, onImported }: CsvImport
                       {previewRows.map((row, i) => (
                         <TableRow key={i} sx={{ '&:last-child td': { borderBottom: 0 } }}>
                           {previewHeaders.map((h) => (
-                            <TableCell key={h} sx={{ fontFamily: 'Inter', fontSize: 12, color: '#0D2144', py: 0.75 }}>
+                            <TableCell key={h} sx={{ fontFamily: 'Inter', fontSize: 12, color: 'text.primary', py: 0.75 }}>
                               {row[h] || '—'}
                             </TableCell>
                           ))}
@@ -349,7 +349,7 @@ export default function CsvImportDialog({ open, onClose, onImported }: CsvImport
                   disabled={submitting}
                   sx={{
                     fontFamily: 'Inter', fontSize: 13, fontWeight: 500, textTransform: 'none',
-                    borderColor: '#E8EFF7', color: '#64748B', borderRadius: '10px',
+                    borderColor: 'divider', color: '#64748B', borderRadius: '10px',
                     '&:hover': { borderColor: '#CBD5E8', bgcolor: 'transparent' },
                   }}
                 >

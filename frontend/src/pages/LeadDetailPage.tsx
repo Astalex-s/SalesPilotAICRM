@@ -47,10 +47,10 @@ export default function LeadDetailPage() {
             onClick={() => navigate('/leads')}
             size="small"
             sx={{
-              border: '1px solid #E2EAF4',
+              border: '1px solid', borderColor: 'divider',
               borderRadius: '10px',
-              color: '#4B6080',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              color: 'text.secondary',
+              '&:hover': { bgcolor: 'action.hover' },
             }}
           >
             <ArrowBackIcon fontSize="small" />
@@ -65,7 +65,7 @@ export default function LeadDetailPage() {
               fontFamily: 'Inter, sans-serif',
               fontSize: 24,
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
               lineHeight: 1.2,
             }}
           >

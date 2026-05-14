@@ -99,12 +99,12 @@ export default function AddLeadDialog({ open, onClose, onLeadCreated }: AddLeadD
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         px: 3, py: 2, borderBottom: '1px solid #E8EFF7',
       }}>
-        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: 'text.primary' }}>
           {t('leads.dialog.title')}
         </Typography>
         <Box
           onClick={handleClose}
-          sx={{ cursor: submitting ? 'default' : 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: '#0D2144' } }}
+          sx={{ cursor: submitting ? 'default' : 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: 'text.primary' } }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6L6 18 M6 6l12 12" />
@@ -172,7 +172,7 @@ export default function AddLeadDialog({ open, onClose, onLeadCreated }: AddLeadD
               disabled={submitting}
               sx={{
                 fontFamily: 'Inter', fontSize: 13, fontWeight: 500, textTransform: 'none',
-                borderColor: '#E8EFF7', color: '#64748B', borderRadius: '10px',
+                borderColor: 'divider', color: '#64748B', borderRadius: '10px',
                 '&:hover': { borderColor: '#CBD5E8', bgcolor: 'transparent' },
               }}
             >

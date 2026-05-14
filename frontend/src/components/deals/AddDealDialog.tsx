@@ -29,17 +29,17 @@ import type { Pipeline, Stage } from '../../types/pipeline';
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
 const cardSx = {
-  border: '1px solid #E8EFF7',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '12px',
   p: 2.5,
-  bgcolor: '#FAFBFD',
+  bgcolor: 'background.default',
 };
 
 const sectionTitle = {
   fontFamily: 'Inter, sans-serif',
   fontSize: 13,
   fontWeight: 700,
-  color: '#0D2144',
+  color: 'text.primary',
   mb: 0.5,
 };
 
@@ -229,7 +229,7 @@ function EmailCard({ lead }: { lead: Lead }) {
             <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8', minWidth: 42 }}>
               {t('deals.success.emailCard.to')}:
             </Typography>
-            <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#0D2144', fontWeight: 500 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: 'text.primary', fontWeight: 500 }}>
               {lead.email}
             </Typography>
           </Box>
@@ -353,7 +353,7 @@ function SuccessStep({ deal, lead, pipelineId, onDone }: SuccessStepProps) {
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </Box>
-        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 18, color: '#0D2144', mb: 0.5 }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 18, color: 'text.primary', mb: 0.5 }}>
           {t('deals.success.title')}
         </Typography>
         <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#64748B' }}>
@@ -375,7 +375,7 @@ function SuccessStep({ deal, lead, pipelineId, onDone }: SuccessStepProps) {
           onClick={() => navigate(`/pipeline/${pipelineId}`)}
           sx={{
             fontFamily: 'Inter', fontSize: 13, fontWeight: 600, textTransform: 'none',
-            borderColor: '#E8EFF7', color: '#0D2144', borderRadius: '10px',
+            borderColor: 'divider', color: 'text.primary', borderRadius: '10px',
             '&:hover': { borderColor: '#00A8E8', color: '#00A8E8' },
           }}
         >
@@ -621,7 +621,7 @@ function FormStep({ leads, pipeline, defaultStageId, onCancel, onCreated, onLead
           onClick={onCancel}
           sx={{
             fontFamily: 'Inter', fontSize: 13, fontWeight: 500, textTransform: 'none',
-            borderColor: '#E8EFF7', color: '#64748B', borderRadius: '10px',
+            borderColor: 'divider', color: '#64748B', borderRadius: '10px',
             '&:hover': { borderColor: '#CBD5E8', bgcolor: 'transparent' },
           }}
         >
@@ -709,13 +709,13 @@ export default function AddDealDialog({ open, onClose, pipeline, onDealCreated, 
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         px: 3, py: 2, borderBottom: '1px solid #E8EFF7',
       }}>
-        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 16, color: 'text.primary' }}>
           {step === 'form' ? t('deals.dialog.title') : t('deals.success.title')}
         </Typography>
         {step === 'form' && (
           <Box
             onClick={handleClose}
-            sx={{ cursor: 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: '#0D2144' } }}
+            sx={{ cursor: 'pointer', color: '#94A3B8', display: 'flex', '&:hover': { color: 'text.primary' } }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6L6 18 M6 6l12 12" />

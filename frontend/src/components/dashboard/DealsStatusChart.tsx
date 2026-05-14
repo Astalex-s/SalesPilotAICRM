@@ -19,8 +19,8 @@ interface DealsStatusChartProps {
 
 const CARD_STYLE = {
   height: '100%',
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
 };
@@ -50,7 +50,7 @@ export default function DealsStatusChart({ data, loading }: DealsStatusChartProp
             fontFamily: 'Inter, sans-serif',
             fontWeight: 700,
             fontSize: 15,
-            color: '#0D2144',
+            color: 'text.primary',
             mb: 2,
           }}
         >

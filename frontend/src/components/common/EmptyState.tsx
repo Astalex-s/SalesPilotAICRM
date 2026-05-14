@@ -89,7 +89,7 @@ const ILLUSTRATIONS: Record<EmptyStateIcon, Illustration> = {
     ),
   },
   users: {
-    color: '#0D2144',
+    color: 'text.primary',
     bg: 'rgba(13,33,68,0.06)',
     paths: (
       <svg width={40} height={40} viewBox="0 0 24 24" fill="none"

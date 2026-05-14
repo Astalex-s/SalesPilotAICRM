@@ -38,8 +38,8 @@ import { type Lead, type LeadSource, type LeadStatus } from '../types/lead';
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
   overflowX: 'auto' as const,
@@ -62,7 +62,7 @@ const STATUS_STYLE: Record<LeadStatus, { bg: string; color: string }> = {
   contacted:   { bg: 'rgba(245,158,11,0.12)', color: '#D97706' },
   qualified:   { bg: 'rgba(16,185,129,0.12)', color: '#059669' },
   unqualified: { bg: 'rgba(239,68,68,0.12)',  color: '#DC2626' },
-  converted:   { bg: 'rgba(13,33,68,0.10)',   color: '#0D2144' },
+  converted:   { bg: 'rgba(13,33,68,0.10)',   color: 'text.primary' },
 };
 
 function StatusBadge({ status }: { status: LeadStatus }) {
@@ -93,7 +93,7 @@ function StatusBadge({ status }: { status: LeadStatus }) {
 function SourceLabel({ source }: { source: string }) {
   const { t } = useTranslation();
   return (
-    <Typography sx={{ fontSize: 13, color: '#4B6080', fontFamily: 'Inter, sans-serif' }}>
+    <Typography sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'Inter, sans-serif' }}>
       {t(`leads.source.${source}`, source)}
     </Typography>
   );
@@ -135,7 +135,7 @@ const INPUT_SX = {
     borderRadius: '10px',
     fontFamily: 'Inter, sans-serif',
     fontSize: 14,
-    '& fieldset': { borderColor: '#E2EAF4' },
+    '& fieldset': { borderColor: 'divider' },
     '&:hover fieldset': { borderColor: '#CBD5E8' },
     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
   },
@@ -227,7 +227,7 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 18,
-          color: '#0D2144',
+          color: 'text.primary',
           px: 3,
           pt: 3,
           pb: 2,
@@ -242,7 +242,7 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
         </IconButton>
       </DialogTitle>
 
-      <Divider sx={{ borderColor: '#E2EAF4' }} />
+      <Divider sx={{ borderColor: 'divider' }} />
 
       <DialogContent sx={{ px: 3, py: 3 }}>
         {formError && (
@@ -309,7 +309,7 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
               fontFamily: 'Inter, sans-serif',
               fontSize: 12,
               fontWeight: 500,
-              color: '#4B6080',
+              color: 'text.secondary',
               mb: 0.75,
             }}
           >
@@ -324,7 +324,7 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
               borderRadius: '10px',
               fontFamily: 'Inter, sans-serif',
               fontSize: 14,
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
               '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
               '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                 borderColor: '#00A8E8',
@@ -353,12 +353,12 @@ function AddLeadDialog({ open, onClose }: AddLeadDialogProps) {
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600,
               fontSize: 14,
-              color: '#4B6080',
+              color: 'text.secondary',
               borderRadius: '10px',
-              border: '1px solid #E2EAF4',
+              border: '1px solid', borderColor: 'divider',
               px: 2.5,
               textTransform: 'none',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              '&:hover': { bgcolor: 'action.hover' },
             }}
           >
             {t('leads.dialog.cancel')}
@@ -399,12 +399,12 @@ function LeadMobileCard({ lead, onClick, onTagClick }: { lead: Lead; onClick: ()
       onClick={onClick}
       sx={{
         p: 2,
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(13,33,68,0.06)',
         cursor: 'pointer',
-        '&:active': { bgcolor: '#F0F5FF' },
+        '&:active': { bgcolor: 'action.hover' },
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -412,7 +412,7 @@ function LeadMobileCard({ lead, onClick, onTagClick }: { lead: Lead; onClick: ()
           {initials(lead)}
         </Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>
             {lead.first_name} {lead.last_name}
           </Typography>
           <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
@@ -423,7 +423,7 @@ function LeadMobileCard({ lead, onClick, onTagClick }: { lead: Lead; onClick: ()
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-        <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080', flex: 1 }}>
+        <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary', flex: 1 }}>
           {lead.company || '—'}
         </Typography>
         <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8', flexShrink: 0 }}>
@@ -503,7 +503,7 @@ export default function LeadsPage() {
               fontFamily: 'Inter, sans-serif',
               fontSize: { xs: 20, md: 24 },
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
             }}
           >
             {t('leads.title')}
@@ -534,8 +534,8 @@ export default function LeadsPage() {
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600,
               fontSize: { xs: 12, md: 14 },
-              color: '#0D2144',
-              borderColor: '#E2EAF4',
+              color: 'text.primary',
+              borderColor: 'divider',
               borderRadius: '10px',
               px: { xs: 1.5, md: 2.5 },
               textTransform: 'none',
@@ -600,10 +600,10 @@ export default function LeadsPage() {
             width: { xs: '100%', md: 280 },
             '& .MuiOutlinedInput-root': {
               borderRadius: '10px',
-              bgcolor: '#FFFFFF',
+              bgcolor: 'background.paper',
               fontFamily: 'Inter, sans-serif',
               fontSize: 14,
-              '& fieldset': { borderColor: '#E2EAF4' },
+              '& fieldset': { borderColor: 'divider' },
               '&:hover fieldset': { borderColor: '#CBD5E8' },
               '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
             },
@@ -657,10 +657,10 @@ export default function LeadsPage() {
                   width: 180,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
-                    bgcolor: '#FFFFFF',
+                    bgcolor: 'background.paper',
                     fontFamily: 'Inter, sans-serif',
                     fontSize: 13,
-                    '& fieldset': { borderColor: '#E2EAF4' },
+                    '& fieldset': { borderColor: 'divider' },
                     '&:hover fieldset': { borderColor: '#CBD5E8' },
                     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
                   },
@@ -713,7 +713,7 @@ export default function LeadsPage() {
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {/* Avatar col */}
               <TableCell sx={{ width: 52, border: 'none', py: 1.5 }} />
               <TableCell
@@ -832,7 +832,7 @@ export default function LeadsPage() {
                       height: 56,
                       cursor: 'pointer',
                       transition: 'background 0.12s',
-                      '&:hover': { bgcolor: '#F0F5FF' },
+                      '&:hover': { bgcolor: 'action.hover' },
                       '& td': {
                         border: 'none',
                         borderTop: '1px solid #F0F5FF',
@@ -868,7 +868,7 @@ export default function LeadsPage() {
                           fontFamily: 'Inter, sans-serif',
                           fontWeight: 600,
                           fontSize: 14,
-                          color: '#0D2144',
+                          color: 'text.primary',
                           lineHeight: 1.3,
                         }}
                       >
@@ -911,7 +911,7 @@ export default function LeadsPage() {
                           sx={{
                             fontFamily: 'Inter, sans-serif',
                             fontSize: 13,
-                            color: '#4B6080',
+                            color: 'text.secondary',
                             fontWeight: 500,
                           }}
                         >
@@ -976,8 +976,8 @@ export default function LeadsPage() {
                 fontFamily: 'Inter', fontSize: 13, fontWeight: 500,
                 cursor: page === 0 ? 'not-allowed' : 'pointer',
                 color: page === 0 ? '#CBD5E8' : '#4B6080',
-                border: '1px solid #E2EAF4', bgcolor: '#FFFFFF', userSelect: 'none',
-                '&:hover': page === 0 ? {} : { bgcolor: '#F0F5FF' },
+                border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', userSelect: 'none',
+                '&:hover': page === 0 ? {} : { bgcolor: 'action.hover' },
               }}
             >
               ←
@@ -989,8 +989,8 @@ export default function LeadsPage() {
                 fontFamily: 'Inter', fontSize: 13, fontWeight: 500,
                 cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer',
                 color: page >= totalPages - 1 ? '#CBD5E8' : '#4B6080',
-                border: '1px solid #E2EAF4', bgcolor: '#FFFFFF', userSelect: 'none',
-                '&:hover': page >= totalPages - 1 ? {} : { bgcolor: '#F0F5FF' },
+                border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', userSelect: 'none',
+                '&:hover': page >= totalPages - 1 ? {} : { bgcolor: 'action.hover' },
               }}
             >
               →

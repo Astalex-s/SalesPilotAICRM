@@ -46,8 +46,8 @@ import type {
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
 };
@@ -57,7 +57,7 @@ const INPUT_SX = {
     borderRadius: '10px',
     fontFamily: 'Inter, sans-serif',
     fontSize: 14,
-    '& fieldset': { borderColor: '#E2EAF4' },
+    '& fieldset': { borderColor: 'divider' },
     '&:hover fieldset': { borderColor: '#CBD5E8' },
     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
   },
@@ -125,7 +125,7 @@ function ConnectCard({
             fontFamily: 'Inter, sans-serif',
             fontWeight: 700,
             fontSize: 20,
-            color: '#0D2144',
+            color: 'text.primary',
             mb: 1,
           }}
         >
@@ -263,7 +263,7 @@ function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 18,
-          color: '#0D2144',
+          color: 'text.primary',
           px: 3,
           pt: 3,
           pb: 2,
@@ -278,7 +278,7 @@ function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
         </IconButton>
       </DialogTitle>
 
-      <Divider sx={{ borderColor: '#E2EAF4' }} />
+      <Divider sx={{ borderColor: 'divider' }} />
 
       <DialogContent sx={{ px: 3, py: 3 }}>
         {sendError && (
@@ -326,7 +326,7 @@ function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
               fontFamily: 'Inter, sans-serif',
               fontSize: 12,
               fontWeight: 500,
-              color: '#4B6080',
+              color: 'text.secondary',
               mb: 0.75,
             }}
           >
@@ -342,7 +342,7 @@ function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
               borderRadius: '10px',
               fontFamily: 'Inter, sans-serif',
               fontSize: 14,
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
               '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
               '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                 borderColor: '#00A8E8',
@@ -375,12 +375,12 @@ function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
               fontFamily: 'Inter, sans-serif',
               fontWeight: 600,
               fontSize: 14,
-              color: '#4B6080',
+              color: 'text.secondary',
               borderRadius: '10px',
-              border: '1px solid #E2EAF4',
+              border: '1px solid', borderColor: 'divider',
               px: 2.5,
               textTransform: 'none',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              '&:hover': { bgcolor: 'action.hover' },
             }}
           >
             {t('gmail.dialog.cancel')}
@@ -495,7 +495,7 @@ function ThreadDialog({
       PaperProps={{ sx: { borderRadius: '20px', boxShadow: '0 24px 64px rgba(13,33,68,0.18)' } }}
     >
       <DialogTitle sx={{
-        fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: '#0D2144',
+        fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: 'text.primary',
         px: 3, pt: 3, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         {detail?.subject ?? '...'}
@@ -503,7 +503,7 @@ function ThreadDialog({
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
-      <Divider sx={{ borderColor: '#E2EAF4' }} />
+      <Divider sx={{ borderColor: 'divider' }} />
       <DialogContent sx={{ px: 3, py: 2, maxHeight: '70vh', overflowY: 'auto' }}>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -513,7 +513,7 @@ function ThreadDialog({
           <Box key={msg.id} sx={{
             mb: 2, p: 2.5,
             bgcolor: msg.direction === 'inbound' ? '#F8FAFC' : 'rgba(0,168,232,0.04)',
-            border: '1px solid #E8EFF7', borderRadius: '10px',
+            border: '1px solid', borderColor: 'divider', borderRadius: '10px',
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -528,7 +528,7 @@ function ThreadDialog({
                   {(msg.from_address[0] ?? '?').toUpperCase()}
                 </Box>
                 <Box>
-                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: '#0D2144' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: 'text.primary' }}>
                     {msg.from_address}
                   </Typography>
                   <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>
@@ -617,7 +617,7 @@ function ThreadsView({
     <Box sx={CARD}>
       <Table sx={{ tableLayout: 'fixed' }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+          <TableRow sx={{ bgcolor: 'action.hover' }}>
             <TableCell sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8', border: 'none', py: 1.5, pl: 2.5 }}>
               {t('gmail.table.subject')}
             </TableCell>
@@ -643,11 +643,11 @@ function ThreadsView({
                 sx={{
                   height: 60, cursor: 'pointer',
                   '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
-                  '&:hover': { bgcolor: '#F0F5FF' },
+                  '&:hover': { bgcolor: 'action.hover' },
                 }}
               >
                 <TableCell sx={{ py: 1, pl: 2.5 }}>
-                  <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
+                  <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary' }}>
                     {th.subject}
                   </Typography>
                   <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8', mt: 0.25 }}>
@@ -656,7 +656,7 @@ function ThreadsView({
                 </TableCell>
                 <TableCell sx={{ py: 1 }}>
                   {lead ? (
-                    <Box sx={{ display: 'inline-flex', px: 1, py: 0.3, borderRadius: '20px', bgcolor: 'rgba(13,33,68,0.08)', color: '#0D2144', fontFamily: 'Inter', fontSize: 11, fontWeight: 600 }}>
+                    <Box sx={{ display: 'inline-flex', px: 1, py: 0.3, borderRadius: '20px', bgcolor: 'rgba(13,33,68,0.08)', color: 'text.primary', fontFamily: 'Inter', fontSize: 11, fontWeight: 600 }}>
                       {lead.first_name} {lead.last_name}
                     </Box>
                   ) : (
@@ -835,7 +835,7 @@ export default function GmailPage() {
             fontFamily: 'Inter, sans-serif',
             fontSize: 24,
             fontWeight: 700,
-            color: '#0D2144',
+            color: 'text.primary',
             mb: 3,
           }}
         >
@@ -863,7 +863,7 @@ export default function GmailPage() {
               fontFamily: 'Inter, sans-serif',
               fontSize: 24,
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
             }}
           >
             {t('gmail.title')}
@@ -897,7 +897,7 @@ export default function GmailPage() {
 
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
           {/* View toggle */}
-          <Box sx={{ display: 'flex', border: '1px solid #E2EAF4', borderRadius: '10px', overflow: 'hidden' }}>
+          <Box sx={{ display: 'flex', border: '1px solid', borderColor: 'divider', borderRadius: '10px', overflow: 'hidden' }}>
             <Button
               onClick={() => setViewMode('flat')}
               sx={{
@@ -998,10 +998,10 @@ export default function GmailPage() {
             width: 320,
             '& .MuiOutlinedInput-root': {
               borderRadius: '10px',
-              bgcolor: '#FFFFFF',
+              bgcolor: 'background.paper',
               fontFamily: 'Inter, sans-serif',
               fontSize: 14,
-              '& fieldset': { borderColor: '#E2EAF4' },
+              '& fieldset': { borderColor: 'divider' },
               '&:hover fieldset': { borderColor: '#CBD5E8' },
               '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
             },
@@ -1022,7 +1022,7 @@ export default function GmailPage() {
       <Box sx={CARD}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {/* Direction */}
               <TableCell
                 sx={{
@@ -1138,7 +1138,7 @@ export default function GmailPage() {
                     sx={{
                       height: 56,
                       '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
-                      '&:hover': { bgcolor: '#F0F5FF' },
+                      '&:hover': { bgcolor: 'action.hover' },
                     }}
                   >
                     {/* Direction badge */}
@@ -1155,7 +1155,7 @@ export default function GmailPage() {
                             fontFamily: 'Inter, sans-serif',
                             fontSize: 13,
                             fontWeight: 500,
-                            color: '#0D2144',
+                            color: 'text.primary',
                             maxWidth: 180,
                           }}
                         >
@@ -1172,7 +1172,7 @@ export default function GmailPage() {
                           sx={{
                             fontFamily: 'Inter, sans-serif',
                             fontSize: 13,
-                            color: '#4B6080',
+                            color: 'text.secondary',
                           }}
                         >
                           {email.subject}
@@ -1197,7 +1197,7 @@ export default function GmailPage() {
                             py: 0.3,
                             borderRadius: '20px',
                             bgcolor: 'rgba(13,33,68,0.08)',
-                            color: '#0D2144',
+                            color: 'text.primary',
                             fontFamily: 'Inter',
                             fontSize: 11,
                             fontWeight: 600,

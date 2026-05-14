@@ -54,7 +54,7 @@ function TaskRow({ task, onDone, onDelete }: { task: CrmTask; onDone: (id: strin
   };
 
   return (
-    <TableRow sx={{ height: 56, '& td': { border: 'none', borderTop: '1px solid #F0F5FF' }, '&:hover': { bgcolor: '#F0F5FF' } }}>
+    <TableRow sx={{ height: 56, '& td': { border: 'none', borderTop: '1px solid #F0F5FF' }, '&:hover': { bgcolor: 'action.hover' } }}>
       {/* Title + description */}
       <TableCell>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -64,7 +64,7 @@ function TaskRow({ task, onDone, onDelete }: { task: CrmTask; onDone: (id: strin
             </Tooltip>
           )}
           <Box>
-            <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144', lineHeight: 1.2 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary', lineHeight: 1.2 }}>
               {task.title}
             </Typography>
             {task.description && (
@@ -148,12 +148,12 @@ function TaskMobileCard({ task, onDone, onDelete }: { task: CrmTask; onDone: (id
   const st = STATUS_STYLE[task.status];
 
   return (
-    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
+    <Box sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 0.75 }}>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {task.is_overdue && <WarningAmberIcon sx={{ fontSize: 15, color: '#F59E0B', flexShrink: 0 }} />}
-            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+            <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>
               {task.title}
             </Typography>
           </Box>
@@ -223,7 +223,7 @@ export default function TasksPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: 'text.primary' }}>
             {t('tasks.title')}
           </Typography>
           {!loading && (
@@ -277,10 +277,10 @@ export default function TasksPage() {
         </Box>
       ) : (
       /* Desktop table */
-      <Box sx={{ background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '16px', boxShadow: '0 4px 24px rgba(13,33,68,0.07)', overflowX: 'auto' }}>
+      <Box sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '16px', boxShadow: '0 4px 24px rgba(13,33,68,0.07)', overflowX: 'auto' }}>
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {[
                 [t('tasks.table.title'), undefined],
                 [t('tasks.table.status'), '130px'],

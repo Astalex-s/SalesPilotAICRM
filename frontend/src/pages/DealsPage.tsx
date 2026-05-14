@@ -54,10 +54,10 @@ function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose 
   const amountNum = parseFloat(deal.value_amount);
 
   return (
-    <Box sx={{ p: 2, background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
+    <Box sx={{ p: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '12px', boxShadow: '0 2px 8px rgba(13,33,68,0.06)' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1 }}>
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>
+          <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>
             {deal.title}
           </Typography>
           {deal.company && (
@@ -85,10 +85,10 @@ function DealMobileCard({ deal, stageName, onAttachments, onActivities, onClose 
           {deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString() : '—'}
         </Typography>
         <Box sx={{ display: 'flex', gap: 0.5 }}>
-          <Box component="button" onClick={onActivities} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #E8EFF7', bgcolor: '#FAFBFD', color: '#8FA3B8', cursor: 'pointer' }}>
+          <Box component="button" onClick={onActivities} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid', borderColor: 'divider', bgcolor: 'background.default', color: '#8FA3B8', cursor: 'pointer' }}>
             <ChatBubbleOutlineIcon sx={{ fontSize: 15 }} />
           </Box>
-          <Box component="button" onClick={onAttachments} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid #E8EFF7', bgcolor: '#FAFBFD', color: '#8FA3B8', cursor: 'pointer' }}>
+          <Box component="button" onClick={onAttachments} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '6px', border: '1px solid', borderColor: 'divider', bgcolor: 'background.default', color: '#8FA3B8', cursor: 'pointer' }}>
             <AttachFileIcon sx={{ fontSize: 15 }} />
           </Box>
           {deal.status === 'open' && (
@@ -163,7 +163,7 @@ export default function DealsPage() {
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 1.5 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: { xs: 20, md: 24 }, fontWeight: 700, color: 'text.primary' }}>
           {t('deals.title')}
         </Typography>
         <Button
@@ -215,8 +215,8 @@ export default function DealsPage() {
       /* Desktop table */
       <Box
         sx={{
-          background: '#FFFFFF',
-          border: '1px solid #E2EAF4',
+          bgcolor: 'background.paper',
+          border: '1px solid', borderColor: 'divider',
           borderRadius: '16px',
           boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
           overflowX: 'auto',
@@ -224,7 +224,7 @@ export default function DealsPage() {
       >
         <Table sx={{ tableLayout: 'fixed' }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {([
                 [t('deals.table.title'),     undefined],
                 [t('deals.table.amount'),    undefined],
@@ -285,13 +285,13 @@ export default function DealsPage() {
                     sx={{
                       height: 56,
                       '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
-                      '&:hover': { bgcolor: '#F0F5FF' },
+                      '&:hover': { bgcolor: 'action.hover' },
                     }}
                   >
                     {/* Title */}
                     <TableCell>
                       <Box>
-                        <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144', lineHeight: 1.2 }}>
+                        <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary', lineHeight: 1.2 }}>
                           {deal.title}
                         </Typography>
                         {deal.company && (
@@ -345,9 +345,9 @@ export default function DealsPage() {
                             sx={{
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
                               width: 28, height: 28, borderRadius: '6px',
-                              border: '1px solid #E8EFF7', bgcolor: '#FAFBFD',
+                              border: '1px solid', borderColor: 'divider', bgcolor: 'background.default',
                               color: '#8FA3B8', cursor: 'pointer',
-                              '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8', borderColor: '#C8D9EC' },
+                              '&:hover': { bgcolor: 'action.hover', color: '#00A8E8', borderColor: '#C8D9EC' },
                             }}
                           >
                             <ChatBubbleOutlineIcon sx={{ fontSize: 15 }} />
@@ -360,9 +360,9 @@ export default function DealsPage() {
                             sx={{
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
                               width: 28, height: 28, borderRadius: '6px',
-                              border: '1px solid #E8EFF7', bgcolor: '#FAFBFD',
+                              border: '1px solid', borderColor: 'divider', bgcolor: 'background.default',
                               color: '#8FA3B8', cursor: 'pointer',
-                              '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8', borderColor: '#C8D9EC' },
+                              '&:hover': { bgcolor: 'action.hover', color: '#00A8E8', borderColor: '#C8D9EC' },
                             }}
                           >
                             <AttachFileIcon sx={{ fontSize: 15 }} />

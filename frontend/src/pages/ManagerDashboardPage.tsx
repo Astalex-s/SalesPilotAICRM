@@ -31,8 +31,8 @@ import { type ManagerReportEntry, type ManagersReport } from '../types/analytics
 
 /* ── Tokens ── */
 const CARD_SX = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
 };
@@ -46,7 +46,7 @@ const TH_SX = {
   color: '#94A3B8',
   border: 'none',
   py: 1.5,
-  bgcolor: '#F8FAFC',
+  bgcolor: 'action.hover',
 };
 
 const BAR_COLORS = ['#00A8E8', '#7C3AED', '#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
@@ -85,7 +85,7 @@ function RevenueChart({ managers, loading }: { managers: ManagerReportEntry[]; l
 
   return (
     <Box sx={{ ...CARD_SX, p: 2.5 }}>
-      <Typography sx={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 700, color: '#0D2144', mb: 0.5 }}>
+      <Typography sx={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
         {t('managerDashboard.chart.title')}
       </Typography>
       <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#94A3B8', mb: 2.5 }}>
@@ -101,7 +101,7 @@ function RevenueChart({ managers, loading }: { managers: ManagerReportEntry[]; l
             <YAxis tickFormatter={(v) => fmt(v)} tick={{ fontFamily: 'Inter', fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
             <RTooltip
               formatter={(value: number, name: string) => [fmt(value), name === 'won' ? t('managerDashboard.chart.won') : t('managerDashboard.chart.pipeline')]}
-              contentStyle={{ fontFamily: 'Inter', borderRadius: 10, border: '1px solid #E2EAF4', boxShadow: '0 4px 16px rgba(13,33,68,0.10)' }}
+              contentStyle={{ fontFamily: 'Inter', borderRadius: 10, border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 16px rgba(13,33,68,0.10)' }}
             />
             <Bar dataKey="won" radius={[6, 6, 0, 0]} name="won">
               {data.map((_, i) => (
@@ -122,7 +122,7 @@ function ManagerRow({ m }: { m: ManagerReportEntry }) {
   const hasOverdue = m.overdue_deals > 0;
 
   return (
-    <TableRow sx={{ '&:hover': { bgcolor: '#F8FAFC' }, '& td': { border: 'none', borderTop: '1px solid #F0F5FF' } }}>
+    <TableRow sx={{ '&:hover': { bgcolor: 'action.hover' }, '& td': { border: 'none', borderTop: '1px solid #F0F5FF' } }}>
       {/* Manager */}
       <TableCell sx={{ pl: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -130,7 +130,7 @@ function ManagerRow({ m }: { m: ManagerReportEntry }) {
             {initials}
           </Box>
           <Box>
-            <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: '#0D2144', lineHeight: 1.2 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: 'text.primary', lineHeight: 1.2 }}>
               {m.manager_name}
             </Typography>
             <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
@@ -142,7 +142,7 @@ function ManagerRow({ m }: { m: ManagerReportEntry }) {
 
       {/* Leads */}
       <TableCell>
-        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: '#0D2144' }}>{m.total_leads}</Typography>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: 'text.primary' }}>{m.total_leads}</Typography>
         <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>{m.converted_leads} {t('managerDashboard.table.converted')}</Typography>
       </TableCell>
 
@@ -177,7 +177,7 @@ function ManagerRow({ m }: { m: ManagerReportEntry }) {
 
       {/* Won revenue */}
       <TableCell>
-        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 700, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 700, color: 'text.primary' }}>
           {fmt(m.won_revenue)}
         </Typography>
       </TableCell>
@@ -249,7 +249,7 @@ export default function ManagerDashboardPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: 'text.primary' }}>
             {t('managerDashboard.title')}
           </Typography>
           {!loading && report && (
@@ -259,7 +259,7 @@ export default function ManagerDashboardPage() {
           )}
         </Box>
         <Tooltip title={t('managerDashboard.refresh')}>
-          <IconButton onClick={load} disabled={loading} sx={{ color: '#5E6E82', '&:hover': { color: '#00A8E8', bgcolor: '#F0F8FF' } }}>
+          <IconButton onClick={load} disabled={loading} sx={{ color: '#5E6E82', '&:hover': { color: '#00A8E8', bgcolor: 'action.selected' } }}>
             <RefreshIcon />
           </IconButton>
         </Tooltip>
@@ -307,7 +307,7 @@ export default function ManagerDashboardPage() {
       {!loading && managers.length === 0 ? (
         <Box sx={{ ...CARD_SX, display: 'flex', flexDirection: 'column', alignItems: 'center', py: 10 }}>
           <GroupsIcon sx={{ fontSize: 56, color: '#CBD5E8', mb: 2 }} />
-          <Typography sx={{ fontFamily: 'Inter', fontSize: 16, fontWeight: 600, color: '#4B6080', mb: 0.5 }}>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 16, fontWeight: 600, color: 'text.secondary', mb: 0.5 }}>
             {t('managerDashboard.noData')}
           </Typography>
           <Typography sx={{ fontFamily: 'Inter', fontSize: 14, color: '#94A3B8' }}>
@@ -324,7 +324,7 @@ export default function ManagerDashboardPage() {
           {/* ── Manager table ── */}
           <Box sx={{ ...CARD_SX, overflowX: 'auto' }}>
             <Box sx={{ p: 2.5, borderBottom: '1px solid #EFF4FB' }}>
-              <Typography sx={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 700, color: '#0D2144' }}>
+              <Typography sx={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 700, color: 'text.primary' }}>
                 {t('managerDashboard.table.title')}
               </Typography>
               <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#94A3B8', mt: 0.25 }}>

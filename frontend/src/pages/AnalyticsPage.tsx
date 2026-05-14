@@ -48,8 +48,8 @@ import { type AnalyticsOverview, type ManagerReportEntry, type ManagersReport, t
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
 };
@@ -93,7 +93,7 @@ function ConversionFunnelCard({
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 15,
-          color: '#0D2144',
+          color: 'text.primary',
           mb: 2,
         }}
       >
@@ -198,7 +198,7 @@ function RevenueForecastCard({
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 15,
-          color: '#0D2144',
+          color: 'text.primary',
           mb: 2,
         }}
       >
@@ -224,8 +224,8 @@ function RevenueForecastCard({
                   justifyContent: 'space-between',
                   p: '10px 14px',
                   borderRadius: '10px',
-                  bgcolor: '#F7F9FC',
-                  border: '1px solid #E2EAF4',
+                  bgcolor: 'background.default',
+                  border: '1px solid', borderColor: 'divider',
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -243,7 +243,7 @@ function RevenueForecastCard({
                       fontFamily: 'Inter, sans-serif',
                       fontSize: 13,
                       fontWeight: 500,
-                      color: '#4B6080',
+                      color: 'text.secondary',
                     }}
                   >
                     {m.label}
@@ -254,7 +254,7 @@ function RevenueForecastCard({
                     fontFamily: 'Inter, sans-serif',
                     fontSize: 16,
                     fontWeight: 700,
-                    color: '#0D2144',
+                    color: 'text.primary',
                   }}
                 >
                   {m.value}
@@ -333,7 +333,7 @@ function PipelineStatsTable({
     return (
       <Box sx={CARD}>
         <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5 }}>
-          <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
             {t('analytics.pipelineStats.title')}
           </Typography>
         </Box>
@@ -344,13 +344,13 @@ function PipelineStatsTable({
             <Typography sx={{ py: 4, textAlign: 'center', fontSize: 13, color: '#94A3B8' }}>{t('analytics.pipelineStats.noData')}</Typography>
           ) : (
             overview.pipeline_stats.map((p) => (
-              <Box key={p.pipeline_id} sx={{ p: 2, borderRadius: '10px', bgcolor: '#F7F9FC', border: '1px solid #E2EAF4' }}>
-                <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144', mb: 1 }}>{p.pipeline_name}</Typography>
+              <Box key={p.pipeline_id} sx={{ p: 2, borderRadius: '10px', bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
+                <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary', mb: 1 }}>{p.pipeline_name}</Typography>
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1 }}>
                   <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.open')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#00A8E8' }}>{p.open_deals}</Typography></Box>
                   <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.won')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#10B981' }}>{p.won_deals}</Typography></Box>
                   <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.lost')}</Typography><Typography sx={{ fontSize: 14, fontWeight: 600, color: '#EF4444' }}>{p.lost_deals}</Typography></Box>
-                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.value')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 600, color: '#0D2144' }}>{fmt(p.pipeline_value)}</Typography></Box>
+                  <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.value')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary' }}>{fmt(p.pipeline_value)}</Typography></Box>
                   <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.revenue')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 600, color: '#10B981' }}>{fmt(p.won_revenue)}</Typography></Box>
                   <Box><Typography sx={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' }}>{t('analytics.pipelineStats.winRate')}</Typography><Typography sx={{ fontSize: 13, fontWeight: 700, color: p.win_rate >= 50 ? '#059669' : '#D97706' }}>{p.win_rate.toFixed(1)}%</Typography></Box>
                 </Box>
@@ -370,7 +370,7 @@ function PipelineStatsTable({
             fontFamily: 'Inter, sans-serif',
             fontWeight: 700,
             fontSize: 15,
-            color: '#0D2144',
+            color: 'text.primary',
           }}
         >
           {t('analytics.pipelineStats.title')}
@@ -379,7 +379,7 @@ function PipelineStatsTable({
 
       <Table sx={{ tableLayout: 'fixed' }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+          <TableRow sx={{ bgcolor: 'action.hover' }}>
             {headers.map((h, i) => (
               <TableCell
                 key={i}
@@ -437,7 +437,7 @@ function PipelineStatsTable({
                 sx={{
                   height: 52,
                   '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
-                  '&:hover': { bgcolor: '#F0F5FF' },
+                  '&:hover': { bgcolor: 'action.hover' },
                 }}
               >
                 <TableCell sx={{ py: 1, px: 2.5 }}>
@@ -446,14 +446,14 @@ function PipelineStatsTable({
                       fontFamily: 'Inter, sans-serif',
                       fontWeight: 600,
                       fontSize: 13,
-                      color: '#0D2144',
+                      color: 'text.primary',
                     }}
                   >
                     {p.pipeline_name}
                   </Typography>
                 </TableCell>
                 <TableCell align="right" sx={{ py: 1, px: 2 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary' }}>
                     {p.total_deals}
                   </Typography>
                 </TableCell>
@@ -473,7 +473,7 @@ function PipelineStatsTable({
                   </Typography>
                 </TableCell>
                 <TableCell align="right" sx={{ py: 1, px: 2 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#0D2144' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.primary' }}>
                     {fmt(p.pipeline_value)}
                   </Typography>
                 </TableCell>
@@ -502,7 +502,7 @@ function PipelineStatsTable({
                   </Box>
                 </TableCell>
                 <TableCell align="right" sx={{ py: 1, px: 2 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary' }}>
                     {fmt(p.avg_deal_size)}
                   </Typography>
                 </TableCell>
@@ -538,7 +538,7 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
     <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
       <PeopleIcon sx={{ fontSize: 18, color: '#00A8E8' }} />
       <Box>
-        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
           {t('analytics.managers.title')}
         </Typography>
         <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#94A3B8' }}>
@@ -559,16 +559,16 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
             <Typography sx={{ py: 4, textAlign: 'center', fontSize: 14, color: '#94A3B8' }}>{t('analytics.managers.noData')}</Typography>
           ) : (
             report.managers.map((m: ManagerReportEntry) => (
-              <Box key={m.manager_id} sx={{ p: 2, borderRadius: '10px', bgcolor: '#F7F9FC', border: '1px solid #E2EAF4' }}>
+              <Box key={m.manager_id} sx={{ p: 2, borderRadius: '10px', bgcolor: 'background.default', border: '1px solid', borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#0D2144' }}>{m.manager_name}</Typography>
+                    <Typography noWrap sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: 'text.primary' }}>{m.manager_name}</Typography>
                     <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>{m.manager_email}</Typography>
                   </Box>
-                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: '#0D2144', flexShrink: 0, ml: 1 }}>{fmt(m.won_revenue)}</Typography>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: 'text.primary', flexShrink: 0, ml: 1 }}>{fmt(m.won_revenue)}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                  <Chip label={`${m.total_leads} ${t('analytics.managers.leads')}`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(13,33,68,0.06)', color: '#4B6080' }} />
+                  <Chip label={`${m.total_leads} ${t('analytics.managers.leads')}`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(13,33,68,0.06)', color: 'text.secondary' }} />
                   <Chip label={`${m.open_deals} open`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(0,168,232,0.1)', color: '#0090CC' }} />
                   <Chip label={`${m.won_deals} won`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: 'rgba(16,185,129,0.1)', color: '#059669' }} />
                   <Chip label={`WR ${m.win_rate.toFixed(0)}%`} size="small" sx={{ fontSize: 10, height: 20, bgcolor: m.win_rate >= 50 ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: m.win_rate >= 50 ? '#059669' : '#D97706' }} />
@@ -588,7 +588,7 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
 
       <Table sx={{ tableLayout: 'fixed' }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+          <TableRow sx={{ bgcolor: 'action.hover' }}>
             <TableCell sx={{ ...TH_SX, pl: 2.5 }}>{t('analytics.managers.manager')}</TableCell>
             <TableCell sx={{ ...TH_SX, width: 90 }}>{t('analytics.managers.leads')}</TableCell>
             <TableCell sx={{ ...TH_SX, width: 90 }}>{t('analytics.managers.conversion')}</TableCell>
@@ -618,9 +618,9 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
             </TableRow>
           ) : (
             report.managers.map((m: ManagerReportEntry) => (
-              <TableRow key={m.manager_id} sx={{ '&:hover': { bgcolor: '#F8FAFC' } }}>
+              <TableRow key={m.manager_id} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                 <TableCell sx={{ ...TD_SX, pl: 2.5 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: '#0D2144' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 13, color: 'text.primary' }}>
                     {m.manager_name}
                   </Typography>
                   <Typography noWrap sx={{ fontFamily: 'Inter', fontSize: 11, color: '#94A3B8' }}>
@@ -628,7 +628,7 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
                   </Typography>
                 </TableCell>
                 <TableCell sx={TD_SX}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary' }}>
                     {m.total_leads}
                   </Typography>
                 </TableCell>
@@ -652,12 +652,12 @@ function ManagersTable({ report, loading }: { report: ManagersReport | null; loa
                   </Typography>
                 </TableCell>
                 <TableCell sx={TD_SX}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary' }}>
                     {fmt(m.won_revenue)}
                   </Typography>
                 </TableCell>
                 <TableCell sx={{ ...TD_SX, pr: 2.5 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary' }}>
                     {fmt(m.pipeline_value)}
                   </Typography>
                 </TableCell>
@@ -766,13 +766,13 @@ export default function AnalyticsPage() {
               fontFamily: 'Inter, sans-serif',
               fontSize: { xs: 20, md: 24 },
               fontWeight: 700,
-              color: '#0D2144',
+              color: 'text.primary',
               lineHeight: 1.2,
             }}
           >
             {t('analytics.title')}
           </Typography>
-          <Typography sx={{ fontSize: 14, color: '#4B6080', mt: 0.5 }}>
+          <Typography sx={{ fontSize: 14, color: 'text.secondary', mt: 0.5 }}>
             {t('analytics.greeting')}
           </Typography>
         </Box>
@@ -787,14 +787,14 @@ export default function AnalyticsPage() {
             target="_blank"
             rel="noopener"
             sx={{
-              borderColor: '#E2EAF4',
-              color: '#4B6080',
+              borderColor: 'divider',
+              color: 'text.secondary',
               borderRadius: '10px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 500,
               fontSize: 13,
               textTransform: 'none',
-              '&:hover': { bgcolor: '#F0F5FF', borderColor: '#C8D8F0' },
+              '&:hover': { bgcolor: 'action.hover', borderColor: '#C8D8F0' },
             }}
           >
             Grafana
@@ -806,10 +806,10 @@ export default function AnalyticsPage() {
               disabled={loading}
               size="small"
               sx={{
-                border: '1px solid #E2EAF4',
+                border: '1px solid', borderColor: 'divider',
                 borderRadius: '10px',
-                color: '#4B6080',
-                '&:hover': { bgcolor: '#F0F5FF' },
+                color: 'text.secondary',
+                '&:hover': { bgcolor: 'action.hover' },
               }}
             >
               <RefreshIcon fontSize="small" />
@@ -823,14 +823,14 @@ export default function AnalyticsPage() {
             onClick={(e) => setExportAnchor(e.currentTarget)}
             disabled={loading}
             sx={{
-              borderColor: '#E2EAF4',
-              color: '#4B6080',
+              borderColor: 'divider',
+              color: 'text.secondary',
               borderRadius: '10px',
               fontFamily: 'Inter, sans-serif',
               fontWeight: 500,
               fontSize: 13,
               textTransform: 'none',
-              '&:hover': { bgcolor: '#F0F5FF', borderColor: '#C8D8F0' },
+              '&:hover': { bgcolor: 'action.hover', borderColor: '#C8D8F0' },
             }}
           >
             {csvLoading ? t('analytics.export.downloading') : t('analytics.export.button')}
@@ -843,7 +843,7 @@ export default function AnalyticsPage() {
             PaperProps={{
               sx: {
                 borderRadius: '12px',
-                border: '1px solid #E8EFF7',
+                border: '1px solid', borderColor: 'divider',
                 boxShadow: '0 8px 24px rgba(13,33,68,0.10)',
                 mt: 0.5,
                 minWidth: 160,

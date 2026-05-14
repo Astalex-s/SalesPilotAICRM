@@ -22,7 +22,7 @@ function BoardSkeleton() {
             <Skeleton variant="text" width={100} height={22} />
             <Skeleton variant="rounded" width={32} height={20} sx={{ borderRadius: '20px' }} />
           </Box>
-          <Box sx={{ borderRadius: '12px', bgcolor: '#F0F5FF', p: 1.25, minHeight: 200 }}>
+          <Box sx={{ borderRadius: '12px', bgcolor: 'action.hover', p: 1.25, minHeight: 200 }}>
             {Array.from({ length: 3 - i % 2 }).map((_, j) => (
               <Skeleton
                 key={j}
@@ -61,8 +61,8 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
       sx={{
         mt: 2.5,
         p: '14px 20px',
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(13,33,68,0.06)',
         display: 'flex',
@@ -74,7 +74,7 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
         <Typography sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8' }}>
           {t('pipeline.totalValue')}
         </Typography>
-        <Typography sx={{ fontFamily: 'Inter', fontSize: 20, fontWeight: 700, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
           {fmt(totalValue)}
         </Typography>
       </Box>
@@ -85,7 +85,7 @@ function TotalsBar({ pipeline, columns }: { pipeline: NonNullable<ReturnType<typ
         <Typography sx={{ fontFamily: 'Inter', fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: '#94A3B8' }}>
           {t('pipeline.totalDeals')}
         </Typography>
-        <Typography sx={{ fontFamily: 'Inter', fontSize: 20, fontWeight: 700, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 20, fontWeight: 700, color: 'text.primary' }}>
           {totalDeals}
         </Typography>
       </Box>

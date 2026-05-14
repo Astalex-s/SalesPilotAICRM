@@ -34,8 +34,8 @@ import type { User } from '../types/auth';
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
   p: 2.5,
@@ -45,7 +45,7 @@ const SELECT_SX = {
   borderRadius: '10px',
   fontFamily: 'Inter, sans-serif',
   fontSize: 14,
-  '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+  '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
   '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#00A8E8', borderWidth: 2 },
 };
@@ -84,7 +84,7 @@ function ConfirmDialog({
           fontFamily: 'Inter, sans-serif',
           fontWeight: 700,
           fontSize: 17,
-          color: '#0D2144',
+          color: 'text.primary',
           pt: 3,
           px: 3,
           display: 'flex',
@@ -96,7 +96,7 @@ function ConfirmDialog({
         {title}
       </DialogTitle>
       <DialogContent sx={{ px: 3 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#4B6080', lineHeight: 1.6 }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: 'text.secondary', lineHeight: 1.6 }}>
           {desc}
         </Typography>
       </DialogContent>
@@ -108,12 +108,12 @@ function ConfirmDialog({
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
             fontSize: 14,
-            color: '#4B6080',
+            color: 'text.secondary',
             borderRadius: '10px',
-            border: '1px solid #E2EAF4',
+            border: '1px solid', borderColor: 'divider',
             px: 2.5,
             textTransform: 'none',
-            '&:hover': { bgcolor: '#F0F5FF' },
+            '&:hover': { bgcolor: 'action.hover' },
           }}
         >
           {t('gdpr.deleteUser.cancel')}
@@ -223,7 +223,7 @@ function DeleteUserCard({
         >
           <DeleteForeverIcon sx={{ fontSize: 18 }} />
         </Box>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
           {t('gdpr.deleteUser.title')}
         </Typography>
       </Box>
@@ -246,7 +246,7 @@ function DeleteUserCard({
         </Alert>
       )}
 
-      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 500, color: '#4B6080', mb: 0.75 }}>
+      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 500, color: 'text.secondary', mb: 0.75 }}>
         {t('gdpr.deleteUser.selectLabel')}
       </Typography>
       <Select
@@ -358,7 +358,7 @@ function AnonymizeLeadCard({ onAction }: { onAction: () => void }) {
         >
           <VisibilityOffIcon sx={{ fontSize: 18 }} />
         </Box>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
           {t('gdpr.anonymizeLead.title')}
         </Typography>
       </Box>
@@ -379,7 +379,7 @@ function AnonymizeLeadCard({ onAction }: { onAction: () => void }) {
         </Alert>
       )}
 
-      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 500, color: '#4B6080', mb: 0.75 }}>
+      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 500, color: 'text.secondary', mb: 0.75 }}>
         {t('gdpr.anonymizeLead.selectLabel')}
       </Typography>
       <Select
@@ -444,9 +444,9 @@ function AuditLogCard({ entries, loading, error }: { entries: GdprAuditEntry[]; 
   const { t } = useTranslation();
 
   return (
-    <Box sx={{ background: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '16px', boxShadow: '0 4px 24px rgba(13,33,68,0.07)' }}>
+    <Box sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '16px', boxShadow: '0 4px 24px rgba(13,33,68,0.07)' }}>
       <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
           {t('gdpr.auditLog.title')}
         </Typography>
       </Box>
@@ -455,7 +455,7 @@ function AuditLogCard({ entries, loading, error }: { entries: GdprAuditEntry[]; 
 
       <Table sx={{ tableLayout: 'fixed' }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F8FAFC' }}>
+          <TableRow sx={{ bgcolor: 'action.hover' }}>
             {[
               { label: t('gdpr.auditLog.eventType'), width: '16%' },
               { label: t('gdpr.auditLog.targetType'), width: '12%' },
@@ -514,7 +514,7 @@ function AuditLogCard({ entries, loading, error }: { entries: GdprAuditEntry[]; 
                   sx={{
                     height: 52,
                     '& td': { border: 'none', borderTop: '1px solid #F0F5FF' },
-                    '&:hover': { bgcolor: '#F0F5FF' },
+                    '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
                   <TableCell sx={{ py: 1, px: 2.5 }}>
@@ -541,7 +541,7 @@ function AuditLogCard({ entries, loading, error }: { entries: GdprAuditEntry[]; 
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ py: 1, px: 2 }}>
-                    <Typography noWrap sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#4B6080' }}>
+                    <Typography noWrap sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.secondary' }}>
                       {entry.summary}
                     </Typography>
                   </TableCell>
@@ -612,7 +612,7 @@ export default function GdprPage() {
             fontFamily: 'Inter, sans-serif',
             fontSize: 24,
             fontWeight: 700,
-            color: '#0D2144',
+            color: 'text.primary',
           }}
         >
           {t('gdpr.title')}
@@ -670,7 +670,7 @@ export default function GdprPage() {
         </Grid>
       </Grid>
 
-      <Divider sx={{ borderColor: '#E2EAF4', mb: 2.5 }} />
+      <Divider sx={{ borderColor: 'divider', mb: 2.5 }} />
 
       {/* ── Audit log ── */}
       <AuditLogCard

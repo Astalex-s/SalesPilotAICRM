@@ -117,7 +117,7 @@ export default function RegisterPage() {
         <Box sx={{
           position: 'absolute', top: '50%', left: '50%',
           transform: 'translate(-50%,-50%)',
-          bgcolor: '#fff', px: 1.5,
+          bgcolor: 'background.paper', px: 1.5,
           fontSize: 12, color: '#6E7881', fontFamily: 'Inter, sans-serif',
           whiteSpace: 'nowrap',
         }}>
@@ -140,11 +140,11 @@ export default function RegisterPage() {
               border: '1px solid #0D2144',
               borderRadius: '8px',
               bgcolor: 'transparent',
-              color: '#0D2144',
+              color: 'text.primary',
               fontSize: 14, fontWeight: 700, fontFamily: 'Inter, sans-serif',
               cursor: 'pointer',
               transition: 'background 0.15s',
-              '&:hover': { bgcolor: '#F0F5FF' },
+              '&:hover': { bgcolor: 'action.hover' },
             }}
           >
             {icon}&nbsp;{t(`auth.${key}`)}

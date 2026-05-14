@@ -30,7 +30,7 @@ const ACTIVITY_META: Record<ActivityType, { icon: React.ReactNode; color: string
   meeting:        { icon: <EventIcon sx={{ fontSize: 14 }} />,       color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
   note:           { icon: <NoteIcon sx={{ fontSize: 14 }} />,        color: '#94A3B8', bg: 'rgba(148,163,184,0.12)' },
   status_change:  { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,   color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-  stage_change:   { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,   color: '#0D2144', bg: 'rgba(13,33,68,0.10)' },
+  stage_change:   { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,   color: 'text.primary', bg: 'rgba(13,33,68,0.10)' },
   lead_converted: { icon: <CheckCircleIcon sx={{ fontSize: 14 }} />, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
 };
 
@@ -61,7 +61,7 @@ function ActivityEntry({ activity, isLast }: { activity: Activity; isLast: boole
       </Box>
       <Box sx={{ pb: isLast ? 0 : 2.5, flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 1, mb: 0.25 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#0D2144', fontFamily: 'Inter, sans-serif' }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary', fontFamily: 'Inter, sans-serif' }}>
             {t(`leadDetail.timeline.types.${activity.activity_type}`)}
           </Typography>
           <Typography sx={{ fontSize: 11, color: '#94A3B8', flexShrink: 0, fontFamily: 'Inter, sans-serif' }}>
@@ -69,7 +69,7 @@ function ActivityEntry({ activity, isLast }: { activity: Activity; isLast: boole
           </Typography>
         </Box>
         {activity.body && (
-          <Typography sx={{ fontSize: 13, color: '#4B6080', lineHeight: 1.5, fontFamily: 'Inter, sans-serif' }}>
+          <Typography sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.5, fontFamily: 'Inter, sans-serif' }}>
             {activity.body}
           </Typography>
         )}
@@ -114,7 +114,7 @@ export default function DealActivitiesDialog({ deal, open, onClose }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '16px' } }}>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: '#0D2144', pb: 1 }}>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: 'text.primary', pb: 1 }}>
         <Box>
           <Box>{t('deals.comments.title')}</Box>
           {deal && (
@@ -128,7 +128,7 @@ export default function DealActivitiesDialog({ deal, open, onClose }: Props) {
 
       <DialogContent sx={{ pt: 1 }}>
         {/* Comment input */}
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, border: '1px solid #E2EAF4', borderRadius: '10px', px: 1.5, py: 1, bgcolor: '#F7F9FC', mb: 2.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, border: '1px solid', borderColor: 'divider', borderRadius: '10px', px: 1.5, py: 1, bgcolor: 'background.default', mb: 2.5 }}>
           <InputBase
             multiline
             maxRows={4}
@@ -136,7 +136,7 @@ export default function DealActivitiesDialog({ deal, open, onClose }: Props) {
             onChange={(e) => setComment(e.target.value)}
             placeholder={t('deals.comments.placeholder')}
             onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit(); }}
-            sx={{ flex: 1, fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#0D2144' }}
+            sx={{ flex: 1, fontSize: 13, fontFamily: 'Inter, sans-serif', color: 'text.primary' }}
           />
           <IconButton size="small" onClick={handleSubmit} disabled={!comment.trim() || submitting} sx={{ color: '#00A8E8', '&:disabled': { color: '#CBD5E1' } }}>
             {submitting ? <CircularProgress size={16} /> : <SendIcon fontSize="small" />}

@@ -168,7 +168,7 @@ function LangSwitcher({ dark = false }: { dark?: boolean }) {
 export const inputSx = {
   width: '100%',
   height: 44,
-  bgcolor: '#FFFFFF',
+  bgcolor: 'background.paper',
   border: '1px solid #BDC8D1',
   borderRadius: '8px',
   color: '#171C20',
@@ -203,7 +203,7 @@ export default function AuthLayout({ activeTab, children }: AuthLayoutProps) {
         display: { xs: 'none', lg: 'flex' },
         width: '75%',
         position: 'relative',
-        bgcolor: '#0D2144',
+        bgcolor: 'text.primary',
         flexDirection: 'column',
         justifyContent: 'space-between',
         p: 5,

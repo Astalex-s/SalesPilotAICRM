@@ -53,7 +53,7 @@ function PipelineNameEditor({
           placeholder={t('pipeline.renamePlaceholder')}
           sx={{
             fontSize: 22, fontWeight: 700, fontFamily: 'Inter, sans-serif',
-            color: '#0D2144', border: 'none', borderBottom: '2px solid #00A8E8',
+            color: 'text.primary', border: 'none', borderBottom: '2px solid #00A8E8',
             outline: 'none', background: 'transparent', letterSpacing: '-0.02em',
             minWidth: 120, maxWidth: 320,
           }}
@@ -71,7 +71,7 @@ function PipelineNameEditor({
     >
       <Typography sx={{
         fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 700,
-        color: '#0D2144', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+        color: 'text.primary', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
       }}>
         {pipeline.name}
       </Typography>
@@ -128,7 +128,7 @@ export default function PipelinePage() {
   if (!pipelineId) {
     return (
       <Box sx={{ p: 3 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144', mb: 2 }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: 'text.primary', mb: 2 }}>
           {t('pipeline.title')}
         </Typography>
         <Alert severity="info" sx={{ borderRadius: '12px' }}>
@@ -152,7 +152,7 @@ export default function PipelinePage() {
           ) : (
             <Typography sx={{
               fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 700,
-              color: '#0D2144', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+              color: 'text.primary', letterSpacing: '-0.02em', whiteSpace: 'nowrap',
             }}>
               {t('pipeline.title')}
             </Typography>
@@ -166,8 +166,8 @@ export default function PipelinePage() {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handlePipelineChange(e.target.value)}
               sx={{
                 px: '12px', py: '6px',
-                border: '1px solid #E8EFF7', borderRadius: '8px',
-                fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#191C1E',
+                border: '1px solid', borderColor: 'divider', borderRadius: '8px',
+                fontSize: 13, fontFamily: 'Inter, sans-serif', color: 'text.primary',
                 background: '#fff', cursor: 'pointer', outline: 'none',
                 '&:focus': { borderColor: '#00A8E8' },
               }}
@@ -186,8 +186,8 @@ export default function PipelinePage() {
           sx={{
             display: 'flex', alignItems: 'center', gap: 0.75,
             px: '14px', py: '8px',
-            border: '1px solid #E8EFF7', borderRadius: '8px',
-            bgcolor: '#fff', color: '#3E4850',
+            border: '1px solid', borderColor: 'divider', borderRadius: '8px',
+            bgcolor: 'background.paper', color: '#3E4850',
             fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif',
             cursor: 'pointer',
             '&:hover': { borderColor: '#00A8E8', color: '#00A8E8', bgcolor: 'rgba(0,168,232,0.04)' },

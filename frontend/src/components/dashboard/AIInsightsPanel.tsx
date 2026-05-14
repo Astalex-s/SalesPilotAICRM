@@ -67,8 +67,8 @@ export default function AIInsightsPanel({ data, loading }: AIInsightsPanelProps)
       elevation={0}
       sx={{
         height: '100%',
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '16px',
         boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
       }}
@@ -90,7 +90,7 @@ export default function AIInsightsPanel({ data, loading }: AIInsightsPanelProps)
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 700,
                 fontSize: 15,
-                color: '#0D2144',
+                color: 'text.primary',
               }}
             >
               {t('dashboard.aiInsights.title')}
@@ -126,8 +126,8 @@ export default function AIInsightsPanel({ data, loading }: AIInsightsPanelProps)
                   gap: 1.5,
                   p: 1.5,
                   borderRadius: '10px',
-                  bgcolor: '#F7F9FC',
-                  border: '1px solid #E2EAF4',
+                  bgcolor: 'background.default',
+                  border: '1px solid', borderColor: 'divider',
                 }}
               >
                 <Box
@@ -146,7 +146,7 @@ export default function AIInsightsPanel({ data, loading }: AIInsightsPanelProps)
                       fontFamily: 'Inter, sans-serif',
                       fontWeight: 600,
                       fontSize: 13,
-                      color: '#0D2144',
+                      color: 'text.primary',
                       mb: 0.25,
                     }}
                   >

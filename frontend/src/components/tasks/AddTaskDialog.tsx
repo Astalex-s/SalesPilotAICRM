@@ -27,7 +27,7 @@ const INPUT_SX = {
     borderRadius: '10px',
     fontFamily: 'Inter, sans-serif',
     fontSize: 14,
-    '& fieldset': { borderColor: '#E2EAF4' },
+    '& fieldset': { borderColor: 'divider' },
     '&:hover fieldset': { borderColor: '#CBD5E8' },
     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
   },
@@ -85,7 +85,7 @@ export default function AddTaskDialog({ open, onClose, leadId, dealId }: Props) 
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '16px' } }}>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: '#0D2144' }}>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: 'text.primary' }}>
         {t('tasks.dialog.title')}
         <IconButton size="small" onClick={handleClose}><CloseIcon fontSize="small" /></IconButton>
       </DialogTitle>
@@ -132,7 +132,7 @@ export default function AddTaskDialog({ open, onClose, leadId, dealId }: Props) 
           <Button
             onClick={handleClose}
             disabled={submitting}
-            sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14, color: '#4B6080', borderRadius: '10px', border: '1px solid #E2EAF4', px: 2.5, textTransform: 'none', '&:hover': { bgcolor: '#F0F5FF' } }}
+            sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14, color: 'text.secondary', borderRadius: '10px', border: '1px solid', borderColor: 'divider', px: 2.5, textTransform: 'none', '&:hover': { bgcolor: 'action.hover' } }}
           >
             {t('tasks.dialog.cancel')}
           </Button>

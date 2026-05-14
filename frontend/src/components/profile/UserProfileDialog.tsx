@@ -19,16 +19,16 @@ const ROLE_LABEL: Record<string, { en: string; ru: string }> = {
 const inputSx = {
   width: '100%',
   px: '12px', py: '9px',
-  border: '1px solid #E8EFF7',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '8px',
   fontSize: 13,
   fontFamily: 'Inter, sans-serif',
-  color: '#191C1E',
+  color: 'text.primary',
   background: '#fff',
   outline: 'none',
   transition: 'border-color 0.15s',
   '&:focus': { borderColor: '#00A8E8' },
-  '&:disabled': { bgcolor: '#F7F9FC', color: '#8FA3B8', cursor: 'not-allowed' },
+  '&:disabled': { bgcolor: 'background.default', color: '#8FA3B8', cursor: 'not-allowed' },
 };
 
 /* ── Label ───────────────────────────────────────────────────────────────────── */
@@ -122,7 +122,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
         elevation: 0,
         sx: {
           borderRadius: '16px',
-          border: '1px solid #E8EFF7',
+          border: '1px solid', borderColor: 'divider',
           boxShadow: '0 16px 48px rgba(13,33,68,0.14)',
           overflow: 'hidden',
         },
@@ -135,7 +135,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <Typography sx={{
-          fontSize: 18, fontWeight: 700, color: '#0D2144',
+          fontSize: 18, fontWeight: 700, color: 'text.primary',
           fontFamily: 'Inter, sans-serif',
         }}>
           {t('profile.title')}
@@ -145,7 +145,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
           sx={{
             color: '#8FA3B8', cursor: 'pointer', display: 'flex',
             p: '6px', borderRadius: '8px',
-            '&:hover': { color: '#3E4850', bgcolor: '#F5F8FC' },
+            '&:hover': { color: '#3E4850', bgcolor: 'action.hover' },
           }}
         >
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none"
@@ -174,7 +174,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
           </Box>
           <Box>
             <Typography sx={{
-              fontSize: 18, fontWeight: 700, color: '#191C1E',
+              fontSize: 18, fontWeight: 700, color: 'text.primary',
               fontFamily: 'Inter, sans-serif', lineHeight: 1.2,
             }}>
               {user.first_name} {user.last_name}
@@ -287,7 +287,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
 
         {/* Change password section */}
         <Typography sx={{
-          fontSize: 14, fontWeight: 600, color: '#0D2144',
+          fontSize: 14, fontWeight: 600, color: 'text.primary',
           fontFamily: 'Inter, sans-serif', mb: 0.5,
         }}>
           {t('profile.changePassword')}
@@ -354,7 +354,7 @@ export default function UserProfileDialog({ open, onClose }: UserProfileDialogPr
             py: '10px',
             mt: 2,
             borderRadius: '8px',
-            border: '1px solid #E8EFF7',
+            border: '1px solid', borderColor: 'divider',
             bgcolor: pwSaved ? '#10B981' : '#fff',
             color: pwSaved ? '#fff' : '#0D2144',
             fontSize: 14, fontWeight: 600, fontFamily: 'Inter, sans-serif',

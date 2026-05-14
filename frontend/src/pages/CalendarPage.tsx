@@ -82,13 +82,13 @@ function MeetingRow({ meeting, onComplete, onDelete }: {
   return (
     <Box sx={{
       display: 'flex', alignItems: 'flex-start', gap: 2,
-      p: 2, borderRadius: '12px', bgcolor: '#F8FAFC',
+      p: 2, borderRadius: '12px', bgcolor: 'action.hover',
       border: '1px solid #EFF4FB',
-      '&:hover': { bgcolor: '#F0F5FF', borderColor: '#D1E3F8' },
+      '&:hover': { bgcolor: 'action.hover', borderColor: '#D1E3F8' },
     }}>
       {/* Time column */}
       <Box sx={{ minWidth: 80, flexShrink: 0 }}>
-        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 700, color: '#0D2144', lineHeight: 1.2 }}>
+        <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 700, color: 'text.primary', lineHeight: 1.2 }}>
           {formatTime(meeting.start_time)}
         </Typography>
         {meeting.end_time && (
@@ -101,7 +101,7 @@ function MeetingRow({ meeting, onComplete, onDelete }: {
       {/* Content */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-          <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: 'text.primary' }}>
             {meeting.title}
           </Typography>
           <Box sx={{ px: 1, py: 0.25, borderRadius: '20px', bgcolor: st.bg, color: st.color, fontFamily: 'Inter', fontSize: 11, fontWeight: 600 }}>
@@ -227,7 +227,7 @@ export default function CalendarPage() {
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}>
+        <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: 'text.primary' }}>
           {t('calendar.title')}
         </Typography>
         <Button
@@ -245,23 +245,23 @@ export default function CalendarPage() {
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '340px 1fr' }, gap: 3, alignItems: 'start' }}>
 
         {/* ── Calendar grid ── */}
-        <Box sx={{ bgcolor: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '16px', p: 2.5, boxShadow: '0 4px 24px rgba(13,33,68,0.07)' }}>
+        <Box sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '16px', p: 2.5, boxShadow: '0 4px 24px rgba(13,33,68,0.07)' }}>
           {/* Month nav */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Box
               component="button"
               onClick={prevMonth}
-              sx={{ border: 'none', bgcolor: 'transparent', cursor: 'pointer', color: '#5E6E82', display: 'flex', p: 0.5, borderRadius: '6px', '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8' } }}
+              sx={{ border: 'none', bgcolor: 'transparent', cursor: 'pointer', color: '#5E6E82', display: 'flex', p: 0.5, borderRadius: '6px', '&:hover': { bgcolor: 'action.hover', color: '#00A8E8' } }}
             >
               <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6" /></svg>
             </Box>
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 15, fontWeight: 700, color: '#0D2144' }}>
+            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 15, fontWeight: 700, color: 'text.primary' }}>
               {MONTH_NAMES[viewMonth]} {viewYear}
             </Typography>
             <Box
               component="button"
               onClick={nextMonth}
-              sx={{ border: 'none', bgcolor: 'transparent', cursor: 'pointer', color: '#5E6E82', display: 'flex', p: 0.5, borderRadius: '6px', '&:hover': { bgcolor: '#F0F5FF', color: '#00A8E8' } }}
+              sx={{ border: 'none', bgcolor: 'transparent', cursor: 'pointer', color: '#5E6E82', display: 'flex', p: 0.5, borderRadius: '6px', '&:hover': { bgcolor: 'action.hover', color: '#00A8E8' } }}
             >
               <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6" /></svg>
             </Box>
@@ -347,7 +347,7 @@ export default function CalendarPage() {
         <Box>
           {/* Section title */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 16, fontWeight: 700, color: '#0D2144' }}>
+            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 16, fontWeight: 700, color: 'text.primary' }}>
               {selectedDay
                 ? formatDateLabel(new Date(selectedDay + 'T00:00:00'))
                 : `${MONTH_NAMES[viewMonth]} ${viewYear}`}
@@ -377,7 +377,7 @@ export default function CalendarPage() {
           ) : displayedMeetings.length === 0 ? (
             <Box sx={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              py: 8, bgcolor: '#FFFFFF', border: '1px solid #E2EAF4', borderRadius: '16px',
+              py: 8, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: '16px',
               boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
             }}>
               {/* Calendar illustration */}
@@ -389,7 +389,7 @@ export default function CalendarPage() {
                   <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
               </Box>
-              <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 16, fontWeight: 600, color: '#4B6080', mb: 0.5 }}>
+              <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 16, fontWeight: 600, color: 'text.secondary', mb: 0.5 }}>
                 {t('calendar.noMeetings')}
               </Typography>
               <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: '#94A3B8', mb: 2.5 }}>

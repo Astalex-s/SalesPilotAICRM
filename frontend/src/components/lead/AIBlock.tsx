@@ -21,8 +21,8 @@ import { type AiTone, type GeneratedEmail, type LeadScore, type NextBestAction }
 
 /* ── Design tokens ── */
 const CARD_STYLE = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
   height: '100%',
@@ -43,7 +43,7 @@ const INPUT_SX = {
     borderRadius: '10px',
     fontFamily: 'Inter, sans-serif',
     fontSize: 13,
-    '& fieldset': { borderColor: '#E2EAF4' },
+    '& fieldset': { borderColor: 'divider' },
     '&:hover fieldset': { borderColor: '#CBD5E8' },
     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
   },
@@ -105,7 +105,7 @@ function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
         </Button>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: '#F0F5FF', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
+      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: 'action.hover', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
       {error && <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', py: 0.5 }}>{error}</Alert>}
 
       {score && (
@@ -134,7 +134,7 @@ function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
           </Box>
 
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: '#4B6080', lineHeight: 1.5, mb: 1 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, color: 'text.secondary', lineHeight: 1.5, mb: 1 }}>
               {score.reasoning}
             </Typography>
             {score.recommended_actions.length > 0 && (
@@ -142,7 +142,7 @@ function ScoreSection({ score, loading, error, onRefresh }: ScoreSectionProps) {
                 {score.recommended_actions.map((action, i) => (
                   <Box key={i} sx={{ display: 'flex', gap: 0.75, alignItems: 'flex-start' }}>
                     <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: '#00A8E8', mt: '6px', flexShrink: 0 }} />
-                    <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#4B6080', lineHeight: 1.5 }}>
+                    <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: 'text.secondary', lineHeight: 1.5 }}>
                       {action}
                     </Typography>
                   </Box>
@@ -197,7 +197,7 @@ function NextActionSection({ nextAction, loading, error, onRefresh }: NextAction
         </Button>
       </Box>
 
-      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: '#F0F5FF', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
+      {loading && <LinearProgress sx={{ mb: 1.5, borderRadius: 2, bgcolor: 'action.hover', '& .MuiLinearProgress-bar': { bgcolor: '#00A8E8' } }} />}
       {error && <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', py: 0.5 }}>{error}</Alert>}
 
       {nextAction && (
@@ -205,8 +205,8 @@ function NextActionSection({ nextAction, loading, error, onRefresh }: NextAction
           sx={{
             p: 1.5,
             borderRadius: '10px',
-            bgcolor: '#F7F9FC',
-            border: '1px solid #E2EAF4',
+            bgcolor: 'background.default',
+            border: '1px solid', borderColor: 'divider',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
@@ -224,7 +224,7 @@ function NextActionSection({ nextAction, loading, error, onRefresh }: NextAction
             >
               {t(`leadDetail.ai.priority.${nextAction.priority}`)}
             </Box>
-            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144' }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary' }}>
               {nextAction.action}
             </Typography>
           </Box>
@@ -275,7 +275,7 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
             borderRadius: '10px',
             fontFamily: 'Inter',
             fontSize: 13,
-            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E2EAF4' },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' },
             '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E8' },
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#00A8E8', borderWidth: 2 },
           }}
@@ -312,10 +312,10 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
       {generatedEmail && (
         <Box
           sx={{
-            border: '1px solid #E2EAF4',
+            border: '1px solid', borderColor: 'divider',
             borderRadius: '10px',
             p: 1.5,
-            bgcolor: '#F7F9FC',
+            bgcolor: 'background.default',
             position: 'relative',
           }}
         >
@@ -341,12 +341,12 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
           </Tooltip>
 
           <Typography sx={{ ...SECTION_LABEL_SX, mb: 0.5 }}>{t('leadDetail.ai.emailSubject')}</Typography>
-          <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144', mb: 1.5 }}>
+          <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
             {generatedEmail.subject}
           </Typography>
 
           <Typography sx={{ ...SECTION_LABEL_SX, mb: 0.5 }}>{t('leadDetail.ai.emailBody')}</Typography>
-          <Typography sx={{ fontFamily: 'monospace', fontSize: 12, color: '#4B6080', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+          <Typography sx={{ fontFamily: 'monospace', fontSize: 12, color: 'text.secondary', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
             {generatedEmail.body}
           </Typography>
         </Box>
@@ -385,7 +385,7 @@ export default function AIBlock({
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
           <AutoAwesomeIcon sx={{ color: '#00A8E8', fontSize: 18 }} />
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary' }}>
             {t('leadDetail.ai.title')}
           </Typography>
           <Box

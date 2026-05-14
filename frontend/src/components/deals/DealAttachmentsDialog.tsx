@@ -103,7 +103,7 @@ export default function DealAttachmentsDialog({ open, onClose, dealId, dealTitle
       fullWidth
       PaperProps={{
         elevation: 0,
-        sx: { borderRadius: '16px', border: '1px solid #E8EFF7', boxShadow: '0 16px 48px rgba(13,33,68,0.14)' },
+        sx: { borderRadius: '16px', border: '1px solid', borderColor: 'divider', boxShadow: '0 16px 48px rgba(13,33,68,0.14)' },
       }}
     >
       {/* Header */}
@@ -111,7 +111,7 @@ export default function DealAttachmentsDialog({ open, onClose, dealId, dealTitle
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <AttachFileIcon sx={{ color: '#00A8E8', fontSize: 20 }} />
           <Box>
-            <Typography sx={{ fontFamily: 'Inter', fontSize: 16, fontWeight: 700, color: '#0D2144', lineHeight: 1.2 }}>
+            <Typography sx={{ fontFamily: 'Inter', fontSize: 16, fontWeight: 700, color: 'text.primary', lineHeight: 1.2 }}>
               {t('attachments.title')}
             </Typography>
             <Typography sx={{ fontFamily: 'Inter', fontSize: 12, color: '#8FA3B8' }}>
@@ -119,7 +119,7 @@ export default function DealAttachmentsDialog({ open, onClose, dealId, dealTitle
             </Typography>
           </Box>
         </Box>
-        <Box onClick={onClose} sx={{ cursor: 'pointer', color: '#8FA3B8', p: '6px', borderRadius: '8px', display: 'flex', '&:hover': { color: '#3E4850', bgcolor: '#F5F8FC' } }}>
+        <Box onClick={onClose} sx={{ cursor: 'pointer', color: '#8FA3B8', p: '6px', borderRadius: '8px', display: 'flex', '&:hover': { color: '#3E4850', bgcolor: 'action.hover' } }}>
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -184,13 +184,13 @@ export default function DealAttachmentsDialog({ open, onClose, dealId, dealTitle
                 sx={{
                   display: 'flex', alignItems: 'center', gap: 1.5,
                   p: '10px 12px', borderRadius: '10px',
-                  border: '1px solid #E8EFF7', bgcolor: '#FAFBFD',
-                  '&:hover': { bgcolor: '#F0F5FF' },
+                  border: '1px solid', borderColor: 'divider', bgcolor: 'background.default',
+                  '&:hover': { bgcolor: 'action.hover' },
                 }}
               >
                 <AttachFileIcon sx={{ fontSize: 18, color: '#8FA3B8', flexShrink: 0 }} />
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: '#0D2144', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {att.filename}
                   </Typography>
                   <Typography sx={{ fontFamily: 'Inter', fontSize: 11, color: '#8FA3B8' }}>

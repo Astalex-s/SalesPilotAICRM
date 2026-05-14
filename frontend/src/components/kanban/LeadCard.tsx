@@ -43,8 +43,8 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
           sx={{
             mb: 1.5,
             height: CARD_HEIGHT,
-            background: '#FFFFFF',
-            border: '1px solid #E2EAF4',
+            bgcolor: 'background.paper',
+            border: '1px solid', borderColor: 'divider',
             borderLeft: '3px solid #00A8E8',
             borderRadius: '12px',
             boxShadow: snapshot.isDragging
@@ -64,7 +64,7 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
               <Box sx={{
                 width: 28, height: 28, borderRadius: '6px',
-                bgcolor: '#E8EFF7', color: '#4B6080',
+                bgcolor: '#E8EFF7', color: 'text.secondary',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 700,
                 flexShrink: 0,
@@ -73,7 +73,7 @@ export default function LeadCard({ lead, index }: LeadCardProps) {
               </Box>
               <Typography noWrap sx={{
                 fontFamily: 'Inter, sans-serif', fontSize: 13,
-                fontWeight: 600, color: '#0D2144', flex: 1,
+                fontWeight: 600, color: 'text.primary', flex: 1,
               }}>
                 {displayName}
               </Typography>

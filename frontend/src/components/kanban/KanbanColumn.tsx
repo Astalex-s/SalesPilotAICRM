@@ -131,7 +131,7 @@ function AddCardButton({
             sx: {
               borderRadius: '10px',
               boxShadow: '0 4px 20px rgba(13,33,68,0.12)',
-              border: '1px solid #E8EFF7',
+              border: '1px solid', borderColor: 'divider',
               minWidth: 160,
               py: 0.5,
             },
@@ -143,7 +143,7 @@ function AddCardButton({
               onClick={item.action}
               sx={{
                 px: 2, py: 1,
-                fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#0D2144',
+                fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.primary',
                 cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: 1,
                 '&:hover': { bgcolor: 'rgba(0,168,232,0.06)', color: '#00A8E8' },
@@ -197,7 +197,7 @@ export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: Kan
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
               fontSize: 14,
-              color: '#0D2144',
+              color: 'text.primary',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -211,7 +211,7 @@ export default function KanbanColumn({ stage, deals, onAddDeal, onAddLead }: Kan
           <Box
             sx={{
               px: 1, py: 0.2, borderRadius: '20px',
-              bgcolor: 'rgba(13,33,68,0.08)', color: '#0D2144',
+              bgcolor: 'rgba(13,33,68,0.08)', color: 'text.primary',
               fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 700,
             }}
           >

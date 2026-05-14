@@ -17,7 +17,7 @@ const STATUS_STYLE: Record<LeadStatus, { bg: string; color: string }> = {
   contacted:   { bg: 'rgba(245,158,11,0.12)', color: '#D97706' },
   qualified:   { bg: 'rgba(16,185,129,0.12)', color: '#059669' },
   unqualified: { bg: 'rgba(239,68,68,0.12)',  color: '#DC2626' },
-  converted:   { bg: 'rgba(13,33,68,0.10)',   color: '#0D2144' },
+  converted:   { bg: 'rgba(13,33,68,0.10)',   color: 'text.primary' },
 };
 
 /* ── Avatar helpers ── */
@@ -41,7 +41,7 @@ function ContactRow({
         sx={{
           fontFamily: 'Inter, sans-serif',
           fontSize: 13,
-          color: '#4B6080',
+          color: 'text.secondary',
           wordBreak: 'break-all',
         }}
       >
@@ -68,7 +68,7 @@ function MetaRow({ label, value }: { label: string; value: string }) {
       >
         {label}
       </Typography>
-      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#4B6080' }}>
+      <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.secondary' }}>
         {value}
       </Typography>
     </Box>
@@ -149,8 +149,8 @@ export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, avail
     <Card
       elevation={0}
       sx={{
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '16px',
         boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
       }}
@@ -183,7 +183,7 @@ export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, avail
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
               fontSize: 17,
-              color: '#0D2144',
+              color: 'text.primary',
               textAlign: 'center',
               lineHeight: 1.3,
             }}
@@ -306,7 +306,7 @@ export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, avail
             >
               {t('leadDetail.info.notes')}
             </Typography>
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#4B6080' }}>
+            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.secondary' }}>
               {lead.notes}
             </Typography>
           </>
@@ -404,7 +404,7 @@ export default function LeadInfoCard({ lead, onStatusChange, onTagsChange, avail
                   <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: '#94A3B8' }}>
                     {t('leadDetail.info.category')}:
                   </Typography>
-                  <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#4B6080', fontWeight: 600 }}>
+                  <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'text.secondary', fontWeight: 600 }}>
                     {lead.category}
                   </Typography>
                 </Box>

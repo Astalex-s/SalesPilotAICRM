@@ -70,7 +70,7 @@ export default function LeadPoolColumn({ leads, onAddLead }: LeadPoolColumnProps
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#00A8E8', flexShrink: 0 }} />
           <Typography sx={{
-            fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: '#0D2144',
+            fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: 'text.primary',
           }}>
             {t('pipeline.leadsPool')}
           </Typography>

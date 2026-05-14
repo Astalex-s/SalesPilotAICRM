@@ -73,7 +73,7 @@ function NotifRow({ n }: { n: CRMNotification }) {
         borderLeft: n.read ? '3px solid transparent' : `3px solid ${color}`,
         cursor: n.link ? 'pointer' : 'default',
         transition: 'background 0.15s',
-        '&:hover': { bgcolor: '#F5F8FC' },
+        '&:hover': { bgcolor: 'action.hover' },
       }}
     >
       {/* Type icon circle */}
@@ -91,7 +91,7 @@ function NotifRow({ n }: { n: CRMNotification }) {
         <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1 }}>
           <Typography sx={{
             fontSize: 13, fontWeight: n.read ? 400 : 600,
-            color: '#191C1E', fontFamily: 'Inter, sans-serif',
+            color: 'text.primary', fontFamily: 'Inter, sans-serif',
             lineHeight: 1.3,
           }}>
             {t(n.titleKey, n.params)}
@@ -164,7 +164,7 @@ export default function NotificationPanel({ anchorEl, onClose }: NotificationPan
           width: 380,
           maxHeight: 520,
           mt: 1,
-          border: '1px solid #E8EFF7',
+          border: '1px solid', borderColor: 'divider',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(13,33,68,0.12)',
           overflow: 'hidden',
@@ -182,7 +182,7 @@ export default function NotificationPanel({ anchorEl, onClose }: NotificationPan
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography sx={{
-            fontSize: 15, fontWeight: 700, color: '#0D2144',
+            fontSize: 15, fontWeight: 700, color: 'text.primary',
             fontFamily: 'Inter, sans-serif',
           }}>
             {t('notifications.title')}
@@ -222,7 +222,7 @@ export default function NotificationPanel({ anchorEl, onClose }: NotificationPan
           }}>
             <Box sx={{
               width: 48, height: 48, borderRadius: '50%',
-              bgcolor: '#F0F8FF',
+              bgcolor: 'action.selected',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <svg width={24} height={24} viewBox="0 0 24 24" fill="none"

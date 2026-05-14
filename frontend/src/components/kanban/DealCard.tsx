@@ -82,8 +82,8 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
           sx={{
             mb: 1.5,
             height: CARD_HEIGHT,
-            background: '#FFFFFF',
-            border: '1px solid #E2EAF4',
+            bgcolor: 'background.paper',
+            border: '1px solid', borderColor: 'divider',
             borderRadius: '12px',
             borderLeft: `3px solid ${STATUS_LEFT_BORDER[deal.status]}`,
             boxShadow: snapshot.isDragging
@@ -150,7 +150,7 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
                   fontFamily: 'Inter, sans-serif',
                   fontSize: 12,
                   fontWeight: 600,
-                  color: '#4B6080',
+                  color: 'text.secondary',
                   flex: 1,
                 }}
               >
@@ -165,7 +165,7 @@ export default function DealCard({ deal, index, stageProbability }: DealCardProp
                 fontFamily: 'Inter, sans-serif',
                 fontSize: 13,
                 fontWeight: 600,
-                color: '#0D2144',
+                color: 'text.primary',
                 mb: 0.75,
               }}
             >

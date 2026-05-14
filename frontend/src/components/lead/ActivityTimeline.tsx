@@ -21,7 +21,7 @@ const ACTIVITY_META: Record<
   meeting:        { icon: <EventIcon sx={{ fontSize: 14 }} />,        color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
   note:           { icon: <NoteIcon sx={{ fontSize: 14 }} />,         color: '#94A3B8', bg: 'rgba(148,163,184,0.12)' },
   status_change:  { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,    color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-  stage_change:   { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,    color: '#0D2144', bg: 'rgba(13,33,68,0.10)' },
+  stage_change:   { icon: <SwapHorizIcon sx={{ fontSize: 14 }} />,    color: 'text.primary', bg: 'rgba(13,33,68,0.10)' },
   lead_converted: { icon: <CheckCircleIcon sx={{ fontSize: 14 }} />,  color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
 };
 
@@ -95,7 +95,7 @@ function TimelineEntry({
               fontFamily: 'Inter, sans-serif',
               fontSize: 13,
               fontWeight: 600,
-              color: '#0D2144',
+              color: 'text.primary',
             }}
           >
             {t(`leadDetail.timeline.types.${activity.activity_type}`)}
@@ -116,7 +116,7 @@ function TimelineEntry({
             sx={{
               fontFamily: 'Inter, sans-serif',
               fontSize: 13,
-              color: '#4B6080',
+              color: 'text.secondary',
               lineHeight: 1.5,
             }}
           >
@@ -170,11 +170,11 @@ function CommentBox({ onSubmit }: { onSubmit: (body: string) => Promise<void> })
         display: 'flex',
         alignItems: 'flex-end',
         gap: 1,
-        border: '1px solid #E2EAF4',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '10px',
         px: 1.5,
         py: 1,
-        bgcolor: '#F7F9FC',
+        bgcolor: 'background.default',
       }}
     >
       <InputBase
@@ -186,7 +186,7 @@ function CommentBox({ onSubmit }: { onSubmit: (body: string) => Promise<void> })
         onKeyDown={(e) => {
           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit();
         }}
-        sx={{ flex: 1, fontSize: 13, fontFamily: 'Inter, sans-serif', color: '#0D2144' }}
+        sx={{ flex: 1, fontSize: 13, fontFamily: 'Inter, sans-serif', color: 'text.primary' }}
       />
       <IconButton
         size="small"
@@ -215,8 +215,8 @@ export default function ActivityTimeline({ activities, loading, error, onAddComm
     <Card
       elevation={0}
       sx={{
-        background: '#FFFFFF',
-        border: '1px solid #E2EAF4',
+        bgcolor: 'background.paper',
+        border: '1px solid', borderColor: 'divider',
         borderRadius: '16px',
         boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
         height: '100%',
@@ -228,7 +228,7 @@ export default function ActivityTimeline({ activities, loading, error, onAddComm
             fontFamily: 'Inter, sans-serif',
             fontWeight: 700,
             fontSize: 15,
-            color: '#0D2144',
+            color: 'text.primary',
             mb: 2.5,
           }}
         >

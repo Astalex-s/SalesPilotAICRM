@@ -85,7 +85,7 @@ function ToggleRow({
           position: 'absolute',
           top: 3, left: checked ? 23 : 3,
           width: 18, height: 18, borderRadius: '50%',
-          bgcolor: '#fff',
+          bgcolor: 'background.paper',
           boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
           transition: 'left 0.2s',
         }} />

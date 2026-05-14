@@ -22,8 +22,8 @@ import type { TelegramStatus } from '../types/telegram';
 
 /* ── Design tokens ── */
 const CARD = {
-  background: '#FFFFFF',
-  border: '1px solid #E2EAF4',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '16px',
   boxShadow: '0 4px 24px rgba(13,33,68,0.07)',
   p: 2.5,
@@ -34,7 +34,7 @@ const INPUT_SX = {
     borderRadius: '10px',
     fontFamily: 'Inter, sans-serif',
     fontSize: 14,
-    '& fieldset': { borderColor: '#E2EAF4' },
+    '& fieldset': { borderColor: 'divider' },
     '&:hover fieldset': { borderColor: '#CBD5E8' },
     '&.Mui-focused fieldset': { borderColor: '#00A8E8', borderWidth: 2 },
   },
@@ -125,7 +125,7 @@ function NotConfiguredCard() {
             fontFamily: 'Inter, sans-serif',
             fontWeight: 700,
             fontSize: 18,
-            color: '#0D2144',
+            color: 'text.primary',
             mb: 1,
           }}
         >
@@ -149,13 +149,13 @@ function NotConfiguredCard() {
             gap: 1,
             p: '10px 14px',
             borderRadius: '10px',
-            bgcolor: '#F7F9FC',
-            border: '1px solid #E2EAF4',
+            bgcolor: 'background.default',
+            border: '1px solid', borderColor: 'divider',
             textAlign: 'left',
           }}
         >
           <InfoOutlinedIcon sx={{ fontSize: 16, color: '#94A3B8', mt: '1px', flexShrink: 0 }} />
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#4B6080', lineHeight: 1.5 }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.secondary', lineHeight: 1.5 }}>
             {t('telegram.notConfiguredCard.hint')}
           </Typography>
         </Box>
@@ -180,7 +180,7 @@ function StatusCard({
     <Box sx={CARD}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Typography
-          sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144' }}
+          sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary' }}
         >
           {t('telegram.statusCard.title')}
         </Typography>
@@ -189,7 +189,7 @@ function StatusCard({
             size="small"
             onClick={onRefresh}
             disabled={loading}
-            sx={{ border: '1px solid #E2EAF4', borderRadius: '8px', color: '#4B6080', '&:hover': { bgcolor: '#F0F5FF' } }}
+            sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '8px', color: 'text.secondary', '&:hover': { bgcolor: 'action.hover' } }}
           >
             <RefreshIcon fontSize="small" />
           </IconButton>
@@ -236,7 +236,7 @@ function CapabilitiesCard() {
   return (
     <Box sx={CARD}>
       <Typography
-        sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144', mb: 2 }}
+        sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary', mb: 2 }}
       >
         {t('telegram.capabilitiesCard.title')}
       </Typography>
@@ -244,7 +244,7 @@ function CapabilitiesCard() {
         {items.map((item, i) => (
           <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25 }}>
             <CheckCircleIcon sx={{ fontSize: 16, color: '#10B981', mt: '2px', flexShrink: 0 }} />
-            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: '#4B6080', lineHeight: 1.5 }}>
+            <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'text.secondary', lineHeight: 1.5 }}>
               {item}
             </Typography>
           </Box>
@@ -282,7 +282,7 @@ function WebhookCard({ onSuccess }: { onSuccess: () => void }) {
   return (
     <Box sx={CARD}>
       <Typography
-        sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#0D2144', mb: 0.75 }}
+        sx={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'text.primary', mb: 0.75 }}
       >
         {t('telegram.webhookCard.title')}
       </Typography>
@@ -383,7 +383,7 @@ export default function TelegramPage() {
             fontFamily: 'Inter, sans-serif',
             fontSize: 24,
             fontWeight: 700,
-            color: '#0D2144',
+            color: 'text.primary',
           }}
         >
           {t('telegram.title')}

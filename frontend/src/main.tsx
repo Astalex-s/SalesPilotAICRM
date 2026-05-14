@@ -29,7 +29,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function SentryFallback() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'Inter, sans-serif', gap: 16 }}>
-      <h2 style={{ margin: 0, color: '#0D2144' }}>Something went wrong</h2>
+      <h2 style={{ margin: 0, color: 'text.primary' }}>Something went wrong</h2>
       <p style={{ margin: 0, color: '#6B7280' }}>The error has been reported automatically.</p>
       <button onClick={() => window.location.reload()} style={{ padding: '8px 20px', background: '#00A8E8', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
         Reload page

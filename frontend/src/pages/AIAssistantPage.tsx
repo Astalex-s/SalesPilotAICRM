@@ -24,8 +24,8 @@ import type { Deal } from '../types/deal';
 
 /* ── shared style tokens ────────────────────────────────────────────────────── */
 const card = {
-  background: '#FFFFFF',
-  border: '1px solid #E8EFF7',
+  bgcolor: 'background.paper',
+  border: '1px solid', borderColor: 'divider',
   borderRadius: '12px',
   boxShadow: '0 1px 4px rgba(13,33,68,0.06)',
   p: 3,
@@ -35,7 +35,7 @@ const sectionTitle = {
   fontFamily: 'Inter, sans-serif',
   fontSize: 13,
   fontWeight: 700,
-  color: '#0D2144',
+  color: 'text.primary',
   mb: 1,
 };
 
@@ -242,7 +242,7 @@ function LeadScoreTab() {
                 />
               </Box>
               <Typography sx={{
-                fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: '#0D2144', mb: 0.75,
+                fontFamily: 'Inter', fontSize: 14, fontWeight: 600, color: 'text.primary', mb: 0.75,
               }}>
                 {nba.action}
               </Typography>
@@ -520,7 +520,7 @@ function EmailGenTab() {
       {result && !loading && (
         <Box sx={card}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-            <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: '#0D2144' }}>
+            <Typography sx={{ fontFamily: 'Inter', fontWeight: 700, fontSize: 14, color: 'text.primary' }}>
               {t('aiAssistant.email.subject')}: {result.subject}
             </Typography>
             <Button
@@ -536,7 +536,7 @@ function EmailGenTab() {
             </Button>
           </Box>
           <Box sx={{
-            bgcolor: '#F7F9FC', border: '1px solid #E8EFF7',
+            bgcolor: 'background.default', border: '1px solid', borderColor: 'divider',
             borderRadius: '8px', p: 2,
           }}>
             <Typography sx={{
@@ -845,7 +845,7 @@ export default function AIAssistantPage() {
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: '#0D2144' }}>
+          <Typography sx={{ fontFamily: 'Inter, sans-serif', fontSize: 24, fontWeight: 700, color: 'text.primary' }}>
             {t('aiAssistant.title')}
           </Typography>
           {/* Pulsing AI dot */}
@@ -872,7 +872,7 @@ export default function AIAssistantPage() {
 
       {/* Tabs */}
       <Box sx={{
-        background: '#FFFFFF', border: '1px solid #E8EFF7',
+        bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider',
         borderRadius: '12px', boxShadow: '0 1px 4px rgba(13,33,68,0.06)',
         mb: 2.5,
       }}>
