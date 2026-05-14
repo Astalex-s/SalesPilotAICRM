@@ -3,6 +3,7 @@ import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useKanbanStore } from '../../store/useKanbanStore';
+import { type Deal } from '../../types/deal';
 import KanbanColumn from './KanbanColumn';
 import LeadPoolColumn, { LEADS_POOL_ID } from './LeadPoolColumn';
 
