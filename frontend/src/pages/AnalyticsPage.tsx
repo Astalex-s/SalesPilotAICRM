@@ -782,7 +782,10 @@ export default function AnalyticsPage() {
             size="small"
             variant="outlined"
             startIcon={<MonitorHeartIcon fontSize="small" />}
-            onClick={() => window.open('/grafana/', '_blank', 'noopener')}
+            component="a"
+            href="/grafana/"
+            target="_blank"
+            rel="noopener"
             sx={{
               borderColor: '#E2EAF4',
               color: '#4B6080',
