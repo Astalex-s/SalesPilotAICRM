@@ -31,6 +31,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import EmptyState from '../components/common/EmptyState';
 import { gmailApi } from '../api/gmail';
@@ -200,19 +201,38 @@ function ConnectCard({
 }
 
 /* ── Compose dialog ── */
+interface ComposeInitialValues {
+  to?: string;
+  subject?: string;
+  body?: string;
+  leadId?: string;
+}
+
 interface ComposeDialogProps {
   open: boolean;
   onClose: () => void;
   onSent: (msg: EmailMessage) => void;
   userId: string;
+  initialValues?: ComposeInitialValues;
 }
 
-function ComposeDialog({ open, onClose, onSent, userId }: ComposeDialogProps) {
+function ComposeDialog({ open, onClose, onSent, userId, initialValues }: ComposeDialogProps) {
   const { t } = useTranslation();
   const { leads } = useLeadStore();
 
   const empty = { to: '', subject: '', body: '', leadId: '' };
   const [form, setForm] = useState(empty);
+
+  useEffect(() => {
+    if (open && initialValues) {
+      setForm({
+        to: initialValues.to ?? '',
+        subject: initialValues.subject ?? '',
+        body: initialValues.body ?? '',
+        leadId: initialValues.leadId ?? '',
+      });
+    }
+  }, [open, initialValues]);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
@@ -685,6 +705,7 @@ type AuthState = 'loading' | 'not_connected' | 'awaiting_auth' | 'connected';
 
 export default function GmailPage() {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const user = useAuthStore((s) => s.user);
   const { leads, fetchLeads } = useLeadStore();
 
@@ -700,6 +721,21 @@ export default function GmailPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [composeOpen, setComposeOpen] = useState(false);
+  const [composeInitial, setComposeInitial] = useState<ComposeInitialValues | undefined>();
+
+  // Auto-open compose from query params (e.g. from AI email generation)
+  useEffect(() => {
+    if (searchParams.get('compose') === '1') {
+      setComposeInitial({
+        to: searchParams.get('to') ?? undefined,
+        subject: searchParams.get('subject') ?? undefined,
+        body: searchParams.get('body') ?? undefined,
+        leadId: searchParams.get('leadId') ?? undefined,
+      });
+      setComposeOpen(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [viewMode, setViewMode] = useState<'flat' | 'threads'>('flat');
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
@@ -1230,7 +1266,8 @@ export default function GmailPage() {
       {/* ── Compose dialog ── */}
       <ComposeDialog
         open={composeOpen}
-        onClose={() => setComposeOpen(false)}
+        onClose={() => { setComposeOpen(false); setComposeInitial(undefined); }}
+        initialValues={composeInitial}
         onSent={handleSent}
         userId={user?.id ?? ''}
       />

@@ -282,6 +282,7 @@
       "emailBody": "Body",
       "copy": "Copy",
       "copied": "Copied!",
+      "sendViaGmail": "Send",
       "tones": {
         "friendly": "Friendly",
         "formal": "Formal",

@@ -1,6 +1,8 @@
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SendIcon from '@mui/icons-material/Send';
+import { useNavigate } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -245,10 +247,13 @@ interface EmailSectionProps {
   loading: boolean;
   error: string | null;
   onGenerate: (tone: AiTone, context: string) => void;
+  leadEmail?: string;
+  leadId?: string;
 }
 
-function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSectionProps) {
+function EmailSection({ generatedEmail, loading, error, onGenerate, leadEmail, leadId }: EmailSectionProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [tone, setTone] = useState<AiTone>('friendly');
   const [context, setContext] = useState('');
   const [copied, setCopied] = useState(false);
@@ -258,6 +263,18 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
     navigator.clipboard.writeText(`Subject: ${generatedEmail.subject}\n\n${generatedEmail.body}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSendViaGmail = () => {
+    if (!generatedEmail) return;
+    const params = new URLSearchParams({
+      compose: '1',
+      subject: generatedEmail.subject,
+      body: generatedEmail.body,
+      ...(leadEmail ? { to: leadEmail } : {}),
+      ...(leadId ? { leadId } : {}),
+    });
+    navigate(`/gmail?${params.toString()}`);
   };
 
   return (
@@ -319,26 +336,41 @@ function EmailSection({ generatedEmail, loading, error, onGenerate }: EmailSecti
             position: 'relative',
           }}
         >
-          <Tooltip title={copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}>
+          <Box sx={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 0.5 }}>
+            <Tooltip title={copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}>
+              <Button
+                size="small"
+                onClick={handleCopy}
+                startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
+                sx={{
+                  fontFamily: 'Inter',
+                  fontSize: 12,
+                  textTransform: 'none',
+                  color: '#00A8E8',
+                  fontWeight: 600,
+                  '&:hover': { bgcolor: '#E8F4FF' },
+                }}
+              >
+                {copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}
+              </Button>
+            </Tooltip>
             <Button
               size="small"
-              onClick={handleCopy}
-              startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
+              onClick={handleSendViaGmail}
+              startIcon={<SendIcon sx={{ fontSize: 13 }} />}
               sx={{
-                position: 'absolute',
-                top: 8,
-                right: 8,
                 fontFamily: 'Inter',
                 fontSize: 12,
                 textTransform: 'none',
-                color: '#00A8E8',
+                color: '#fff',
                 fontWeight: 600,
-                '&:hover': { bgcolor: '#E8F4FF' },
+                bgcolor: '#00A8E8',
+                '&:hover': { bgcolor: '#0090CC' },
               }}
             >
-              {copied ? t('leadDetail.ai.copied') : t('leadDetail.ai.copy')}
+              {t('leadDetail.ai.sendViaGmail')}
             </Button>
-          </Tooltip>
+          </Box>
 
           <Typography sx={{ ...SECTION_LABEL_SX, mb: 0.5 }}>{t('leadDetail.ai.emailSubject')}</Typography>
           <Typography sx={{ fontFamily: 'Inter', fontSize: 13, fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
@@ -369,6 +401,8 @@ interface AIBlockProps {
   onScoreRefresh: () => void;
   onNextActionRefresh: () => void;
   onGenerateEmail: (tone: AiTone, context: string) => void;
+  leadEmail?: string;
+  leadId?: string;
 }
 
 export default function AIBlock({
@@ -376,6 +410,7 @@ export default function AIBlock({
   nextAction, nextActionLoading, nextActionError,
   generatedEmail, emailLoading, emailError,
   onScoreRefresh, onNextActionRefresh, onGenerateEmail,
+  leadEmail, leadId,
 }: AIBlockProps) {
   const { t } = useTranslation();
 
@@ -442,6 +477,8 @@ export default function AIBlock({
           loading={emailLoading}
           error={emailError}
           onGenerate={onGenerateEmail}
+          leadEmail={leadEmail}
+          leadId={leadId}
         />
       </Box>
     </Card>

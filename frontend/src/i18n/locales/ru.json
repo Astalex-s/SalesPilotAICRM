@@ -282,6 +282,7 @@
       "emailBody": "Текст",
       "copy": "Копировать",
       "copied": "Скопировано!",
+      "sendViaGmail": "Отправить",
       "tones": {
         "friendly": "Дружелюбный",
         "formal": "Официальный",

@@ -120,6 +120,8 @@ export default function LeadDetailPage() {
             onScoreRefresh={() => leadId && fetchScore(leadId)}
             onNextActionRefresh={() => leadId && fetchNextAction(leadId)}
             onGenerateEmail={(tone, ctx) => leadId && generateEmail(leadId, tone, ctx || undefined)}
+            leadEmail={lead.data?.email}
+            leadId={leadId}
           />
         </Grid>
       </Grid>
