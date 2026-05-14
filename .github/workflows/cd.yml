@@ -26,15 +26,18 @@ jobs:
 
     outputs:
       image_tag: ${{ steps.tag.outputs.value }}
+      owner: ${{ steps.tag.outputs.owner }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Set image tag (short SHA)
+      - name: Set image tag and lowercase owner
         id: tag
-        run: echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -55,8 +58,8 @@ jobs:
           target: production
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/salespilotai-backend:latest
-            ghcr.io/${{ github.repository_owner }}/salespilotai-backend:${{ steps.tag.outputs.value }}
+            ghcr.io/${{ steps.tag.outputs.owner }}/salespilotai-backend:latest
+            ghcr.io/${{ steps.tag.outputs.owner }}/salespilotai-backend:${{ steps.tag.outputs.value }}
           cache-from: type=gha,scope=backend
           cache-to:   type=gha,scope=backend,mode=max
 
@@ -69,8 +72,8 @@ jobs:
           target: production
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/salespilotai-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/salespilotai-frontend:${{ steps.tag.outputs.value }}
+            ghcr.io/${{ steps.tag.outputs.owner }}/salespilotai-frontend:latest
+            ghcr.io/${{ steps.tag.outputs.owner }}/salespilotai-frontend:${{ steps.tag.outputs.value }}
           cache-from: type=gha,scope=frontend
           cache-to:   type=gha,scope=frontend,mode=max
 
@@ -85,7 +88,7 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
-          GHCR_USER: ${{ github.repository_owner }}
+          GHCR_USER: ${{ needs.publish.outputs.owner }}
           GHCR_TOKEN: ${{ secrets.GHCR_PAT }}
           IMAGE_TAG: ${{ needs.publish.outputs.image_tag }}
           DEPLOY_PATH: ${{ secrets.SERVER_DEPLOY_PATH }}
